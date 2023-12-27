@@ -8,11 +8,12 @@ import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import "./style.css";
 import Login from "./components/login/login";
-// import { handleUpdateDarkMode } from "./variables";
+import Profile from "./components/profile/profile";
+// import ForgotPassword from "./components/forgotPassword";
 
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const token = Cookies.get("token");
+  let token = Cookies.get("token");
   useEffect(() => {
     // check dark mode and enable it
     if (Cookies.get("dark-mode") === "true")
@@ -36,14 +37,20 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* <Route
-          path="/"
-          element={token ? <Home /> : <Navigate to="/signin" />}
-        /> */}
         <Route
           path="/login"
           element={
             !token ? <Login isDarkMode={isDarkMode} /> : <Navigate to="/" />
+          }
+        />
+        <Route
+          path="/*"
+          element={
+            token ? (
+              <Profile isDarkMode={isDarkMode} />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
       </Routes>

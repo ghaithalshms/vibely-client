@@ -1,12 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 
 :root {
-  --main-bg-light: linear-gradient(
-    to right,
-    #ffffff,
-    rgba(255, 201, 228, 0.263)
-  );
-  --main-bg-dark: linear-gradient(to right, #000000, rgb(42, 35, 38));
+  --main-bg-light: linear-gradient(to right, #fff, rgba(255, 201, 228, 0.3));
+  --main-bg-dark: linear-gradient(to right, #000, rgb(29, 25, 27));
   --placeholder-light: #333333;
   --placeholder-dark: #9d9d9d;
   --button-bg-light: #f874bb;
@@ -27,6 +23,7 @@
   font-family: "Montserrat", sans-serif;
   transition: background-color 0.3s, color 0.3s;
   box-sizing: border-box;
+  /* font-weight: 500; */
 
   /* MAKE ELEMENTS NOT SELECTABLE */
   -webkit-touch-callout: none;
@@ -45,8 +42,9 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 100svh;
-  width: 100svw;
+  max-height: 100svh;
+  max-width: 100svw;
+  /* overflow: hidden; */
 }
 
 @media (max-width: 650px) {
@@ -61,19 +59,23 @@ body {
   }
 }
 
-.container {
+.container-y {
   display: flex;
+  flex-direction: column;
 }
 
+.container-x {
+  display: flex;
+  flex-direction: row;
+}
 p {
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0.3px;
   margin: 20px 0;
 }
-
-span {
-  font-size: 12px;
+li {
+  list-style: none;
 }
 
 .error-span {
@@ -154,6 +156,34 @@ input {
   transition: all 0.6s ease-in-out;
 }
 
+/* LOADER */
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 3px solid #000;
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-container {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
 /* DARK MODE */
 
 .dark-mode {
@@ -181,4 +211,7 @@ input {
 }
 .dark-mode input {
   background-color: var(--input-bg-dark);
+}
+.dark-mode .loader {
+  border-top: 3px solid #fff;
 }

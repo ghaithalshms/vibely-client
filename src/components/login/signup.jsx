@@ -8,14 +8,13 @@ import { termsOfUse } from "./termsOfUse";
 
 import IconLight from "../../icon/light-mode/vibely-text-light.png";
 import IconDark from "../../icon/dark-mode/vibely-text-dark.png";
+
 const Signup = ({ isDarkMode }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [modalHeader, setModalHeader] = useState("Terms of Use");
   const [modalBody, setModalBody] = useState(termsOfUse);
 
   const [step, setStep] = useState(1);
-  const [isError, setIsError] = useState(false);
-  const [errorStatus, setErrorStatus] = useState();
   const [passwordError, setPasswordError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [usernameErrorText, setUsernameErrorText] = useState();
@@ -49,9 +48,10 @@ const Signup = ({ isDarkMode }) => {
             return false;
           }
         })
-        .catch((err) => {
-          setIsError(true);
-          setErrorStatus(err.response.code);
+        .catch((error) => {
+          setDialogOpen(true);
+          setModalHeader("Ooups");
+          setModalBody(`Sorry, an error happened: ${error?.response?.code}`);
         });
       setPasswordError(false);
       return true;
@@ -60,17 +60,22 @@ const Signup = ({ isDarkMode }) => {
 
   const handleSignUp = async () => {
     const user = { username, firstName: name, password: md5(password), email };
-    axios
+    await axios
       .post(postLink.signUp, user)
       .then((response) => {
         setModalHeader("Hello, Friend!");
         setModalBody(response.data.message);
         setDialogOpen(true);
-        Cookies.set("token", response.data.token);
+        Cookies.set("token", response.data.token, { expires: 1000 });
+        Cookies.set("username", response.data.username, { expires: 1000 });
+        setTimeout(function () {
+          window.location.href = "/";
+        }, 3000);
       })
       .catch((error) => {
-        setIsError(true);
-        setErrorStatus(error?.response?.code);
+        setDialogOpen(true);
+        setModalHeader("Ooups");
+        setModalBody(`Sorry, an error happened: ${error?.response?.code}`);
       });
   };
   const vibelyIcon = useRef(null);
@@ -83,9 +88,6 @@ const Signup = ({ isDarkMode }) => {
     if (vibelyIcon.current)
       vibelyIcon.current.src = isDarkMode ? IconDark : IconLight;
   }, [isDarkMode]);
-
-  // CONVERT TO MODAL
-  if (isError) return <div>{errorStatus}</div>;
 
   const stepReturn = () => {
     switch (step) {

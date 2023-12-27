@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { postLink } from "../../API";
+import { postLink } from "../API";
 import axios from "axios";
 import md5 from "md5";
 import Cookies from "js-cookie";
-import YesNoDialog from "../yesNoDialog/yesNoDialog";
+import YesNoDialog from "./yesNoDialog/yesNoDialog";
 
 // ICONS
 import IconLight from "../../icon/light-mode/vibely-text-light.png";
 import IconDark from "../../icon/dark-mode/vibely-text-dark.png";
 
-const Signin = ({ isDarkMode }) => {
+const ForgotPassword = ({ isDarkMode }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [modalHeader, setModalHeader] = useState("");
   const [modalBody, setModalBody] = useState("");
@@ -20,13 +20,9 @@ const Signin = ({ isDarkMode }) => {
       usernameOrEmail: document.getElementById("username").value,
       password: md5(document.getElementById("password-signin").value),
     };
-    await axios
+    axios
       .post(postLink.signIn, user)
-      .then((response) => {
-        Cookies.set("token", response.data.token, { expires: 1000 });
-        Cookies.set("username", response.data.username, { expires: 1000 });
-        window.location.href = "/";
-      })
+      .then((response) => Cookies.set("token", response.data.token))
       .catch((error) => {
         setDialogOpen(true);
         setModalHeader("Ooups");
@@ -87,4 +83,4 @@ const Signin = ({ isDarkMode }) => {
     </div>
   );
 };
-export default Signin;
+export default ForgotPassword;
