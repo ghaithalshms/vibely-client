@@ -36,6 +36,7 @@ const YesNoDialog = ({
           position: "static",
           width: "300px",
           height: "auto",
+          maxHeight: "60svh",
           borderRadius: "8px",
           backgroundColor: isDarkMode ? "black" : "white",
           borderColor: isDarkMode ? "black" : "white",

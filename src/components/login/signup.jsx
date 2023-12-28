@@ -51,7 +51,7 @@ const Signup = ({ isDarkMode }) => {
         .catch((error) => {
           setDialogOpen(true);
           setModalHeader("Ooups");
-          setModalBody(`Sorry, an error happened: ${error?.response?.code}`);
+          setModalBody(`Sorry, an error happened: ${error?.response?.status}`);
         });
       setPasswordError(false);
       return true;
@@ -75,7 +75,7 @@ const Signup = ({ isDarkMode }) => {
       .catch((error) => {
         setDialogOpen(true);
         setModalHeader("Ooups");
-        setModalBody(`Sorry, an error happened: ${error?.response?.code}`);
+        setModalBody(`Sorry, an error happened: ${error?.response?.status}`);
       });
   };
   const vibelyIcon = useRef(null);
@@ -229,6 +229,10 @@ const Signup = ({ isDarkMode }) => {
         src={isDarkMode ? IconDark : IconLight}
         ref={vibelyIcon}
         alt=""
+        // block right click
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
       />
       <h2 className="only-mobile">Hello, Friend!</h2>
       {stepReturn()}
@@ -238,13 +242,15 @@ const Signup = ({ isDarkMode }) => {
       >
         Already have an account? Sign in!
       </span>
-      <YesNoDialog
-        isDarkMode={isDarkMode}
-        header={modalHeader}
-        body={modalBody}
-        isOpen={isDialogOpen}
-        onNo={() => setDialogOpen(false)}
-      />
+      {isDialogOpen && (
+        <YesNoDialog
+          isDarkMode={isDarkMode}
+          header={modalHeader}
+          body={modalBody}
+          isOpen={isDialogOpen}
+          onNo={() => setDialogOpen(false)}
+        />
+      )}
     </div>
   );
 };

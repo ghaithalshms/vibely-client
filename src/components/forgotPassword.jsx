@@ -26,7 +26,7 @@ const ForgotPassword = ({ isDarkMode }) => {
       .catch((error) => {
         setDialogOpen(true);
         setModalHeader("Ooups");
-        setModalBody(`Sorry, an error happened: ${error?.response?.code}`);
+        setModalBody(`Sorry, an error happened: ${error?.response?.status}`);
       });
   };
   const vibelyIcon = useRef(null);
@@ -47,6 +47,10 @@ const ForgotPassword = ({ isDarkMode }) => {
         src={isDarkMode ? IconDark : IconLight}
         ref={vibelyIcon}
         alt=""
+        // block right click
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
       />
       <h2 className="only-mobile">Welcome Back!</h2>
       <input

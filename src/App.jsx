@@ -34,6 +34,7 @@ const App = () => {
       document.body.removeEventListener("transitionend", handleSetDarkMode);
     };
   }, []);
+
   return (
     <Router>
       <Routes>

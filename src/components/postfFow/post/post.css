@@ -1,0 +1,10 @@
+.post-picture {
+  border-radius: 10px;
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+}

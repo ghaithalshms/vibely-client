@@ -19,8 +19,8 @@
     height: 100px;
   }
 }
+
 .profile-picture {
-  object-fit: "cover";
   border-radius: 100%;
 }
 

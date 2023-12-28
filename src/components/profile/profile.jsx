@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import YesNoDialog from "../yesNoDialog/yesNoDialog";
 import "./profile.css";
 import DataContainer from "./dataContainer";
+import UserPostFlow from "../postfFow/userPostFlow";
 
 const Profile = ({ isDarkMode }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -15,14 +16,12 @@ const Profile = ({ isDarkMode }) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleGetUserData = async () => {
+  const handleGetUserData = async (username) => {
+    setIsLoading(true);
     await axios
       .get(getLink.getUserData, {
         params: {
-          username:
-            window.location.href.split("/")[
-              window.location.href.split("/").length - 1
-            ],
+          username,
           userSigned,
         },
       })
@@ -36,8 +35,11 @@ const Profile = ({ isDarkMode }) => {
   };
 
   useEffect(() => {
-    handleGetUserData();
-
+    handleGetUserData(
+      window.location.href.split("/")[
+        window.location.href.split("/").length - 1
+      ]
+    );
     // eslint-disable-next-line
   }, []);
 
@@ -47,12 +49,19 @@ const Profile = ({ isDarkMode }) => {
         <span className="loader" />
       </div>
     );
+  if (!isLoading && !userData?.username) return <div>404</div>;
   return (
-    <div className="container-y profile-container">
+    <div className="container-y profile-container" style={{ padding: "15px" }}>
       <DataContainer
-        userData={userData}
         isDarkMode={isDarkMode}
+        userData={userData}
+        visitUser={handleGetUserData}
         setUserData={setUserData}
+      />
+      <UserPostFlow
+        isDarkMode={isDarkMode}
+        userData={userData}
+        visitUser={handleGetUserData}
       />
       <YesNoDialog
         isDarkMode={isDarkMode}

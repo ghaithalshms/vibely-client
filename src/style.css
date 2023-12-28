@@ -2,7 +2,7 @@
 
 :root {
   --main-bg-light: linear-gradient(to right, #fff, rgba(255, 201, 228, 0.3));
-  --main-bg-dark: linear-gradient(to right, #000, rgb(29, 25, 27));
+  --main-bg-dark: linear-gradient(to right, #000, rgb(21, 17, 19));
   --placeholder-light: #333333;
   --placeholder-dark: #9d9d9d;
   --button-bg-light: #f874bb;
@@ -23,7 +23,7 @@
   font-family: "Montserrat", sans-serif;
   transition: background-color 0.3s, color 0.3s;
   box-sizing: border-box;
-  /* font-weight: 500; */
+  font-weight: 500;
 
   /* MAKE ELEMENTS NOT SELECTABLE */
   -webkit-touch-callout: none;
@@ -72,7 +72,6 @@ p {
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0.3px;
-  margin: 20px 0;
 }
 li {
   list-style: none;
@@ -88,6 +87,10 @@ a,
   font-size: 13px;
   text-decoration: none;
   margin-top: 15px;
+}
+
+img {
+  object-fit: cover;
 }
 
 .pointer {
@@ -108,6 +111,7 @@ button {
   margin-top: 10px;
   cursor: pointer;
   text-align: center;
+  height: 37px;
 }
 
 .full-width {
@@ -194,7 +198,6 @@ input {
 
 .dark-mode {
   background-color: #000;
-  box-shadow: 0 5px 15px var(--shadow-dark);
 }
 
 .dark-mode a,

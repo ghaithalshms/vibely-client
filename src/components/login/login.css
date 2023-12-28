@@ -16,6 +16,10 @@
   }
 }
 
+.toggle-container p {
+  margin: 20px 0;
+}
+
 .login-container {
   background-color: #fff;
   box-shadow: 0 5px 15px var(--shadow-light);
@@ -146,6 +150,10 @@
 }
 
 /* Dark Mode */
+.dark-mode .login-container {
+  background-color: #000;
+  box-shadow: 0 5px 15px var(--shadow-dark);
+}
 .dark-mode .toggle {
   background: var(--toggle-bg-dark);
 }
