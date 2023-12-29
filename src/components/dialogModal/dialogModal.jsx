@@ -4,7 +4,7 @@ import "../../modal.css";
 
 Modal.setAppElement("#root");
 
-const YesNoDialog = ({
+const DialogModal = ({
   isDarkMode,
   isOpen,
   header,
@@ -56,4 +56,4 @@ const YesNoDialog = ({
   );
 };
 
-export default YesNoDialog;
+export default DialogModal;

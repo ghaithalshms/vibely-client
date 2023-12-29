@@ -13,3 +13,9 @@
   overflow-y: auto;
   padding: 20px;
 }
+
+.modal-container:focus,
+.modal-container:active {
+  outline: none;
+  border: none;
+}

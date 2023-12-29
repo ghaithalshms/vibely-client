@@ -7,8 +7,8 @@ import Cookies from "js-cookie";
 import YesNoDialog from "./yesNoDialog/yesNoDialog";
 
 // ICONS
-import IconLight from "../../icon/light-mode/vibely-text-light.png";
-import IconDark from "../../icon/dark-mode/vibely-text-dark.png";
+import IconLight from "./icon/light-mode/vibely-text-light.png";
+import IconDark from "./icon/dark-mode/vibely-text-dark.png";
 
 const ForgotPassword = ({ isDarkMode }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -23,10 +23,14 @@ const ForgotPassword = ({ isDarkMode }) => {
     axios
       .post(postLink.signIn, user)
       .then((response) => Cookies.set("token", response.data.token))
-      .catch((error) => {
+      .catch((err) => {
         setDialogOpen(true);
         setModalHeader("Ooups");
-        setModalBody(`Sorry, an error happened: ${error?.response?.status}`);
+        if (err?.code === "ERR_NETWORK")
+          setModalBody(
+            `Sorry, a problem happened while connecting to the server`
+          );
+        else setModalBody(`Sorry, an error happened: ${err?.response?.status}`);
       });
   };
   const vibelyIcon = useRef(null);

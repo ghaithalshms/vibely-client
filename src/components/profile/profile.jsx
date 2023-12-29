@@ -2,19 +2,21 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { getLink } from "../../API";
 import Cookies from "js-cookie";
-import YesNoDialog from "../yesNoDialog/yesNoDialog";
+import DialogModal from "../dialogModal/dialogModal";
 import "./profile.css";
 import DataContainer from "./dataContainer";
 import UserPostFlow from "../postfFow/userPostFlow";
 
 const Profile = ({ isDarkMode }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [modalHeader, setModalHeader] = useState("");
-  const [modalBody, setModalBody] = useState("");
+  const [dialogModalHeader, setDialogModalHeader] = useState("");
+  const [dialogModalBody, setDialogModalBody] = useState("");
 
   const userSigned = Cookies.get("username");
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  let isUserDataGot = false;
 
   const handleGetUserData = async (username) => {
     setIsLoading(true);
@@ -26,20 +28,29 @@ const Profile = ({ isDarkMode }) => {
         },
       })
       .then((res) => setUserData(res.data))
-      .catch((err) => {
-        setDialogOpen(true);
-        setModalHeader("Ooups");
-        setModalBody(`Sorry, an error happened: ${err?.response?.code}`);
-      });
+      .catch((err) => handleCatchAxios(err));
     setIsLoading(false);
+    isUserDataGot = true;
+  };
+
+  const handleCatchAxios = (err) => {
+    setDialogOpen(true);
+    setDialogModalHeader("Ooups");
+    if (err?.code === "ERR_NETWORK")
+      setDialogModalBody(
+        `Sorry, a problem happened while connecting to the server`
+      );
+    else
+      setDialogModalBody(`Sorry, an error happened: ${err?.response?.status}`);
   };
 
   useEffect(() => {
-    handleGetUserData(
-      window.location.href.split("/")[
-        window.location.href.split("/").length - 1
-      ]
-    );
+    if (!isUserDataGot)
+      handleGetUserData(
+        window.location.href.split("/")[
+          window.location.href.split("/").length - 1
+        ]
+      );
     // eslint-disable-next-line
   }, []);
 
@@ -49,27 +60,34 @@ const Profile = ({ isDarkMode }) => {
         <span className="loader" />
       </div>
     );
-  if (!isLoading && !userData?.username) return <div>404</div>;
   return (
-    <div className="container-y profile-container" style={{ padding: "15px" }}>
-      <DataContainer
-        isDarkMode={isDarkMode}
-        userData={userData}
-        visitUser={handleGetUserData}
-        setUserData={setUserData}
-      />
-      <UserPostFlow
-        isDarkMode={isDarkMode}
-        userData={userData}
-        visitUser={handleGetUserData}
-      />
-      <YesNoDialog
-        isDarkMode={isDarkMode}
-        isOpen={isDialogOpen}
-        header={modalHeader}
-        body={modalBody}
-        onNo={() => setDialogOpen(false)}
-      />
+    <div className="container-y  main-container">
+      {!isLoading && userData?.username && (
+        <>
+          <DataContainer
+            isDarkMode={isDarkMode}
+            userData={userData}
+            visitUser={handleGetUserData}
+            setUserData={setUserData}
+            handleCatchAxios={handleCatchAxios}
+          />
+          <UserPostFlow
+            isDarkMode={isDarkMode}
+            userData={userData}
+            visitUser={handleGetUserData}
+            handleCatchAxios={handleCatchAxios}
+          />
+        </>
+      )}
+      {isDialogOpen && (
+        <DialogModal
+          isDarkMode={isDarkMode}
+          isOpen={isDialogOpen}
+          header={dialogModalHeader}
+          body={dialogModalBody}
+          onNo={() => setDialogOpen(false)}
+        />
+      )}
     </div>
   );
 };

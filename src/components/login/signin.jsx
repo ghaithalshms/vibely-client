@@ -4,11 +4,11 @@ import { postLink } from "../../API";
 import axios from "axios";
 import md5 from "md5";
 import Cookies from "js-cookie";
-import YesNoDialog from "../yesNoDialog/yesNoDialog";
+import DialogModal from "../dialogModal/dialogModal";
 
 // ICONS
-import IconLight from "../../icon/light-mode/vibely-text-light.png";
-import IconDark from "../../icon/dark-mode/vibely-text-dark.png";
+import IconLight from "../icon/light-mode/vibely-text-light.png";
+import IconDark from "../icon/dark-mode/vibely-text-dark.png";
 
 const Signin = ({ isDarkMode }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -30,6 +30,12 @@ const Signin = ({ isDarkMode }) => {
       .catch((error) => {
         setDialogOpen(true);
         setModalHeader("Ooups");
+        if (error?.code === "ERR_NETWORK") {
+          setModalBody(
+            `Sorry, a problem happened while connecting to the server`
+          );
+          return;
+        }
         switch (error?.response?.status) {
           case 401:
             setModalBody(`Your password is incorrect, try again.`);
@@ -93,7 +99,7 @@ const Signin = ({ isDarkMode }) => {
         Don't have an account? Sign up!
       </span>
       {isDialogOpen && (
-        <YesNoDialog
+        <DialogModal
           isDarkMode={isDarkMode}
           header={modalHeader}
           body={modalBody}

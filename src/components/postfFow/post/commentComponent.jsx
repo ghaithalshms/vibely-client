@@ -1,10 +1,10 @@
 import React from "react";
-import defaultPfp from "../icon/default profile picture.jpg";
-import adminIcon from "../icon/admin.png";
-import verifiedIcon from "../icon/verified.png";
+import defaultPfp from "../../icon/default profile picture.jpg";
+import adminIcon from "../../icon/admin.png";
+import verifiedIcon from "../../icon/verified.png";
 import { useNavigate } from "react-router-dom";
 
-const UserComponent = ({ user, visitUser }) => {
+const CommentComponent = ({ user, visitUser }) => {
   const handlePfp = () => {
     if (user?.picture)
       return `data:image/png;base64,${btoa(
@@ -70,4 +70,4 @@ const UserComponent = ({ user, visitUser }) => {
   );
 };
 
-export default UserComponent;
+export default CommentComponent;

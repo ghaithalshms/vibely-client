@@ -1,53 +1,40 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import "../../modal.css";
-import { getLink } from "../../API";
+import "../../../modal.css";
+import { getLink } from "../../../API";
 import axios from "axios";
-import UserComponent from "./userComponent";
+import CommentComponent from "./commentComponent";
+import Cookies from "js-cookie";
 
 Modal.setAppElement("#root");
 
-const GetUserListModal = ({
+const CommentsModal = ({
   isDarkMode,
   isOpen,
   onRequestClose,
   header,
-  type,
-  username,
   postID,
-  visitUser,
-  handleCatchAxios,
 }) => {
-  const [userList, setUserList] = useState([]);
+  const [comments, setComments] = useState();
   const [isLoading, setLoading] = useState(true);
 
-  const handleGetUserList = async () => {
-    let reqLink;
-    switch (type) {
-      case "Followers":
-        reqLink = getLink.getUserFollowers;
-        break;
-      case "Following":
-        reqLink = getLink.getUserFollowing;
-        break;
-      default:
-        return;
-    }
+  const handleGetComments = async () => {
     await axios
-      .get(reqLink, {
+      .get(getLink.getPostComments, {
         params: {
-          username,
+          postID,
+          token: Cookies.get("token"),
         },
       })
-      .then((res) => setUserList(res.data))
-      .catch((err) => handleCatchAxios(err));
+      .then((res) => setComments(res.data));
     setLoading(false);
   };
 
   useEffect(() => {
-    handleGetUserList();
+    handleGetComments();
+    console.log(comments);
     // eslint-disable-next-line
-  }, [type]);
+  }, []);
 
   return (
     <Modal
@@ -98,11 +85,11 @@ const GetUserListModal = ({
           </div>
         )}
         {userList.map((user, index) => (
-          <UserComponent key={index} user={user} visitUser={visitUser} />
+          <CommentComponent key={index} user={user} visitUser={visitUser} />
         ))}
       </div>
     </Modal>
   );
 };
 
-export default GetUserListModal;
+export default CommentsModal;

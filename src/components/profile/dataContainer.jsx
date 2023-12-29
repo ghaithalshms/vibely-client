@@ -1,33 +1,40 @@
 import React, { useRef, useEffect, useState } from "react";
-import "../../style.css";
 import Cookies from "js-cookie";
 import axios from "axios";
-import verifiedIcon from "../../icon/verified.png";
-import adminIcon from "../../icon/admin.png";
+import verifiedIcon from "../icon/verified.png";
+import adminIcon from "../icon/admin.png";
 import { postLink } from "../../API";
-import YesNoDialog from "../yesNoDialog/yesNoDialog";
 
-import defaultPfp from "../../icon/default profile picture.jpg";
+import defaultPfp from "../icon/default profile picture.jpg";
 // LIGHT THEME ICON
-import linkIconLight from "../../icon/light-mode/profile/link.png";
-import optionsIconLight from "../../icon/light-mode/navbar/options.png";
+import linkIconLight from "../icon/light-mode/profile/link.png";
+import optionsIconLight from "../icon/light-mode/navbar/options.png";
 // DARK THEME ICON
-import linkIconDark from "../../icon/dark-mode/profile/link.png";
-import optionsIconDark from "../../icon/dark-mode/navbar/options.png";
+import linkIconDark from "../icon/dark-mode/profile/link.png";
+import optionsIconDark from "../icon/dark-mode/navbar/options.png";
 
 import GetUserListModal from "../user/getUserListModal";
 
-const DataContainer = ({ isDarkMode, userData, setUserData, visitUser }) => {
+const DataContainer = ({
+  isDarkMode,
+  userData,
+  setUserData,
+  visitUser,
+  handleCatchAxios,
+}) => {
   const tokenUsername = Cookies.get("username");
   const token = Cookies.get("token");
   const linkIconRef = useRef();
   const optionsIconRef = useRef();
 
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [dialogModalHeader, setDialogModalHeader] = useState();
-  const [dialogModalBody, setDialogModalBody] = useState();
+  const [followButtonText, setFollowButtonText] = useState(
+    userData.isFollowing
+      ? "Unfollow"
+      : userData.isFollowRequested
+      ? "Requested"
+      : "Follow"
+  );
 
-  const [locationOptionsIcon, setLocationOptionsIcon] = useState(0);
   // eslint-disable-next-line
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false);
 
@@ -45,22 +52,6 @@ const DataContainer = ({ isDarkMode, userData, setUserData, visitUser }) => {
         : optionsIconLight;
   }, [isDarkMode]);
 
-  // GET LOCATION FOR options icon
-  useEffect(() => {
-    const container = document.querySelector(".container-x");
-    const updateContainerRight = () => {
-      if (container) {
-        const containerRect = container.getBoundingClientRect();
-        setLocationOptionsIcon(window.innerWidth - containerRect.right + "px");
-      }
-    };
-    updateContainerRight(); // Initial update
-    window.addEventListener("resize", updateContainerRight);
-    return () => {
-      window.removeEventListener("resize", updateContainerRight);
-    };
-  }, []);
-
   const handlePfp = () => {
     if (userData?.picture)
       return `data:image/png;base64,${btoa(
@@ -73,6 +64,15 @@ const DataContainer = ({ isDarkMode, userData, setUserData, visitUser }) => {
   };
 
   const handleFollow = async () => {
+    setFollowButtonText(
+      userData.isFollowing
+        ? "follow"
+        : userData.isFollowRequested
+        ? "follow"
+        : userData.privacity
+        ? "requested"
+        : "unfollow"
+    );
     await axios
       .post(postLink.follow, {
         username: userData.username,
@@ -102,20 +102,15 @@ const DataContainer = ({ isDarkMode, userData, setUserData, visitUser }) => {
             setUserData((prevState) => ({ ...prevState }));
         }
       })
-      .catch((error) => {
-        setDialogOpen(true);
-        setDialogModalHeader("Ooups");
-        setDialogModalBody(
-          `Sorry, an error happened: ${error?.response?.status}`
-        );
-      });
+      .catch((err) => handleCatchAxios(err));
   };
 
   const nameAndIcon = (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
         <h3
-          style={{ marginRight: "5px" }}
+          className="single-line"
+          style={{ marginRight: "5px" /*, width: "max-content"*/ }}
         >{`${userData.firstName} ${userData.lastName}`}</h3>
         {userData.isVerified && (
           <img
@@ -145,144 +140,137 @@ const DataContainer = ({ isDarkMode, userData, setUserData, visitUser }) => {
   );
 
   return (
-    <div
-      className="data-container container-y"
-      style={{ position: "relative" }}
-    >
-      {/* OPTIONS ICON  */}
-      <img
-        style={{
-          width: "28px",
-          height: "28px",
-          marginRight: "8px",
-          position: "fixed",
-          marginTop: "30px",
-          right: locationOptionsIcon,
-        }}
-        src={isDarkMode ? optionsIconDark : optionsIconLight}
-        alt="options"
-        className="pointer"
-        onClick={() => setOptionsModalOpen(true)}
-        // block right click
-        onContextMenu={(event) => {
-          event.preventDefault();
-        }}
-      />
+    <div className="data-container container-y">
       <div
         className="container-x"
-        style={{ padding: "1rem", paddingTop: "2rem" }}
+        style={{
+          padding: "1rem",
+          paddingTop: "2rem",
+          justifyContent: "space-between",
+        }}
       >
-        <img
-          className="profile-picture"
-          src={handlePfp()}
-          alt="Pfp"
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
-        />
-        <div
-          className="container-y"
-          style={{
-            justifyContent: "center",
-            marginLeft: "10%",
-          }}
-        >
-          {/* FOR PC NAME AND ICONS */}
-          <div className="only-pc">{nameAndIcon}</div>
+        <div className="container-x">
+          <img
+            className="profile-picture"
+            src={handlePfp()}
+            alt="Pfp"
+            // block right click
+            onContextMenu={(event) => {
+              event.preventDefault();
+            }}
+          />
+          <div
+            className="container-y"
+            style={{
+              justifyContent: "center",
+              marginLeft: "10%",
+            }}
+          >
+            {/* FOR PC NAME AND ICONS */}
+            <div className="only-pc">{nameAndIcon}</div>
 
-          {/* FOR PC follower and following */}
-          <div className="only-pc" style={{ marginTop: "15px" }}>
-            <div className="container-x">
-              <div
-                className="pointer"
-                onClick={() => {
-                  if (
-                    userData.username === Cookies.get("username") ||
-                    !userData.privacity ||
-                    userData.isFollowing
-                  ) {
-                    setUserListModalOpen(true);
-                    setUserListModalType("Followers");
-                  }
-                }}
-                style={{ marginRight: "10px" }}
-              >{`${userData.followerCount} follower`}</div>
-              <div
-                className="pointer"
-                onClick={() => {
-                  if (
-                    userData.username === Cookies.get("username") ||
-                    !userData.privacity ||
-                    userData.isFollowing
-                  ) {
-                    setUserListModalOpen(true);
-                    setUserListModalType("Following");
-                  }
-                }}
-              >{`${userData.followingCount} following`}</div>
-            </div>
-            {tokenUsername !== userData.username && (
-              <button className="full-width" onClick={() => handleFollow()}>
-                {userData.isFollowing
-                  ? "Unfollow"
-                  : userData.isFollowRequested
-                  ? "Requested"
-                  : "Follow"}
-              </button>
-            )}
-          </div>
-          {/* FOR MOBILE FOLLOW FOLLOWING*/}
-          <div className="only-mobile" style={{ marginTop: "10px" }}>
-            <div className="container-x">
-              {/* follower */}
-              <div
-                style={{ alignItems: "center", marginRight: "10px" }}
-                className="container-y pointer"
-                onClick={() => {
-                  if (
-                    userData.username === Cookies.get("username") ||
-                    !userData.privacity ||
-                    userData.isFollowing
-                  ) {
-                    setUserListModalOpen(true);
-                    setUserListModalType("Followers");
-                  }
-                }}
-              >
-                {`${userData.followerCount}`}
-                <div>follower</div>
+            {/* FOR PC follower and following */}
+            <div className="only-pc" style={{ marginTop: "15px" }}>
+              <div className="container-x">
+                <div
+                  className="pointer single-line"
+                  onClick={() => {
+                    if (
+                      userData.username === Cookies.get("username") ||
+                      !userData.privacity ||
+                      userData.isFollowing
+                    ) {
+                      setUserListModalOpen(true);
+                      setUserListModalType("Followers");
+                    }
+                  }}
+                  style={{ marginRight: "10px" }}
+                >{`${userData.followerCount} follower`}</div>
+                <div
+                  className="pointer single-line"
+                  onClick={() => {
+                    if (
+                      userData.username === Cookies.get("username") ||
+                      !userData.privacity ||
+                      userData.isFollowing
+                    ) {
+                      setUserListModalOpen(true);
+                      setUserListModalType("Following");
+                    }
+                  }}
+                >{`${userData.followingCount} following`}</div>
               </div>
-              {/* following */}
-              <div
-                style={{ alignItems: "center" }}
-                className="container-y pointer"
-                onClick={() => {
-                  if (
-                    userData.username === Cookies.get("username") ||
-                    !userData.privacity ||
-                    userData.isFollowing
-                  ) {
-                    setUserListModalOpen(true);
-                    setUserListModalType("Following");
-                  }
-                }}
-              >
-                {`${userData.followingCount}`}
-                <div>following</div>
-              </div>
+              {tokenUsername !== userData.username && (
+                <button className="full-width" onClick={() => handleFollow()}>
+                  {followButtonText}
+                </button>
+              )}
             </div>
-            {tokenUsername !== userData.username && (
-              <button className="full-width" onClick={() => handleFollow()}>
-                {userData.isFollowing
-                  ? "Unfollow"
-                  : userData.isFollowRequested
-                  ? "Requested"
-                  : "Follow"}
-              </button>
-            )}
+            {/* FOR MOBILE FOLLOW FOLLOWING*/}
+            <div className="only-mobile" style={{ marginTop: "10px" }}>
+              <div className="container-x">
+                {/* follower */}
+                <div
+                  style={{ alignItems: "center", marginRight: "10px" }}
+                  className="container-y pointer"
+                  onClick={() => {
+                    if (
+                      userData.username === Cookies.get("username") ||
+                      !userData.privacity ||
+                      userData.isFollowing
+                    ) {
+                      setUserListModalOpen(true);
+                      setUserListModalType("Followers");
+                    }
+                  }}
+                >
+                  {`${userData.followerCount}`}
+                  <div>follower</div>
+                </div>
+                {/* following */}
+                <div
+                  style={{ alignItems: "center" }}
+                  className="container-y pointer"
+                  onClick={() => {
+                    if (
+                      userData.username === Cookies.get("username") ||
+                      !userData.privacity ||
+                      userData.isFollowing
+                    ) {
+                      setUserListModalOpen(true);
+                      setUserListModalType("Following");
+                    }
+                  }}
+                >
+                  {`${userData.followingCount}`}
+                  <div>following</div>
+                </div>
+              </div>
+              {tokenUsername !== userData.username && (
+                <button className="full-width" onClick={() => handleFollow()}>
+                  {followButtonText}
+                </button>
+              )}
+            </div>
           </div>
         </div>
+        {/* OPTIONS ICON  */}
+        {userData.username === Cookies.get("username") && (
+          <img
+            style={{
+              width: "28px",
+              height: "28px",
+            }}
+            src={isDarkMode ? optionsIconDark : optionsIconLight}
+            alt="options"
+            className="pointer"
+            onClick={() => setOptionsModalOpen(true)}
+            // block right click
+            onContextMenu={(event) => {
+              event.preventDefault();
+            }}
+          />
+        )}
       </div>
       {/* FOR MOBILE NAME AND ICONS */}
       <div className="only-mobile">{nameAndIcon}</div>
@@ -331,16 +319,7 @@ const DataContainer = ({ isDarkMode, userData, setUserData, visitUser }) => {
             setUserListModalOpen(false);
             visitUser(username);
           }}
-        />
-      )}
-
-      {isDialogOpen && (
-        <YesNoDialog
-          isDarkMode={isDarkMode}
-          header={dialogModalHeader}
-          body={dialogModalBody}
-          isOpen={isDialogOpen}
-          onNo={() => setDialogOpen(false)}
+          handleCatchAxios={handleCatchAxios}
         />
       )}
     </div>

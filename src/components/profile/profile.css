@@ -1,22 +1,13 @@
-@media (min-width: 650px) {
-  .profile-container {
-    min-width: 550px;
-    max-width: 550px;
-  }
-  .profile-picture {
-    width: 150px;
-    height: 150px;
-  }
-}
-
 @media (max-width: 650px) {
-  .profile-container {
-    min-width: 99vw;
-    max-width: 100vw;
-  }
   .profile-picture {
     width: 100px;
     height: 100px;
+  }
+}
+@media (min-width: 650px) {
+  .profile-picture {
+    width: 150px;
+    height: 150px;
   }
 }
 

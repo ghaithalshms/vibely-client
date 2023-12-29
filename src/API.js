@@ -7,14 +7,21 @@ const postLink = {
   // USER
   checkUsername: `${host}/api/user/check-username`,
   follow: `${host}/api/user/follow`,
+  // POST
+  likePost: `${host}/api/post/like`,
+  savePost: `${host}/api/post/save`,
 };
 const getLink = {
+  // ACTIVATE SERVER
+  activateServer: `${host}/api/server/activate`,
   // USER
   getUserData: `${host}/api/user/data`,
   getUserFollowers: `${host}/api/user/followers`,
   getUserFollowing: `${host}/api/user/following`,
   // POST FLOW
   getUserPostFlow: `${host}/api/post-flow/user`,
+  // POST
+  getPostComments: `${host}/api/post/comments`,
 };
 
 export { postLink, getLink };
