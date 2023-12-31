@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import DialogModal from "../dialogModal/dialogModal";
-import HomePostFlow from "../postfFow/homePostFlow";
+import ExplorerPostFlow from "../postfFow/explorerPostFlow";
 import Navbar from "../navbar/navbar";
-import CreatePost from "../createPost";
 
-const Home = ({ isDarkMode, scrollingPercentage }) => {
+const Explorer = ({ isDarkMode, scrollingPercentage }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [dialogModalHeader, setDialogModalHeader] = useState("");
   const [dialogModalBody, setDialogModalBody] = useState("");
@@ -23,8 +22,7 @@ const Home = ({ isDarkMode, scrollingPercentage }) => {
   return (
     <div className="container-y  main-container">
       <Navbar isDarkMode={isDarkMode} />
-      <CreatePost isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
-      <HomePostFlow
+      <ExplorerPostFlow
         isDarkMode={isDarkMode}
         handleCatchAxios={handleCatchAxios}
         scrollingPercentage={scrollingPercentage}
@@ -43,4 +41,4 @@ const Home = ({ isDarkMode, scrollingPercentage }) => {
   );
 };
 
-export default Home;
+export default Explorer;

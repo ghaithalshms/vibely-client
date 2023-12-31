@@ -16,6 +16,8 @@ import IsLoadingComponent from "./components/isLoadingComponent/isLoadingCompone
 import DialogModal from "./components/dialogModal/dialogModal";
 import { handleAddScrollListener } from "./components/func/scrollPercentage";
 import Home from "./components/home/home";
+import Explorer from "./components/explorer/explorer";
+import defaultPfp from "./components/icon/default profile picture.jpg";
 
 const App = () => {
   // FOR ERROR MODAL
@@ -50,29 +52,61 @@ const App = () => {
     };
   };
 
-  const handleActivateServer = async () => {
+  const handleCatchAxios = (err) => {
+    setDialogOpen(true);
+    setDialogModalHeader("Ooups");
+    if (err?.code === "ERR_NETWORK")
+      setDialogModalBody(
+        `Sorry, a problem happened while connecting to the server`
+      );
+    else
+      setDialogModalBody(`Sorry, an error happened: ${err?.response?.status}`);
+  };
+
+  const handleIsServerWorking = async () => {
     await axios
       .get(getLink.activateServer)
       .then()
       .catch((err) => {
-        setDialogOpen(true);
-        setDialogModalHeader("Ooups");
-        if (err?.code === "ERR_NETWORK")
-          setDialogModalBody(
-            `Sorry, a problem happened while connecting to the server`
-          );
-        else
-          setDialogModalBody(
-            `Sorry, an error happened: ${err?.response?.status}`
-          );
+        handleCatchAxios(err);
       });
     setIsLoading(false);
   };
 
+  const handleGetUserPicture = async () => {
+    axios
+      .get(getLink.getUserPicture, {
+        params: {
+          username: Cookies.get("username"),
+        },
+      })
+      .then((res) => {
+        // sessionStorage.setItem("picture", res.data);
+        sessionStorage.setItem(
+          "picture",
+          JSON.stringify({
+            url: res.data.picture
+              ? `data:image/png;base64,${btoa(
+                  new Uint8Array(res.data.picture.data).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ""
+                  )
+                )}`
+              : defaultPfp,
+          })
+        );
+      })
+
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   useEffect(() => {
     handleTheme();
-    handleActivateServer();
+    handleIsServerWorking();
     handleAddScrollListener(setScrollingPercentage);
+    handleGetUserPicture();
   }, []);
 
   // LOADING SCREEN
@@ -100,6 +134,20 @@ const App = () => {
           element={
             token ? (
               <Home
+                isDarkMode={isDarkMode}
+                scrollingPercentage={scrollingPercentage}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* EXPLORER ROUTE */}
+        <Route
+          path="/explorer"
+          element={
+            token ? (
+              <Explorer
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
               />

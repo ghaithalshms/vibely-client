@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 import appIcon from "../icon/icon.png";
+import appTextLight from "../icon/light-mode/vibely-text-light.png";
+import appTextDark from "../icon/dark-mode/vibely-text-dark.png";
 // ICONS LIGHT MODE
 import home0Light from "../icon/light-mode/navbar/home 0.png";
 import home1Light from "../icon/light-mode/navbar/home 1.png";
@@ -110,7 +112,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
       onClick={() => {
         handleCloseModals();
         setActualPage("profile");
-        navigate("");
+        navigate("/");
       }}
       // block right click
       onContextMenu={(event) => {
@@ -139,7 +141,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
       onClick={() => {
         handleCloseModals();
         setActualPage("search");
-        navigate("search");
+        navigate("/search");
       }}
       // block right click
       onContextMenu={(event) => {
@@ -168,7 +170,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
       onClick={() => {
         handleCloseModals();
         setActualPage("inbox");
-        navigate("inbox");
+        navigate("/inbox");
       }}
       // block right click
       onContextMenu={(event) => {
@@ -217,7 +219,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
       onClick={() => {
         handleCloseModals();
         setActualPage("explorer");
-        navigate("explorer");
+        navigate("/explorer");
       }}
       // block right click
       onContextMenu={(event) => {
@@ -276,7 +278,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
         if (visitUser) visitUser(Cookies.get("username"));
         handleCloseModals();
         setActualPage("profile");
-        navigate(Cookies.get("username"));
+        navigate(`/${Cookies.get("username")}`);
       }}
       // block right click
       onContextMenu={(event) => {
@@ -335,7 +337,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
           className="pointer"
           onClick={() => {
             setActualPage("home");
-            navigate("");
+            navigate("/");
           }}
           // block right click
           onContextMenu={(event) => {
@@ -365,27 +367,62 @@ const Navbar = ({ isDarkMode, visitUser }) => {
     </div>
   );
 
-  const navbarMobile = (
+  const homeHeader = (
     <div
       className="container-x navbar-icon"
       style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        position: "fixed",
-        left: "0",
-        bottom: "0",
         width: "100svw",
-        height: "8svh",
-        padding: "0 8svw",
-        borderTop: borderColor,
+        padding: "0px 8px",
       }}
     >
-      {homeIcon}
-      {searchIcon}
-      {createIcon}
-      {explorerIcon}
-      {profileIcon}
+      <img
+        style={{
+          height: "60px",
+        }}
+        src={isDarkMode ? appTextDark : appTextLight}
+        alt="vibely"
+        className="pointer"
+        // block right click
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
+      />
+      <div className="container-x">
+        <div style={{ marginRight: "15px", alignItems: "center" }}>
+          {notificationIcon}
+        </div>
+        {inboxIcon}
+      </div>
+    </div>
+  );
+
+  const navbarMobile = (
+    <div style={{ display: "flex" }}>
+      {actualPage === "home" && homeHeader}
+      <div
+        className="container-x navbar-icon"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          position: "fixed",
+          left: "0",
+          bottom: "0",
+          width: "100svw",
+          height: "8svh",
+          padding: "0 8svw",
+          borderTop: borderColor,
+        }}
+      >
+        {homeIcon}
+        {searchIcon}
+        {createIcon}
+        {explorerIcon}
+        {profileIcon}
+      </div>
     </div>
   );
   return (

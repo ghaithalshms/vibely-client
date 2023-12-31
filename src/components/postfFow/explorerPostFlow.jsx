@@ -61,11 +61,14 @@ const ExplorerPostFlow = ({
           updatedPosts.push(
             postData.post.postID === postID
               ? {
-                  ...postData,
-                  isLiked: !postData.post.isLiked,
-                  likeCount: postData.post.isLiked
-                    ? postData.post.likeCount - 1
-                    : postData.post.likeCount + 1,
+                  post: {
+                    ...postData.post,
+                    isLiked: !postData.post.isLiked,
+                    likeCount: postData.post.isLiked
+                      ? postData.post.likeCount - 1
+                      : postData.post.likeCount + 1,
+                  },
+                  user: { ...postData.user },
                 }
               : postData
           );
@@ -75,7 +78,10 @@ const ExplorerPostFlow = ({
         explorerPostFlowArray.forEach((postData) => {
           updatedPosts.push(
             postData.post.postID === postID
-              ? { ...postData, isSaved: !postData.post.isSaved }
+              ? {
+                  post: { ...postData.post, isSaved: !postData.post.isSaved },
+                  user: { ...postData.user },
+                }
               : postData
           );
         });
@@ -99,9 +105,9 @@ const ExplorerPostFlow = ({
       <div
         className="full-width"
         style={{
-          display: "flex",
-          justifyContent: "center",
-          paddingTop: "30%",
+          position: "fixed",
+          top: "45%",
+          left: "45%",
         }}
       >
         <span className="loader" />

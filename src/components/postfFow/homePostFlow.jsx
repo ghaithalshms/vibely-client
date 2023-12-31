@@ -60,11 +60,14 @@ const HomePostFlow = ({
           updatedPosts.push(
             postData.post.postID === postID
               ? {
-                  ...postData,
-                  isLiked: !postData.post.isLiked,
-                  likeCount: postData.post.isLiked
-                    ? postData.post.likeCount - 1
-                    : postData.post.likeCount + 1,
+                  post: {
+                    ...postData.post,
+                    isLiked: !postData.post.isLiked,
+                    likeCount: postData.post.isLiked
+                      ? postData.post.likeCount - 1
+                      : postData.post.likeCount + 1,
+                  },
+                  user: { ...postData.user },
                 }
               : postData
           );
@@ -74,7 +77,10 @@ const HomePostFlow = ({
         homePostFlowArray.forEach((postData) => {
           updatedPosts.push(
             postData.post.postID === postID
-              ? { ...postData, isSaved: !postData.post.isSaved }
+              ? {
+                  post: { ...postData.post, isSaved: !postData.post.isSaved },
+                  user: { ...postData.user },
+                }
               : postData
           );
         });

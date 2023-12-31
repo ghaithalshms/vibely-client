@@ -170,7 +170,8 @@ span {
   font-size: 14px;
 }
 
-input {
+input,
+textarea {
   background-color: var(--input-bg-light);
   border: none;
   margin: 5px 0;
@@ -240,7 +241,8 @@ input {
 .dark-mode .form-container {
   background-color: #000;
 }
-.dark-mode input {
+.dark-mode input,
+.dark-mode textarea {
   background-color: var(--input-bg-dark);
 }
 .dark-mode .loader {
