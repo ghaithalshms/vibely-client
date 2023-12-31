@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { timeDifference } from "../../func/timeDifference";
 import "./post.css";
 import Cookies from "js-cookie";
-import CommentComponent from "./commentComponent";
+import CommentsModal from "./commentsModal";
+import GetUserListModal from "../../user/getUserListModal";
+import PostMoreModal from "./postMoreModal";
 
 // LIGHT MODE ICONS
 import like0Light from "../../icon/light-mode/post/like 0.png";
@@ -34,6 +36,11 @@ const PostComponent = ({
   handleCatchAxios,
 }) => {
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+  const [isUserListModalOpen, setUserListModalOpen] = useState(false);
+
+  const [isPostMoreModalOpen, setPostMoreModalOpen] = useState(false);
+  const [isPostDeleted, setPostDeleted] = useState(false);
+
   const handlePicture = (picture) => {
     if (picture)
       return `data:image/png;base64,${btoa(
@@ -105,7 +112,7 @@ const PostComponent = ({
         className="container-x pointer"
         onClick={() => {
           navigate(`/${user.username}`);
-          visitUser(user.username);
+          if (visitUser) visitUser(user.username);
         }}
       >
         <img
@@ -121,16 +128,20 @@ const PostComponent = ({
         />
         <div>{nameIconDate}</div>
       </div>
-      <img
-        className="pointer"
-        style={{ height: "20px", width: "20px" }}
-        src={isDarkMode ? optionsDark : optionsLight}
-        alt="options"
-        // block right click
-        onContextMenu={(event) => {
-          event.preventDefault();
-        }}
-      />
+      {/* POST MORE ICON */}
+      {post.postedUser === Cookies.get("username") && (
+        <img
+          className="pointer"
+          style={{ height: "20px", width: "20px" }}
+          src={isDarkMode ? optionsDark : optionsLight}
+          alt="options"
+          // block right click
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
+          onClick={() => setPostMoreModalOpen(true)}
+        />
+      )}
     </div>
   );
 
@@ -208,7 +219,9 @@ const PostComponent = ({
       {/* LIKE COUNT SPAN */}
       {post.likeCount !== 0 && (
         <span
+          className="pointer"
           style={{ marginTop: ".5rem", marginLeft: "10px" }}
+          onClick={() => setUserListModalOpen(true)}
         >{`${post.likeCount} like`}</span>
       )}
     </>
@@ -233,6 +246,8 @@ const PostComponent = ({
     </div>
   );
 
+  if (isPostDeleted) return <></>;
+
   return (
     <div className="container-y" style={{ padding: "10px", marginTop: "1rem" }}>
       {/* user info */}
@@ -243,6 +258,46 @@ const PostComponent = ({
       <div className="line">
         <hr />
       </div>
+      {/* COMMENTS MODAL DEF */}
+      {isCommentsModalOpen && (
+        <CommentsModal
+          isDarkMode={isDarkMode}
+          isOpen={isCommentsModalOpen}
+          onRequestClose={() => setIsCommentsModalOpen(false)}
+          header={"Comments"}
+          postID={post.postID}
+          visitUser={(username) => {
+            setIsCommentsModalOpen(false);
+            if (visitUser) visitUser(username);
+          }}
+          handleCatchAxios={handleCatchAxios}
+        />
+      )}
+      {post.likeCount > 0 && isUserListModalOpen && (
+        <GetUserListModal
+          isDarkMode={isDarkMode}
+          header={"Liked Users"}
+          isOpen={isUserListModalOpen}
+          onRequestClose={() => setUserListModalOpen(false)}
+          type={"Liked Users"}
+          visitUser={(username) => {
+            setUserListModalOpen(false);
+            if (visitUser) visitUser(username);
+          }}
+          handleCatchAxios={handleCatchAxios}
+          postID={post.postID}
+        />
+      )}
+      {isPostMoreModalOpen && post.postedUser === Cookies.get("username") && (
+        <PostMoreModal
+          isDarkMode={isDarkMode}
+          isOpen={isPostMoreModalOpen}
+          onRequestClose={() => setPostMoreModalOpen(false)}
+          setPostDeleted={() => setPostDeleted(true)}
+          postID={post.postID}
+          handleCatchAxios={handleCatchAxios}
+        />
+      )}
     </div>
   );
 };

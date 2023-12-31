@@ -6,8 +6,9 @@ import DialogModal from "../dialogModal/dialogModal";
 import "./profile.css";
 import DataContainer from "./dataContainer";
 import UserPostFlow from "../postfFow/userPostFlow";
+import Navbar from "../navbar/navbar";
 
-const Profile = ({ isDarkMode }) => {
+const Profile = ({ isDarkMode, scrollingPercentage }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [dialogModalHeader, setDialogModalHeader] = useState("");
   const [dialogModalBody, setDialogModalBody] = useState("");
@@ -45,6 +46,7 @@ const Profile = ({ isDarkMode }) => {
   };
 
   useEffect(() => {
+    // GET USER DATA ON LOAD
     if (!isUserDataGot)
       handleGetUserData(
         window.location.href.split("/")[
@@ -62,6 +64,7 @@ const Profile = ({ isDarkMode }) => {
     );
   return (
     <div className="container-y  main-container">
+      <Navbar isDarkMode={isDarkMode} visitUser={handleGetUserData} />
       {!isLoading && userData?.username && (
         <>
           <DataContainer
@@ -76,6 +79,7 @@ const Profile = ({ isDarkMode }) => {
             userData={userData}
             visitUser={handleGetUserData}
             handleCatchAxios={handleCatchAxios}
+            scrollingPercentage={scrollingPercentage}
           />
         </>
       )}

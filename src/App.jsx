@@ -14,12 +14,16 @@ import { getLink } from "./API";
 import IsLoadingComponent from "./components/isLoadingComponent/isLoadingComponent";
 // import ForgotPassword from "./components/forgotPassword";
 import DialogModal from "./components/dialogModal/dialogModal";
+import { handleAddScrollListener } from "./components/func/scrollPercentage";
+import Home from "./components/home/home";
 
 const App = () => {
   // FOR ERROR MODAL
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [dialogModalHeader, setDialogModalHeader] = useState("");
   const [dialogModalBody, setDialogModalBody] = useState("");
+
+  const [scrollingPercentage, setScrollingPercentage] = useState(0);
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +72,7 @@ const App = () => {
   useEffect(() => {
     handleTheme();
     handleActivateServer();
+    handleAddScrollListener(setScrollingPercentage);
   }, []);
 
   // LOADING SCREEN
@@ -88,20 +93,40 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        {/*  WITH TOKEN */}
+        {/* HOME ROUTE */}
         <Route
-          path="/login"
+          path="/"
           element={
-            !token ? <Login isDarkMode={isDarkMode} /> : <Navigate to="/" />
+            token ? (
+              <Home
+                isDarkMode={isDarkMode}
+                scrollingPercentage={scrollingPercentage}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
+        {/* PROFILE ROUTE */}
         <Route
           path="/*"
           element={
             token ? (
-              <Profile isDarkMode={isDarkMode} />
+              <Profile
+                isDarkMode={isDarkMode}
+                scrollingPercentage={scrollingPercentage}
+              />
             ) : (
               <Navigate to="/login" />
             )
+          }
+        />
+        {/*  WITHOUT TOKEN */}
+        <Route
+          path="/login"
+          element={
+            !token ? <Login isDarkMode={isDarkMode} /> : <Navigate to="/" />
           }
         />
       </Routes>

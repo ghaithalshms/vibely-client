@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "./post/postComponent";
+
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
@@ -14,14 +15,15 @@ const UserPostFlow = ({
   userData,
   visitUser,
   handleCatchAxios,
+  scrollingPercentage,
 }) => {
   const [userPostFlowArray, setUserPostFlowArray] = useState();
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
-  const handleGetUserPostFlow = async () => {
-    setIsLoading(true);
+  const handleGetUserPostFlow = async (isOnScrolling) => {
+    if (!isOnScrolling) setIsLoading(true);
     await axios
       .get(getLink.getUserPostFlow, {
         params: {
@@ -33,19 +35,28 @@ const UserPostFlow = ({
       .then((res) => {
         if (res?.data !== "private account") {
           setLastGotPostID(res.data?.lastGotPostID);
-          setUserPostFlowArray(res.data?.postFlowArray);
+          if (!isOnScrolling) setUserPostFlowArray(res.data?.postFlowArray);
+          // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
+          else
+            setUserPostFlowArray([
+              ...userPostFlowArray,
+              ...res.data?.postFlowArray,
+            ]);
         }
       })
       .catch((err) => handleCatchAxios(err));
     setIsLoading(false);
     setIsPostFlowGot(true);
   };
+
   useEffect(() => {
+    // GET USER POST FLOW ON LOAD
     if (!isPostFlowGot && (userData.isFollowing || !userData.privacity))
       handleGetUserPostFlow();
     else {
       setIsLoading(false);
     }
+    // eslint-disable-next-line
   }, []);
 
   const handleUpdatePost = (postID, process) => {
@@ -78,6 +89,17 @@ const UserPostFlow = ({
     }
     setUserPostFlowArray(updatedPosts);
   };
+
+  // GET USER POST FLOW ON SCROLL EVENT
+  useEffect(() => {
+    if (
+      scrollingPercentage > 75 &&
+      userData?.postCount > userPostFlowArray?.length
+    ) {
+      handleGetUserPostFlow(true);
+    }
+    // eslint-disable-next-line
+  }, [scrollingPercentage]);
 
   if (isLoading) {
     return (

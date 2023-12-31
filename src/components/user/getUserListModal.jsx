@@ -30,17 +30,29 @@ const GetUserListModal = ({
       case "Following":
         reqLink = getLink.getUserFollowing;
         break;
+      case "Liked Users":
+        reqLink = getLink.getPostLikedUsers;
+        break;
       default:
         return;
     }
+    const data = {
+      params:
+        type === "Liked Users"
+          ? {
+              postID,
+            }
+          : {
+              username,
+            },
+    };
     await axios
-      .get(reqLink, {
-        params: {
-          username,
-        },
-      })
+      .get(reqLink, data)
       .then((res) => setUserList(res.data))
-      .catch((err) => handleCatchAxios(err));
+      .catch((err) => {
+        console.log(err);
+        handleCatchAxios(err);
+      });
     setLoading(false);
   };
 
@@ -97,7 +109,7 @@ const GetUserListModal = ({
             <span className="loader" />
           </div>
         )}
-        {userList.map((user, index) => (
+        {userList?.map((user, index) => (
           <UserComponent key={index} user={user} visitUser={visitUser} />
         ))}
       </div>
