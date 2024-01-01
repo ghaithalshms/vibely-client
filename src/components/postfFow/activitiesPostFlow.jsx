@@ -8,21 +8,40 @@ import PostComponent from "./post/postComponent";
 import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
 
-const HomePostFlow = ({
+const ActivitiesPostFlow = ({
   isDarkMode,
   handleCatchAxios,
   scrollingPercentage,
 }) => {
-  const [homePostFlowArray, setHomePostFlowArray] = useState();
+  const [postFlowArray, setPostFlowArray] = useState();
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
-  const handleGetHomePostFlow = async (isOnScrolling) => {
+  const getAxiosLink = () => {
+    const activityType =
+      window.location.href.split("/")[
+        window.location.href.split("/").length - 1
+      ];
+    switch (activityType) {
+      case "liked":
+        return getLink.getLikedPostFlow;
+      case "saved":
+        return getLink.getSavedPostFlow;
+      case "archived":
+        return getLink.getArchivedPostFlow;
+      default:
+        break;
+    }
+  };
+
+  const handleGetPostFlow = async (isOnScrolling) => {
+    const axiosLink = getAxiosLink();
+    if (!axiosLink) return;
     if (!isOnScrolling) setIsLoading(true);
     if (lastGotPostID >= 0)
       await axios
-        .get(getLink.getHomePostFlow, {
+        .get(axiosLink, {
           params: {
             token: Cookies.get("token"),
             lastGotPostID,
@@ -31,13 +50,10 @@ const HomePostFlow = ({
         .then((res) => {
           if (res.data !== "no post flow") {
             setLastGotPostID(res.data?.lastGotPostID);
-            if (!isOnScrolling) setHomePostFlowArray(res.data?.postFlowArray);
+            if (!isOnScrolling) setPostFlowArray(res.data?.postFlowArray);
             // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
             else
-              setHomePostFlowArray([
-                ...homePostFlowArray,
-                ...res.data?.postFlowArray,
-              ]);
+              setPostFlowArray([...postFlowArray, ...res.data?.postFlowArray]);
           }
         })
         .catch((err) => handleCatchAxios(err));
@@ -47,7 +63,7 @@ const HomePostFlow = ({
 
   useEffect(() => {
     // GET USER POST FLOW ON LOAD
-    if (!isPostFlowGot) handleGetHomePostFlow();
+    if (!isPostFlowGot) handleGetPostFlow();
     else setIsLoading(false);
     // eslint-disable-next-line
   }, []);
@@ -56,7 +72,7 @@ const HomePostFlow = ({
     let updatedPosts = [];
     switch (process) {
       case "like":
-        homePostFlowArray.forEach((postData) => {
+        postFlowArray.forEach((postData) => {
           updatedPosts.push(
             postData.post.postID === postID
               ? {
@@ -74,7 +90,7 @@ const HomePostFlow = ({
         });
         break;
       case "save":
-        homePostFlowArray.forEach((postData) => {
+        postFlowArray.forEach((postData) => {
           updatedPosts.push(
             postData.post.postID === postID
               ? {
@@ -86,15 +102,15 @@ const HomePostFlow = ({
         });
         break;
       default:
-        updatedPosts = homePostFlowArray;
+        updatedPosts = postFlowArray;
     }
-    setHomePostFlowArray(updatedPosts);
+    setPostFlowArray(updatedPosts);
   };
 
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
     if (scrollingPercentage > 75) {
-      handleGetHomePostFlow(true);
+      handleGetPostFlow(true);
     }
     // eslint-disable-next-line
   }, [scrollingPercentage]);
@@ -106,7 +122,7 @@ const HomePostFlow = ({
         style={{
           display: "flex",
           justifyContent: "center",
-          paddingTop: "30%",
+          paddingTop: "40svh",
         }}
       >
         <span className="loader" />
@@ -134,9 +150,9 @@ const HomePostFlow = ({
 
   return (
     <div className="container-y post-container">
-      {!isLoading && homePostFlowArray?.length === 0 && noAnyPost}
-      {Array.isArray(homePostFlowArray) &&
-        homePostFlowArray?.map((postData) => (
+      {!isLoading && postFlowArray?.length === 0 && noAnyPost}
+      {Array.isArray(postFlowArray) &&
+        postFlowArray?.map((postData) => (
           <PostComponent
             isDarkMode={isDarkMode}
             key={postData.post.postID}
@@ -150,4 +166,4 @@ const HomePostFlow = ({
   );
 };
 
-export default HomePostFlow;
+export default ActivitiesPostFlow;

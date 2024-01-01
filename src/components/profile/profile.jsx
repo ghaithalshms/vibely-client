@@ -2,17 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { getLink } from "../../API";
 import Cookies from "js-cookie";
-import DialogModal from "../dialogModal/dialogModal";
 import "./profile.css";
 import DataContainer from "./dataContainer";
 import UserPostFlow from "../postfFow/userPostFlow";
 import Navbar from "../navbar/navbar";
 
-const Profile = ({ isDarkMode, scrollingPercentage }) => {
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [dialogModalHeader, setDialogModalHeader] = useState("");
-  const [dialogModalBody, setDialogModalBody] = useState("");
-
+const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
   const userSigned = Cookies.get("username");
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,17 +27,6 @@ const Profile = ({ isDarkMode, scrollingPercentage }) => {
       .catch((err) => handleCatchAxios(err));
     setIsLoading(false);
     isUserDataGot = true;
-  };
-
-  const handleCatchAxios = (err) => {
-    setDialogOpen(true);
-    setDialogModalHeader("Ooups");
-    if (err?.code === "ERR_NETWORK")
-      setDialogModalBody(
-        `Sorry, a problem happened while connecting to the server`
-      );
-    else
-      setDialogModalBody(`Sorry, an error happened: ${err?.response?.status}`);
   };
 
   useEffect(() => {
@@ -85,15 +69,6 @@ const Profile = ({ isDarkMode, scrollingPercentage }) => {
             scrollingPercentage={scrollingPercentage}
           />
         </>
-      )}
-      {isDialogOpen && (
-        <DialogModal
-          isDarkMode={isDarkMode}
-          isOpen={isDialogOpen}
-          header={dialogModalHeader}
-          body={dialogModalBody}
-          onNo={() => setDialogOpen(false)}
-        />
       )}
     </div>
   );

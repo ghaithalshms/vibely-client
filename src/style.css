@@ -57,6 +57,15 @@ body {
   padding: 20px;
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
+pre {
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
 /* MOBILE QUERY */
 @media (max-width: 650px) {
   .only-pc {

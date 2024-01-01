@@ -19,6 +19,7 @@ import Home from "./components/home/home";
 import Explorer from "./components/explorer/explorer";
 import Search from "./components/search/search";
 import defaultPfp from "./components/icon/default profile picture.jpg";
+import Activities from "./components/activities/activities";
 
 const App = () => {
   // FOR ERROR MODAL
@@ -61,14 +62,25 @@ const App = () => {
   };
 
   const handleCatchAxios = (err) => {
-    setDialogOpen(true);
-    setDialogModalHeader("Ooups");
-    if (err?.code === "ERR_NETWORK")
+    if (err?.code === "ERR_NETWORK") {
+      setDialogOpen(true);
+      setDialogModalHeader("Ooups");
       setDialogModalBody(
         `Sorry, a problem happened while connecting to the server`
       );
-    else
-      setDialogModalBody(`Sorry, an error happened: ${err?.response?.status}`);
+    } else if (err?.response?.status === 401) {
+      Cookies.remove("token");
+      Cookies.remove("username");
+      sessionStorage.removeItem("picture");
+      window.location.href = "/login";
+    } else if (err?.response?.status === 404) {
+      setDialogOpen(true);
+      setDialogModalHeader("Ooups");
+      setDialogModalBody(`Sorry, this page does not exist`);
+    }
+    console.error(err?.response);
+
+    // setDialogModalBody(`Sorry, an error happened: ${err?.response?.status}`);
   };
 
   const handleIsServerWorking = async () => {
@@ -120,6 +132,7 @@ const App = () => {
     handleTheme();
     handleIsServerWorking();
     handleGetUserPicture();
+    // eslint-disable-next-line
   }, []);
 
   // LOADING SCREEN
@@ -133,7 +146,7 @@ const App = () => {
         isOpen={isDialogOpen}
         header={dialogModalHeader}
         body={dialogModalBody}
-        onNo={() => window.location.reload()}
+        onNo={() => (window.location.href = "/")}
       />
     );
 
@@ -149,6 +162,7 @@ const App = () => {
               <Home
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
+                handleCatchAxios={handleCatchAxios}
               />
             ) : (
               <Navigate to="/login" />
@@ -177,12 +191,29 @@ const App = () => {
               <Explorer
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
+                handleCatchAxios={handleCatchAxios}
               />
             ) : (
               <Navigate to="/login" />
             )
           }
         />
+        {/* ACTIVITIES ROUTE */}
+        <Route
+          path="/activities/*"
+          element={
+            token ? (
+              <Activities
+                isDarkMode={isDarkMode}
+                scrollingPercentage={scrollingPercentage}
+                handleCatchAxios={handleCatchAxios}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
         {/* PROFILE ROUTE */}
         <Route
           path="/*"
@@ -191,6 +222,7 @@ const App = () => {
               <Profile
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
+                handleCatchAxios={handleCatchAxios}
               />
             ) : (
               <Navigate to="/login" />

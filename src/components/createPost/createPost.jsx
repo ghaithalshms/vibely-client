@@ -75,6 +75,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
         borderRadius: "100%",
         marginRight: "0.5rem",
       }}
+      alt="pfp"
       src={JSON.parse(sessionStorage.getItem("picture"))?.url}
     />
   );

@@ -3,12 +3,12 @@ import Modal from "react-modal";
 import "../../modal.css";
 import CheckboxStyled from "./checkboxStyled";
 import Cookies from "js-cookie";
-import darkModeLight from "../icon/light-mode/navbar/dark theme.png";
-import darkModeDark from "../icon/dark-mode/navbar/dark theme.png";
+import { useNavigate } from "react-router-dom";
 
 Modal.setAppElement("#root");
 
 const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
+  const navigate = useNavigate();
   return (
     <Modal
       isOpen={isOpen}
@@ -40,19 +40,55 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
       }}
     >
       <div className="container-y full-width">
-        <h2>{"More"}</h2>
+        <h2 className="uppercase">{"More"}</h2>
         <br />
-        <h3>Activities</h3>
-        <button>Liked posts</button>
-        <button> Saved posts</button>
-        <button>Archived posts</button>
+        <h3 className="uppercase">Activities</h3>
+        <button
+          onClick={() => {
+            if (
+              window.location.href.split("/")[
+                window.location.href.split("/").length - 2
+              ] !== "activities"
+            )
+              navigate("/activities/liked");
+            else window.location.href = "/activities/liked";
+          }}
+        >
+          Liked posts
+        </button>
+        <button
+          onClick={() => {
+            if (
+              window.location.href.split("/")[
+                window.location.href.split("/").length - 2
+              ] !== "activities"
+            )
+              navigate("/activities/saved");
+            else window.location.href = "/activities/saved";
+          }}
+        >
+          Saved posts
+        </button>
+        <button
+          onClick={() => {
+            if (
+              window.location.href.split("/")[
+                window.location.href.split("/").length - 2
+              ] !== "activities"
+            )
+              navigate("/activities/archived");
+            else window.location.href = "/activities/archived";
+          }}
+        >
+          Archived posts
+        </button>
         <br />
-        <h3>Account</h3>
+        <h3 className="uppercase">Account</h3>
         <button>Edit your profile</button>
         <button> Change your password</button>
         <button>Change your e-mail</button>
         <br />
-        <h3>Settings</h3>
+        <h3 className="uppercase">Settings</h3>
         <button
           onClick={() => {
             Cookies.remove("dark-mode");

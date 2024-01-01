@@ -23,6 +23,7 @@ const Search = ({ isDarkMode, handleCatchAxios }) => {
 
   useEffect(() => {
     if (username) handleGetSearchUser();
+    // eslint-disable-next-line
   }, [username]);
 
   const searchUserElement = (

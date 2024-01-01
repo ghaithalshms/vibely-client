@@ -34,6 +34,8 @@ const getLink = {
   // POST
   getPostComments: `${host}/api/post/comments`,
   getPostLikedUsers: `${host}/api/post/liked-users`,
+  // NOTIFICATION
+  getNotification: `${host}/api/notification`,
 };
 
 const deleteLink = {

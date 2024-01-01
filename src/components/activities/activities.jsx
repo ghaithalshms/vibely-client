@@ -1,12 +1,13 @@
 import React from "react";
-import ExplorerPostFlow from "../postfFow/explorerPostFlow";
 import Navbar from "../navbar/navbar";
+import ActivitiesPostFlow from "../postfFow/activitiesPostFlow";
 
-const Explorer = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
+const Activities = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
   return (
     <div className="container-y  main-container">
       <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
-      <ExplorerPostFlow
+      <br />
+      <ActivitiesPostFlow
         isDarkMode={isDarkMode}
         handleCatchAxios={handleCatchAxios}
         scrollingPercentage={scrollingPercentage}
@@ -15,4 +16,4 @@ const Explorer = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
   );
 };
 
-export default Explorer;
+export default Activities;
