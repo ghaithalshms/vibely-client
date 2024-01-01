@@ -21,7 +21,7 @@ const Explorer = ({ isDarkMode, scrollingPercentage }) => {
 
   return (
     <div className="container-y  main-container">
-      <Navbar isDarkMode={isDarkMode} />
+      <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
       <ExplorerPostFlow
         isDarkMode={isDarkMode}
         handleCatchAxios={handleCatchAxios}

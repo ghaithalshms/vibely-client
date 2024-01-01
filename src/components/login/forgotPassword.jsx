@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { postLink } from "../API";
+import { postLink } from "../../API";
 import axios from "axios";
 import md5 from "md5";
 import Cookies from "js-cookie";

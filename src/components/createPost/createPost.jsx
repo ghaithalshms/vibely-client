@@ -1,10 +1,9 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
-import { postLink } from "../API";
+import { postLink } from "../../API";
 
-import galeryIconLight from "./icon/light-mode/create post/galery.png";
-import galeryIconDark from "./icon/dark-mode/create post/galery.png";
-import defaultPfp from "./icon/default profile picture.jpg";
+import galeryIconLight from "../icon/light-mode/create post/galery.png";
+import galeryIconDark from "../icon/dark-mode/create post/galery.png";
 import Cookies from "js-cookie";
 
 const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
@@ -13,27 +12,17 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
   const [pictureWarning, setPictureWarning] = useState("");
   const pictureRef = useRef();
 
-  const handlePicture = (picture) => {
-    console.log(picture);
-    if (picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
-  };
-
   const handleOnChangeDescription = (value) => {
     setDescription(value);
   };
 
   //UPLOAD POST PICTURE
   const handlePictureLoad = (e) => {
+    setPictureWarning("");
     if (e.target.files[0]) {
       if (e.target.files[0]?.size > 2 * 1024 * 1024) {
         setPictureWarning("Sorry, max file size is 2mb");
+        pictureRef.current.src = null;
         setPicture(null);
       } else {
         setPicture(e.target.files[0]);
@@ -108,10 +97,11 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
 
   const addedPictureDisplay = (
     <>
+      {pictureWarning && <div>{pictureWarning}</div>}
       {/* ADDED PICTURE DISPLAY */}
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative", marginBottom: "0.5rem" }}>
         <img
-          className="added-picture-display"
+          className="post-picture"
           ref={pictureRef}
           alt="Added"
           style={{
@@ -124,8 +114,6 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
                   ? "none"
                   : "block"
                 : "none",
-
-            width: "100%",
           }}
         />
         <div
@@ -189,15 +177,15 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
 
   return (
     <div className="container-y full-width">
-      <div className="container-x" style={{ alignItems: "center" }}>
+      <div
+        className="container-x"
+        style={{ alignItems: "center", marginBottom: "0.3rem" }}
+      >
         {profilePicture}
         {textArea}
       </div>
       {addedPictureDisplay}
-      <div
-        className="container-x"
-        style={{ alignItems: "center", marginTop: "0.5rem" }}
-      >
+      <div className="container-x" style={{ alignItems: "center" }}>
         <button
           className="full-width"
           style={{ margin: "0" }}

@@ -11,7 +11,7 @@ import IconDark from "../icon/dark-mode/vibely-text-dark.png";
 
 const Signup = ({ isDarkMode }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [modalHeader, setModalHeader] = useState("Terms of Use");
+  const [modalHeader, setModalHeader] = useState("Welcome to Vibely!");
   const [modalBody, setModalBody] = useState(termsOfUse);
 
   const [step, setStep] = useState(1);
@@ -155,7 +155,7 @@ const Signup = ({ isDarkMode }) => {
             {passwordError && (
               <span className="error-span">Please check your password</span>
             )}
-            <div className="container full-width">
+            <div className="container-x full-width">
               <button className="half-width" onClick={() => setStep(step - 1)}>
                 Previous
               </button>
@@ -188,7 +188,7 @@ const Signup = ({ isDarkMode }) => {
             {usernameError && (
               <span className="error-span">{usernameErrorText}</span>
             )}
-            <div style={{ width: "100%" }} className="container">
+            <div style={{ width: "100%" }} className="container-x">
               <button className="half-width " onClick={() => setStep(step - 1)}>
                 Previous
               </button>
@@ -213,7 +213,7 @@ const Signup = ({ isDarkMode }) => {
               <span className="underline"> Privacy Policy</span> and{" "}
               <span className="underline"> Use of Cookies</span>.
             </p>
-            <div style={{ width: "100%" }} className="container">
+            <div style={{ width: "100%" }} className="container-x">
               <button className="half-width " onClick={() => setStep(step - 1)}>
                 Previous
               </button>

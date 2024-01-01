@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import MoreModal from "./moreModal";
+import CreatePostModal from "../createPost/createPostModal";
 
 import appIcon from "../icon/icon.png";
 import appTextLight from "../icon/light-mode/vibely-text-light.png";
@@ -37,12 +39,10 @@ import notification0Dark from "../icon/dark-mode/navbar/notifications 0.png";
 import notification1Dark from "../icon/dark-mode/navbar/notifications 1.png";
 import optionsDark from "../icon/dark-mode/navbar/options.png";
 
-const Navbar = ({ isDarkMode, visitUser }) => {
+const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
   const [actualPage, setActualPage] = useState("home");
-  // eslint-disable-next-line
   const [isCreatePostModalOpen, setCreatePostModalOpen] = useState(false);
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
-  // eslint-disable-next-line
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -232,7 +232,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
     <img
       style={{
         width: "25px",
-        height: "25 px",
+        height: "25px",
       }}
       src={
         actualPage === "notification"
@@ -403,7 +403,7 @@ const Navbar = ({ isDarkMode, visitUser }) => {
     <div style={{ display: "flex" }}>
       {actualPage === "home" && homeHeader}
       <div
-        className="container-x navbar-icon"
+        className="container-x navbar-icon navbar-container"
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -428,7 +428,24 @@ const Navbar = ({ isDarkMode, visitUser }) => {
   return (
     <div>
       <div className="only-pc">{navbarPC}</div>
-      <div className="only-mobile">{navbarMobile}</div>
+      <div className="only-mobile">
+        {navbarMobile}
+        {isOptionsModalOpen && (
+          <MoreModal
+            isDarkMode={isDarkMode}
+            isOpen={isOptionsModalOpen}
+            onRequestClose={() => setOptionsModalOpen(false)}
+          />
+        )}
+      </div>
+      {isCreatePostModalOpen && (
+        <CreatePostModal
+          isOpen={isCreatePostModalOpen}
+          onRequestClose={() => setCreatePostModalOpen(false)}
+          isDarkMode={isDarkMode}
+          handleCatchAxios={handleCatchAxios}
+        />
+      )}
     </div>
   );
 };

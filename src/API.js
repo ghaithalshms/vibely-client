@@ -23,10 +23,14 @@ const getLink = {
   getUserPicture: `${host}/api/user/data/picture`,
   getUserFollowers: `${host}/api/user/followers`,
   getUserFollowing: `${host}/api/user/following`,
+  getSearchUser: `${host}/api/user/search`,
   // POST FLOW
   getHomePostFlow: `${host}/api/post-flow/home`,
   getUserPostFlow: `${host}/api/post-flow/user`,
   getExplorerPostFlow: `${host}/api/post-flow/explorer`,
+  getLikedPostFlow: `${host}/api/post-flow/liked`,
+  getSavedPostFlow: `${host}/api/post-flow/saved`,
+  getArchivedPostFlow: `${host}/api/post-flow/archived`,
   // POST
   getPostComments: `${host}/api/post/comments`,
   getPostLikedUsers: `${host}/api/post/liked-users`,

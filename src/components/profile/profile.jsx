@@ -56,15 +56,18 @@ const Profile = ({ isDarkMode, scrollingPercentage }) => {
     // eslint-disable-next-line
   }, []);
 
-  if (isLoading)
-    return (
-      <div className="loader-container">
-        <span className="loader" />
-      </div>
-    );
   return (
     <div className="container-y  main-container">
-      <Navbar isDarkMode={isDarkMode} visitUser={handleGetUserData} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        visitUser={handleGetUserData}
+        handleCatchAxios={handleCatchAxios}
+      />
+      {isLoading && (
+        <div className="loader-container">
+          <span className="loader" />
+        </div>
+      )}
       {!isLoading && userData?.username && (
         <>
           <DataContainer

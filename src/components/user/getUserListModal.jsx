@@ -50,7 +50,6 @@ const GetUserListModal = ({
       .get(reqLink, data)
       .then((res) => setUserList(res.data))
       .catch((err) => {
-        console.log(err);
         handleCatchAxios(err);
       });
     setLoading(false);

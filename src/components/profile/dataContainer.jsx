@@ -14,6 +14,7 @@ import linkIconDark from "../icon/dark-mode/profile/link.png";
 import optionsIconDark from "../icon/dark-mode/navbar/options.png";
 
 import GetUserListModal from "../user/getUserListModal";
+import MoreModal from "../navbar/moreModal";
 
 const DataContainer = ({
   isDarkMode,
@@ -320,6 +321,13 @@ const DataContainer = ({
             visitUser(username);
           }}
           handleCatchAxios={handleCatchAxios}
+        />
+      )}
+      {isOptionsModalOpen && (
+        <MoreModal
+          isDarkMode={isDarkMode}
+          isOpen={isOptionsModalOpen}
+          onRequestClose={() => setOptionsModalOpen(false)}
         />
       )}
     </div>

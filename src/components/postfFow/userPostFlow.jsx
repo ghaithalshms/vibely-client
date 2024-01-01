@@ -51,7 +51,12 @@ const UserPostFlow = ({
 
   useEffect(() => {
     // GET USER POST FLOW ON LOAD
-    if (!isPostFlowGot && (userData.isFollowing || !userData.privacity))
+    if (
+      !isPostFlowGot &&
+      (userData.username === Cookies.get("username") ||
+        userData.isFollowing ||
+        !userData.privacity)
+    )
       handleGetUserPostFlow();
     else {
       setIsLoading(false);
@@ -154,7 +159,10 @@ const UserPostFlow = ({
 
   return (
     <div className="container-y post-container">
-      {!userData.isFollowing && userData.privacity && privateAccount}
+      {userData.username !== Cookies.get("username") &&
+        !userData.isFollowing &&
+        userData.privacity &&
+        privateAccount}
       {!isLoading &&
         userPostFlowArray?.length === 0 &&
         !userData.privacity &&

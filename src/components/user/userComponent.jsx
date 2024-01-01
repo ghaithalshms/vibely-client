@@ -51,8 +51,9 @@ const UserComponent = ({ user, visitUser }) => {
       className="container-x pointer"
       onClick={() => {
         navigate(`/${user.username}`);
-        visitUser(user.username);
+        if (visitUser) visitUser(user.username);
       }}
+      style={{ marginBottom: "5px" }}
     >
       <img
         className="profile-picture"

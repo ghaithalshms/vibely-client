@@ -17,6 +17,7 @@ import DialogModal from "./components/dialogModal/dialogModal";
 import { handleAddScrollListener } from "./components/func/scrollPercentage";
 import Home from "./components/home/home";
 import Explorer from "./components/explorer/explorer";
+import Search from "./components/search/search";
 import defaultPfp from "./components/icon/default profile picture.jpg";
 
 const App = () => {
@@ -45,6 +46,13 @@ const App = () => {
       metaThemeColor.content = document.body.classList.contains("dark-mode")
         ? "#68053a" // Dark mode color
         : "#f874bb"; // Light mode color
+    }
+    // Update color-scheme for scrollbar etc
+    const metaColorScheme = document.querySelector('meta[name="color-scheme"]');
+    if (metaColorScheme) {
+      metaColorScheme.content = document.body.classList.contains("dark-mode")
+        ? "dark"
+        : "light";
     }
     document.body.addEventListener("transitionend", handleSetDarkMode);
     return () => {
@@ -98,14 +106,19 @@ const App = () => {
       })
 
       .catch((err) => {
-        console.error(err);
+        sessionStorage.setItem(
+          "picture",
+          JSON.stringify({
+            url: defaultPfp,
+          })
+        );
       });
   };
 
   useEffect(() => {
+    handleAddScrollListener(setScrollingPercentage);
     handleTheme();
     handleIsServerWorking();
-    handleAddScrollListener(setScrollingPercentage);
     handleGetUserPicture();
   }, []);
 
@@ -136,6 +149,20 @@ const App = () => {
               <Home
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* SEARCH ROUTE */}
+        <Route
+          path="/search"
+          element={
+            token ? (
+              <Search
+                isDarkMode={isDarkMode}
+                handleCatchAxios={handleCatchAxios}
               />
             ) : (
               <Navigate to="/login" />

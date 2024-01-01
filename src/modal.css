@@ -19,3 +19,16 @@
   outline: none;
   border: none;
 }
+
+@media (max-width: 650px) {
+  .create-post-modal-container {
+    width: 95svw;
+    max-width: 95svw;
+  }
+}
+@media (min-width: 650px) {
+  .create-post-modal-container {
+    width: 550px;
+    max-width: 95svw;
+  }
+}
