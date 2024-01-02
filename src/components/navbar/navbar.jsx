@@ -427,7 +427,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
     </div>
   );
   return (
-    <div style={{ zIndex: "9999" }}>
+    <div style={{ zIndex: "9998" }}>
       <div className="only-pc">{navbarPC}</div>
       <div className="only-mobile">
         {navbarMobile}

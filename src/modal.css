@@ -14,6 +14,10 @@
   padding: 20px;
 }
 
+.ReactModalPortal {
+  z-index: 9999;
+}
+
 .modal-container:focus,
 .modal-container:active {
   outline: none;
