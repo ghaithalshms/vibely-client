@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import MoreModal from "./moreModal";
 import CreatePostModal from "../createPost/createPostModal";
+import NotificationModal from "../notification/notificationModal";
 
 import appIcon from "../icon/icon.png";
 import appTextLight from "../icon/light-mode/vibely-text-light.png";
@@ -401,7 +402,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
 
   const navbarMobile = (
     <div style={{ display: "flex" }}>
-      {actualPage === "home" && homeHeader}
+      {(actualPage === "home" || actualPage === "notification") && homeHeader}
       <div
         className="container-x navbar-icon navbar-container"
         style={{
@@ -444,6 +445,18 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
           onRequestClose={() => setCreatePostModalOpen(false)}
           isDarkMode={isDarkMode}
           handleCatchAxios={handleCatchAxios}
+        />
+      )}
+      {isNotificationModalOpen && (
+        <NotificationModal
+          isDarkMode={isDarkMode}
+          isOpen={isNotificationModalOpen}
+          onRequestClose={() => setNotificationModalOpen(false)}
+          handleCatchAxios={handleCatchAxios}
+          visitUser={(username) => {
+            setNotificationModalOpen(false);
+            visitUser(username);
+          }}
         />
       )}
     </div>

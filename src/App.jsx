@@ -28,6 +28,7 @@ const App = () => {
   const [dialogModalBody, setDialogModalBody] = useState("");
 
   const [scrollingPercentage, setScrollingPercentage] = useState(0);
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,10 +116,29 @@ const App = () => {
               : defaultPfp,
           })
         );
+        setProfilePicture(
+          "picture",
+          JSON.stringify({
+            url: res.data.picture
+              ? `data:image/png;base64,${btoa(
+                  new Uint8Array(res.data.picture.data).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ""
+                  )
+                )}`
+              : defaultPfp,
+          })
+        );
       })
 
       .catch((err) => {
         sessionStorage.setItem(
+          "picture",
+          JSON.stringify({
+            url: defaultPfp,
+          })
+        );
+        setProfilePicture(
           "picture",
           JSON.stringify({
             url: defaultPfp,
@@ -136,7 +156,7 @@ const App = () => {
   }, []);
 
   // LOADING SCREEN
-  if (isLoading) return <IsLoadingComponent />;
+  if (isLoading || !profilePicture) return <IsLoadingComponent />;
 
   // IF SERVER ERROR, ERROR MODAL
   if (isDialogOpen)

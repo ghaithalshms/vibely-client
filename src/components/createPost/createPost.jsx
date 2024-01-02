@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
   const [description, setDescription] = useState("");
   const [picture, setPicture] = useState(null);
+  const [video, setVideo] = useState(null);
   const [pictureWarning, setPictureWarning] = useState("");
   const pictureRef = useRef();
 

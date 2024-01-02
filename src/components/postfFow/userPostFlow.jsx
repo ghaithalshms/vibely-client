@@ -165,7 +165,8 @@ const UserPostFlow = ({
         privateAccount}
       {!isLoading &&
         userPostFlowArray?.length === 0 &&
-        !userData.privacity &&
+        (!userData.privacity ||
+          userData.username === Cookies.get("username")) &&
         noAnyPost}
       {Array.isArray(userPostFlowArray) &&
         userPostFlowArray?.map((post) => (

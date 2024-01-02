@@ -91,7 +91,6 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
         <h3 className="uppercase">Settings</h3>
         <button
           onClick={() => {
-            Cookies.remove("dark-mode");
             Cookies.remove("token");
             Cookies.remove("username");
             sessionStorage.removeItem("picture");
