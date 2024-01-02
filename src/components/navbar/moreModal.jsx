@@ -84,7 +84,9 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
         </button>
         <br />
         <h3 className="uppercase">Account</h3>
-        <button>Edit your profile</button>
+        <button onClick={() => navigate("/account/edit-profile")}>
+          Edit your profile
+        </button>
         <button> Change your password</button>
         <button>Change your e-mail</button>
         <br />

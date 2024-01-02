@@ -62,10 +62,10 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
   const handleUpdate = async () => {
     if (isPictureLoaded) await handleUpdateProfilePicture();
     await handleUpdateProfileData();
-    // if (userData.username !== username || pictureRef?.current?.src) {
-    //   Cookies.set("username", username);
-    //   window.location.href = "/";
-    // }
+    if (userData.username !== username || pictureRef?.current?.src) {
+      Cookies.set("username", username);
+      window.location.href = "/";
+    }
   };
 
   const handleGetUserData = async (username) => {
