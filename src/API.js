@@ -7,6 +7,7 @@ const postLink = {
   // USER
   checkUsername: `${host}/api/user/check-username`,
   follow: `${host}/api/user/follow`,
+  acceptFollowRequest: `${host}/api/user/follow/request/accept`,
   // POST
   createPost: `${host}/api/post/create`,
   likePost: `${host}/api/post/like`,
@@ -43,6 +44,8 @@ const deleteLink = {
   deletePost: `${host}/api/post/delete`,
   // COMMENT
   deleteComment: `${host}/api/comment/delete`,
+  // USER
+  deleteFollowRequest: `${host}/api/user/follow/request/delete`,
 };
 
 const updateLink = {

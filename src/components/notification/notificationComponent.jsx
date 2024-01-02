@@ -3,8 +3,18 @@ import defaultPfp from "../icon/default profile picture.jpg";
 // import adminIcon from "../icon/admin.png";
 // import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
+import { postLink } from "../../API";
+import Cookies from "js-cookie";
+import axios from "axios";
 
-const NotificationComponent = ({ user, notification, visitUser }) => {
+const NotificationComponent = ({
+  user,
+  notification,
+  visitUser,
+  handleCatchAxios,
+  refreshNoitfication,
+  setLoading,
+}) => {
   const handlePfp = () => {
     if (user?.picture)
       return `data:image/png;base64,${btoa(
@@ -33,6 +43,17 @@ const NotificationComponent = ({ user, notification, visitUser }) => {
       default:
         return;
     }
+  };
+
+  const handleAcceptFollowRequest = async () => {
+    setLoading(true);
+    axios
+      .post(postLink.acceptFollowRequest, {
+        username: user.username,
+        token: Cookies.get("token"),
+      })
+      .then(() => refreshNoitfication())
+      .catch((err) => handleCatchAxios(err));
   };
 
   return (
@@ -69,7 +90,9 @@ const NotificationComponent = ({ user, notification, visitUser }) => {
           </span>
           {notificationMessage()}
         </pre>
-        {notification.type === "request" && <button>Accept</button>}
+        {notification.type === "request" && (
+          <button onClick={handleAcceptFollowRequest}>Accept</button>
+        )}
       </div>
     </div>
   );

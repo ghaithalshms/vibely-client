@@ -145,7 +145,7 @@ const DataContainer = ({
       <div
         className="container-x"
         style={{
-          padding: "1rem",
+          paddingBottom: "1rem",
           // paddingTop: "2rem",
           justifyContent: "space-between",
         }}

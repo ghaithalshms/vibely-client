@@ -51,6 +51,16 @@ const PostComponent = ({
       )}`;
     else return defaultPfp;
   };
+  const handleVideo = (video) => {
+    return video
+      ? `data:video/mp4;base64,${btoa(
+          new Uint8Array(video.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ""
+          )
+        )}`
+      : null;
+  };
 
   const handleLikePost = async () => {
     handleUpdatePost(post.postID, "like");
@@ -230,15 +240,24 @@ const PostComponent = ({
   const postBody = (
     <div className="post-content container-y">
       <pre>{post.description}</pre>
-      {post?.picture && (
+      {post?.file && post.fileType === "picture" && (
         <img
-          className="post-picture"
-          src={handlePicture(post?.picture)}
+          className="post-file"
+          src={handlePicture(post?.file)}
           alt="post pic"
           // block right click
           onContextMenu={(event) => {
             event.preventDefault();
           }}
+        />
+      )}
+      {post?.file && post.fileType === "video" && (
+        <video
+          src={handleVideo(post?.file)}
+          type="video/mp4"
+          controls
+          controlsList="nodownload"
+          className="post-file"
         />
       )}
       {/* POST ICONS */}

@@ -1,9 +1,14 @@
-.post-picture {
+.post-file {
   border-radius: 10px;
   margin-top: 10px;
   max-width: 100%;
   max-height: 350px;
   margin: 0.7rem auto 0px;
+}
+
+/* Custom styling for the video controls */
+video::-webkit-media-controls {
+  display: flex !important;
 }
 
 .post-header {

@@ -87,6 +87,9 @@ const NotificationModal = ({
                 notification={noti.notification}
                 user={noti.user}
                 visitUser={visitUser}
+                handleCatchAxios={handleCatchAxios}
+                refreshNoitfication={handleGetNotification}
+                setLoading={setLoading}
               />
             ))}
           </div>
