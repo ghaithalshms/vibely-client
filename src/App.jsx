@@ -20,6 +20,7 @@ import Explorer from "./components/explorer/explorer";
 import Search from "./components/search/search";
 import defaultPfp from "./components/icon/default profile picture.jpg";
 import Activities from "./components/activities/activities";
+import EditProfile from "./components/edit profile/editProfile";
 
 const App = () => {
   // FOR ERROR MODAL
@@ -226,6 +227,21 @@ const App = () => {
               <Activities
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
+                handleCatchAxios={handleCatchAxios}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        {/* ACCOUNT ROUTE */}
+        <Route
+          path="/account/edit-profile"
+          element={
+            token ? (
+              <EditProfile
+                isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
               />
             ) : (

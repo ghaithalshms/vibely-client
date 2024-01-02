@@ -1,8 +1,8 @@
 import React from "react";
 import Modal from "react-modal";
-import "../../../modal.css";
+import "../../modal.css";
 import axios from "axios";
-import { deleteLink, updateLink } from "../../../API";
+import { deleteLink, updateLink } from "../../API";
 import Cookies from "js-cookie";
 
 Modal.setAppElement("#root");

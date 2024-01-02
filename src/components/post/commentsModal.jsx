@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import "../../../modal.css";
-import { getLink, postLink } from "../../../API";
+import "../../modal.css";
+import { getLink, postLink } from "../../API";
 import axios from "axios";
-import CommentComponent from "./commentComponent";
+import CommentComponent from "../comment/commentComponent";
 import Cookies from "js-cookie";
 
 Modal.setAppElement("#root");

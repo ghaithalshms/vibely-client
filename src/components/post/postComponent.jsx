@@ -1,31 +1,31 @@
 import React, { useState } from "react";
 import axios from "axios";
-import defaultPfp from "../../icon/default profile picture.jpg";
-import adminIcon from "../../icon/admin.png";
-import verifiedIcon from "../../icon/verified.png";
+import defaultPfp from "../icon/default profile picture.jpg";
+import adminIcon from "../icon/admin.png";
+import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
-import { timeDifference } from "../../func/timeDifference";
+import { timeDifference } from "../func/timeDifference";
 import "./post.css";
 import Cookies from "js-cookie";
-import CommentsModal from "./commentsModal";
-import GetUserListModal from "../../user/getUserListModal";
+import CommentsModal from "../comment/commentsModal";
+import GetUserListModal from "../user/getUserListModal";
 import PostMoreModal from "./postMoreModal";
 
 // LIGHT MODE ICONS
-import like0Light from "../../icon/light-mode/post/like 0.png";
-import like1Light from "../../icon/light-mode/post/like 1.png";
-import save0Light from "../../icon/light-mode/post/save 0.png";
-import save1Light from "../../icon/light-mode/post/save 1.png";
-import commentLight from "../../icon/light-mode/post/comment.png";
-import optionsLight from "../../icon/light-mode/post/options.png";
+import like0Light from "../icon/light-mode/post/like 0.png";
+import like1Light from "../icon/light-mode/post/like 1.png";
+import save0Light from "../icon/light-mode/post/save 0.png";
+import save1Light from "../icon/light-mode/post/save 1.png";
+import commentLight from "../icon/light-mode/post/comment.png";
+import optionsLight from "../icon/light-mode/post/options.png";
 // DARK MODE ICONS
-import like0Dark from "../../icon/dark-mode/post/like 0.png";
-import like1Dark from "../../icon/dark-mode/post/like 1.png";
-import save0Dark from "../../icon/dark-mode/post/save 0.png";
-import save1Dark from "../../icon/dark-mode/post/save 1.png";
-import commentDark from "../../icon/dark-mode/post/comment.png";
-import optionsDark from "../../icon/dark-mode/post/options.png";
-import { postLink } from "../../../API";
+import like0Dark from "../icon/dark-mode/post/like 0.png";
+import like1Dark from "../icon/dark-mode/post/like 1.png";
+import save0Dark from "../icon/dark-mode/post/save 0.png";
+import save1Dark from "../icon/dark-mode/post/save 1.png";
+import commentDark from "../icon/dark-mode/post/comment.png";
+import optionsDark from "../icon/dark-mode/post/options.png";
+import { postLink } from "../../API";
 
 const PostComponent = ({
   isDarkMode,

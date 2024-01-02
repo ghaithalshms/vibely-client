@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import defaultPfp from "../../icon/default profile picture.jpg";
-import adminIcon from "../../icon/admin.png";
-import verifiedIcon from "../../icon/verified.png";
+import defaultPfp from "../icon/default profile picture.jpg";
+import adminIcon from "../icon/admin.png";
+import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { deleteLink, postLink } from "../../../API";
+import { deleteLink, postLink } from "../../API";
 // LIGHT MODE ICONS
-import like0Light from "../../icon/light-mode/post/like 0.png";
-import like1Light from "../../icon/light-mode/post/like 1.png";
-import deleteLight from "../../icon/light-mode/post/delete.png";
+import like0Light from "../icon/light-mode/post/like 0.png";
+import like1Light from "../icon/light-mode/post/like 1.png";
+import deleteLight from "../icon/light-mode/post/delete.png";
 // DARK MODE ICONS
-import like0Dark from "../../icon/dark-mode/post/like 0.png";
-import like1Dark from "../../icon/dark-mode/post/like 1.png";
-import deleteDark from "../../icon/dark-mode/post/delete.png";
+import like0Dark from "../icon/dark-mode/post/like 0.png";
+import like1Dark from "../icon/dark-mode/post/like 1.png";
+import deleteDark from "../icon/dark-mode/post/delete.png";
 
 const CommentComponent = ({
   isDarkMode,
