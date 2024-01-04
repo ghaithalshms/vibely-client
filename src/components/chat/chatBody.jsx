@@ -108,8 +108,8 @@ const ChatBody = ({
         ))}
       {/* MESSAGE SEEN */}
       {chatArray &&
-        chatArray[chatArray.length - 1].from === Cookies.get("username") &&
-        chatArray[chatArray.length - 1].seen && (
+        chatArray[chatArray.length - 1]?.from === Cookies.get("username") &&
+        chatArray[chatArray.length - 1]?.seen && (
           <div
             className="full-width"
             style={{ display: "flex", justifyContent: "flex-end" }}
