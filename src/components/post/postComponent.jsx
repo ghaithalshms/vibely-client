@@ -51,6 +51,7 @@ const PostComponent = ({
       )}`;
     else return defaultPfp;
   };
+
   const handleVideo = (video) => {
     return video
       ? `data:video/mp4;base64,${btoa(

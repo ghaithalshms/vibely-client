@@ -66,6 +66,7 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
       Cookies.set("username", username);
       window.location.href = "/";
     }
+    navigate("/");
   };
 
   const handleGetUserData = async (username) => {

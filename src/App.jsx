@@ -21,7 +21,10 @@ import Search from "./components/search/search";
 import defaultPfp from "./components/icon/default profile picture.jpg";
 import Activities from "./components/activities/activities";
 import EditProfile from "./components/edit profile/editProfile";
-
+import Inbox from "./components/inbox/inbox";
+//socket io
+import io from "socket.io-client";
+const socket = io.connect(process.env.REACT_APP_API_URL);
 const App = () => {
   // FOR ERROR MODAL
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -33,6 +36,9 @@ const App = () => {
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [clientSocket, setClientSocket] = useState(null);
+
   let token = Cookies.get("token");
 
   const handleTheme = () => {
@@ -156,6 +162,14 @@ const App = () => {
     // eslint-disable-next-line
   }, []);
 
+  const handleSetClientSocket = () => {
+    if (!socket.connected && Cookies.get("username")) {
+      socket.emit("set_username", Cookies.get("username"));
+      setClientSocket(socket);
+    }
+  };
+  useEffect(() => handleSetClientSocket(), [socket.connected]);
+
   // LOADING SCREEN
   if (isLoading || !profilePicture) return <IsLoadingComponent />;
 
@@ -198,6 +212,22 @@ const App = () => {
               <Search
                 isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* INBOX ROUTE */}
+        <Route
+          path="/inbox"
+          element={
+            token ? (
+              <Inbox
+                isDarkMode={isDarkMode}
+                scrollingPercentage={scrollingPercentage}
+                handleCatchAxios={handleCatchAxios}
+                clientSocket={clientSocket}
               />
             ) : (
               <Navigate to="/login" />

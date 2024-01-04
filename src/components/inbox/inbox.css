@@ -1,0 +1,38 @@
+.inbox-container {
+  overflow: hidden;
+}
+
+.inbox-users-container {
+  overflow-y: auto;
+  height: 100svh;
+  max-height: 100svh;
+}
+
+@media (max-width: 650px) {
+  .inbox-container {
+    width: 100svw;
+    max-width: 100svw;
+  }
+  .inbox-users-container {
+    min-width: 100svw;
+    max-width: 100svw;
+    padding-bottom: 8svh;
+    padding: 10px;
+  }
+}
+
+@media (min-width: 650px) {
+  .inbox-container {
+    position: absolute;
+    width: calc(100svw - 110px);
+    right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .inbox-users-container {
+    width: 30svw;
+    max-width: 30svw;
+  }
+}

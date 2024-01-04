@@ -54,7 +54,6 @@ const CommentComponent = ({
       })
       .then()
       .catch((err) => {
-        console.log(err);
         handleCatchAxios(err);
       });
   };
