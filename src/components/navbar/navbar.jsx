@@ -39,12 +39,40 @@ import profile1Dark from "../icon/dark-mode/navbar/profile 1.png";
 import notification0Dark from "../icon/dark-mode/navbar/notifications 0.png";
 import notification1Dark from "../icon/dark-mode/navbar/notifications 1.png";
 import optionsDark from "../icon/dark-mode/navbar/options.png";
+import axios from "axios";
+import { getLink } from "../../API";
 
 const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
   const [actualPage, setActualPage] = useState("home");
   const [isCreatePostModalOpen, setCreatePostModalOpen] = useState(false);
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false);
+
+  const [notiCount, setNotiCount] = useState(0);
+  const [msgCount, setMsgCount] = useState(0);
+
+  const handleGetNotificationCount = async () => {
+    await axios
+      .get(getLink.getNotificationCount, {
+        params: { token: Cookies.get("token") },
+      })
+      .then((res) => setNotiCount(res?.data))
+      .catch((err) => handleCatchAxios(err));
+  };
+
+  const handleGetMessagesCount = async () => {
+    await axios
+      .get(getLink.getMessagesCount, {
+        params: { token: Cookies.get("token") },
+      })
+      .then((res) => setMsgCount(res?.data))
+      .catch((err) => handleCatchAxios(err));
+  };
+
+  useEffect(() => {
+    handleGetNotificationCount();
+    handleGetMessagesCount();
+  });
 
   const navigate = useNavigate();
 
@@ -152,32 +180,50 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
   );
 
   const inboxIcon = (
-    <img
+    <div
       style={{
         width: "22px",
         height: "22px",
+        position: "relative",
       }}
-      src={
-        actualPage === "inbox"
-          ? isDarkMode
-            ? inbox1Dark
-            : inbox1Light
-          : isDarkMode
-          ? inbox0Dark
-          : inbox0Light
-      }
-      alt="inbox"
-      className="pointer"
-      onClick={() => {
-        handleCloseModals();
-        setActualPage("inbox");
-        navigate("/inbox");
-      }}
-      // block right click
-      onContextMenu={(event) => {
-        event.preventDefault();
-      }}
-    />
+    >
+      <img
+        style={{
+          width: "22px",
+          height: "22px",
+        }}
+        src={
+          actualPage === "inbox"
+            ? isDarkMode
+              ? inbox1Dark
+              : inbox1Light
+            : isDarkMode
+            ? inbox0Dark
+            : inbox0Light
+        }
+        alt="inbox"
+        className="pointer"
+        onClick={() => {
+          handleCloseModals();
+          setActualPage("inbox");
+          navigate("/inbox");
+        }}
+        // block right click
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          top: "-10px",
+          right: "-10px",
+          color: "red",
+        }}
+      >
+        {msgCount > 0 ? msgCount : ""}
+      </span>
+    </div>
   );
 
   const createIcon = (
@@ -230,32 +276,50 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
   );
 
   const notificationIcon = (
-    <img
+    <div
       style={{
         width: "25px",
         height: "25px",
+        position: "relative",
       }}
-      src={
-        actualPage === "notification"
-          ? isDarkMode
-            ? notification1Dark
-            : notification1Light
-          : isDarkMode
-          ? notification0Dark
-          : notification0Light
-      }
-      alt="notification"
-      className="pointer"
-      onClick={() => {
-        handleCloseModals();
-        setActualPage("notification");
-        setNotificationModalOpen(true);
-      }}
-      // block right click
-      onContextMenu={(event) => {
-        event.preventDefault();
-      }}
-    />
+    >
+      <img
+        style={{
+          width: "25px",
+          height: "25px",
+        }}
+        src={
+          actualPage === "notification"
+            ? isDarkMode
+              ? notification1Dark
+              : notification1Light
+            : isDarkMode
+            ? notification0Dark
+            : notification0Light
+        }
+        alt="notification"
+        className="pointer"
+        onClick={() => {
+          handleCloseModals();
+          setActualPage("notification");
+          setNotificationModalOpen(true);
+        }}
+        // block right click
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          top: "-5px",
+          right: "-5px",
+          color: "red",
+        }}
+      >
+        {notiCount > 0 ? notiCount : ""}
+      </span>
+    </div>
   );
 
   const profileIcon = (

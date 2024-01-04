@@ -42,7 +42,15 @@ const InboxUserComponent = ({ user, message, setChatUser }) => {
         )}
       </div>
       {/* <span>{`@${user.username}`}</span> */}
-      <span>{`${message.message ? message.message : ""}`}</span>
+      <span>{`${
+        message.message
+          ? message.message
+          : message.fileType === "picture"
+          ? "Picture"
+          : message.fileType === "video"
+          ? "Video"
+          : ""
+      }`}</span>
     </div>
   );
   return (

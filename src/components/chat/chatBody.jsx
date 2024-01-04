@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MessageComponent from "./messageComponent";
-import { getLink } from "../../API";
+import { getLink, updateLink } from "../../API";
 import Cookies from "js-cookie";
 
 const ChatBody = ({
@@ -72,6 +72,16 @@ const ChatBody = ({
 
   useEffect(() => handleReceiveMessage(), [clientSocket, chatArray]);
 
+  // SET MESSAGES SEEN
+  const handleSetMessagesSeen = () => {
+    axios.post(updateLink.setMessagesSeen, {
+      token: Cookies.get("token"),
+      username: chatUser.username,
+    });
+  };
+
+  useEffect(() => handleSetMessagesSeen());
+
   const loadingElement = (
     <div
       className="full-width"
@@ -96,6 +106,17 @@ const ChatBody = ({
             message={message}
           />
         ))}
+      {/* MESSAGE SEEN */}
+      {chatArray &&
+        chatArray[chatArray.length - 1].from === Cookies.get("username") &&
+        chatArray[chatArray.length - 1].seen && (
+          <div
+            className="full-width"
+            style={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <span>seen</span>
+          </div>
+        )}
     </div>
   );
 };

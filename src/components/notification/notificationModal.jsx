@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import "../../modal.css";
 import axios from "axios";
-import { getLink } from "../../API";
+import { getLink, updateLink } from "../../API";
 import Cookies from "js-cookie";
 import NotificationComponent from "./notificationComponent";
 
@@ -30,8 +30,15 @@ const NotificationModal = ({
     setLoading(false);
   };
 
+  const handleSetNotificationSeen = () => {
+    axios.post(updateLink.setNotificationSeen, {
+      token: Cookies.get("token"),
+    });
+  };
+
   useEffect(() => {
     handleGetNotification();
+    handleSetNotificationSeen();
     // eslint-disable-next-line
   }, []);
 

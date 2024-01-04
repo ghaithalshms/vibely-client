@@ -39,8 +39,10 @@ const getLink = {
   getPostLikedUsers: `${host}/api/post/liked-users`,
   // NOTIFICATION
   getNotification: `${host}/api/notification`,
+  getNotificationCount: `${host}/api/notification/count`,
   // INBOX
   getInbox: `${host}/api/inbox`,
+  getMessagesCount: `${host}/api/inbox/count`,
   // CHAT
   getChat: `${host}/api/chat`,
 };
@@ -60,6 +62,10 @@ const updateLink = {
   // USER
   updateProfileData: `${host}/api/user/update/data`,
   updateProfilePicture: `${host}/api/user/update/picture`,
+  // CHAT
+  setMessagesSeen: `${host}/api/chat/seen`,
+  // NOTIFICATION
+  setNotificationSeen: `${host}/api/notification/seen`,
 };
 
 export { postLink, getLink, deleteLink, updateLink };
