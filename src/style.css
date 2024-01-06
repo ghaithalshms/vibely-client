@@ -2,7 +2,7 @@
 
 :root {
   --main-bg-light: linear-gradient(to right, #fff, rgb(255, 234, 244));
-  --main-bg-dark: linear-gradient(to right, #000, rgb(21, 17, 19));
+  --main-bg-dark: linear-gradient(to right, #000, #16040e);
   --placeholder-light: #333333;
   --placeholder-dark: #9d9d9d;
   --button-bg-light: #f874bb;

@@ -70,7 +70,11 @@ const ChatBody = ({
     });
   };
 
-  useEffect(() => handleReceiveMessage(), [clientSocket, chatArray]);
+  useEffect(
+    () => handleReceiveMessage(),
+    // eslint-disable-next-line
+    [clientSocket, chatArray]
+  );
 
   // SET MESSAGES SEEN
   const handleSetMessagesSeen = () => {

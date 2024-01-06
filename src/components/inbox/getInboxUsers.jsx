@@ -63,6 +63,12 @@ const GetInboxUsers = ({
               setChatUser={setChatUser}
             />
           ))}
+
+        {!isLoading && !inboxUsers?.length > 0 && (
+          <h3 style={{ marginLeft: "20%", marginTop: "40%" }}>
+            Try to add some friends!
+          </h3>
+        )}
       </div>
     </div>
   );

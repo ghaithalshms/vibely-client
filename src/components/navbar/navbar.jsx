@@ -72,7 +72,8 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
   useEffect(() => {
     handleGetNotificationCount();
     handleGetMessagesCount();
-  });
+    // eslint-disable-next-line
+  }, []);
 
   const navigate = useNavigate();
 
