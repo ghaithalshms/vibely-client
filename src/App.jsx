@@ -168,7 +168,11 @@ const App = () => {
       setClientSocket(socket);
     }
   };
-  useEffect(() => handleSetClientSocket(), [socket.connected]);
+  useEffect(
+    () => handleSetClientSocket(),
+    // eslint-disable-next-line
+    [socket.connected]
+  );
 
   // LOADING SCREEN
   if (isLoading || !profilePicture) return <IsLoadingComponent />;
