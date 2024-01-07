@@ -159,14 +159,6 @@ const App = () => {
     handleTheme();
     handleIsServerWorking();
     handleGetUserPicture();
-
-    // eslint-disable-next-line
-    if (!Cookies.get("token") || Cookies.get("token") == undefined) {
-      Cookies.remove("token");
-      Cookies.remove("username");
-      sessionStorage.removeItem("picture");
-      window.location.href = "/login";
-    }
     // eslint-disable-next-line
   }, []);
 
