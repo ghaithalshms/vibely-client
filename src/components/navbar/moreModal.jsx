@@ -120,7 +120,7 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
               if (metaColorScheme) metaColorScheme.content = "light";
             }}
             isNotCheckedClick={() => {
-              Cookies.set("dark-mode", true);
+              Cookies.set("dark-mode", true, { expires: 1000 });
               document.body.classList.add("dark-mode");
 
               const metaThemeColor = document.querySelector(

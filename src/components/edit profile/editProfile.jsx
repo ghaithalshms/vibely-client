@@ -63,7 +63,7 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
     if (isPictureLoaded) await handleUpdateProfilePicture();
     await handleUpdateProfileData();
     if (userData.username !== username || pictureRef?.current?.src) {
-      Cookies.set("username", username);
+      Cookies.set("username", username, { expires: 1000 });
       window.location.href = "/";
     }
     navigate("/");
