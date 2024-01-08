@@ -7,7 +7,12 @@ const Home = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
   return (
     <div className="container-y  main-container">
       <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
-      <CreatePost isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <div className="only-pc">
+        <CreatePost
+          isDarkMode={isDarkMode}
+          handleCatchAxios={handleCatchAxios}
+        />
+      </div>
       <br />
       <HomePostFlow
         isDarkMode={isDarkMode}
