@@ -12,8 +12,8 @@ const Home = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
           isDarkMode={isDarkMode}
           handleCatchAxios={handleCatchAxios}
         />
+        <br />
       </div>
-      <br />
       <HomePostFlow
         isDarkMode={isDarkMode}
         handleCatchAxios={handleCatchAxios}
