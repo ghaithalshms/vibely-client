@@ -520,7 +520,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
           handleCatchAxios={handleCatchAxios}
           visitUser={(username) => {
             setNotificationModalOpen(false);
-            visitUser(username);
+            if (visitUser) visitUser(username);
           }}
         />
       )}

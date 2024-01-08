@@ -120,7 +120,7 @@ const HomePostFlow = ({
       style={{
         alignItems: "center",
         justifyContent: "center",
-        marginTop: "40%",
+        marginTop: "30vh",
       }}
     >
       <img
