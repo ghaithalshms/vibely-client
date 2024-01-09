@@ -40,6 +40,7 @@ const App = () => {
   const [clientSocket, setClientSocket] = useState(null);
 
   let token = Cookies.get("token");
+  let username = Cookies.get("username");
 
   const handleTheme = () => {
     // check dark mode and enable it
@@ -197,7 +198,7 @@ const App = () => {
         <Route
           path="/"
           element={
-            token ? (
+            token && username ? (
               <Home
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
@@ -212,7 +213,7 @@ const App = () => {
         <Route
           path="/search"
           element={
-            token ? (
+            token && username ? (
               <Search
                 isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
@@ -226,7 +227,7 @@ const App = () => {
         <Route
           path="/inbox"
           element={
-            token ? (
+            token && username ? (
               <Inbox
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
@@ -242,7 +243,7 @@ const App = () => {
         <Route
           path="/explorer"
           element={
-            token ? (
+            token && username ? (
               <Explorer
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
@@ -257,7 +258,7 @@ const App = () => {
         <Route
           path="/activities/*"
           element={
-            token ? (
+            token && username ? (
               <Activities
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
@@ -273,7 +274,7 @@ const App = () => {
         <Route
           path="/account/edit-profile"
           element={
-            token ? (
+            token && username ? (
               <EditProfile
                 isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
@@ -288,7 +289,7 @@ const App = () => {
         <Route
           path="/*"
           element={
-            token ? (
+            token && username ? (
               <Profile
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
@@ -303,7 +304,11 @@ const App = () => {
         <Route
           path="/login"
           element={
-            !token ? <Login isDarkMode={isDarkMode} /> : <Navigate to="/" />
+            !(token && username) ? (
+              <Login isDarkMode={isDarkMode} />
+            ) : (
+              <Navigate to="/" />
+            )
           }
         />
       </Routes>
