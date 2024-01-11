@@ -27,10 +27,7 @@ async function subscribe() {
 
 if ("Notification" in window && Notification.permission !== "denied") {
   Notification.requestPermission().then((permission) => {
-    if (permission === "granted") {
-      const notification = new Notification("Hi there!");
-      subscribe();
-    }
+    if (permission === "granted") subscribe();
   });
 }
 
