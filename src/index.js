@@ -25,7 +25,17 @@ async function subscribe() {
     .catch((err) => console.error(err));
 }
 
-subscribe();
+function notifyMe() {
+  if ("Notification" in window && Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        const notification = new Notification("Hi there!");
+        subscribe();
+      }
+    });
+  }
+}
+
 if ("serviceWorker" in navigator) {
   window.onload = async () => {
     let sw = await navigator.serviceWorker.register("./sw.js");
