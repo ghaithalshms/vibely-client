@@ -39,6 +39,7 @@ const getLink = {
   // POST
   getPostComments: `${host}/api/post/comments`,
   getPostLikedUsers: `${host}/api/post/liked-users`,
+  getPostFile: `${host}/api/post/file`,
   // NOTIFICATION
   getNotification: `${host}/api/notification`,
   getNotificationCount: `${host}/api/notification/count`,

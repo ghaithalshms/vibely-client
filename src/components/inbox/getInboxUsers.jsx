@@ -4,6 +4,7 @@ import { getLink } from "../../API";
 import InboxUserComponent from "./inboxUserComponent";
 import Cookies from "js-cookie";
 import Navbar from "../navbar/navbar";
+import { updateArrayPfp } from "../../usersPfp";
 
 const GetInboxUsers = ({
   isDarkMode,
@@ -11,7 +12,7 @@ const GetInboxUsers = ({
   chatUser,
   setChatUser,
 }) => {
-  const [inboxUsers, setInboxUsers] = useState(null);
+  const [inboxUsers, setInboxUsers] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isDataGot, setDataGot] = useState(false);
 
@@ -22,7 +23,13 @@ const GetInboxUsers = ({
           token: Cookies.get("token"),
         },
       })
-      .then((res) => setInboxUsers(res?.data))
+      .then((res) => {
+        setInboxUsers(res?.data);
+        for (const postData of res.data) {
+          const username = postData.user.username;
+          updateArrayPfp(username, setInboxUsers);
+        }
+      })
       .catch((err) => handleCatchAxios(err));
     setLoading(false);
     setDataGot(true);

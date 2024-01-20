@@ -3,17 +3,20 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
+import { updateArrayPfp } from "../../usersPfp";
+import { handleUpdatePost } from "../postfFow/updatePost";
 
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
+import { updatePostFlowFile } from "./getPostFile";
 
 const ExplorerPostFlow = ({
   isDarkMode,
   handleCatchAxios,
   scrollingPercentage,
 }) => {
-  const [explorerPostFlowArray, setExplorerPostFlowArray] = useState();
+  const [explorerPostFlowArray, setExplorerPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
@@ -28,7 +31,7 @@ const ExplorerPostFlow = ({
             lastGotPostID,
           },
         })
-        .then((res) => {
+        .then(async (res) => {
           if (res.data !== "no post flow") {
             setLastGotPostID(res.data?.lastGotPostID);
             if (!isOnScrolling)
@@ -39,6 +42,12 @@ const ExplorerPostFlow = ({
                 ...explorerPostFlowArray,
                 ...res.data?.postFlowArray,
               ]);
+            for (const postData of res.data?.postFlowArray) {
+              const username = postData.user.username;
+              updateArrayPfp(username, setExplorerPostFlowArray);
+              const postID = postData.post.postID;
+              updatePostFlowFile(postID, setExplorerPostFlowArray);
+            }
           }
         })
         .catch((err) => handleCatchAxios(err));
@@ -52,45 +61,6 @@ const ExplorerPostFlow = ({
     else setIsLoading(false);
     // eslint-disable-next-line
   }, []);
-
-  const handleUpdatePost = (postID, process) => {
-    let updatedPosts = [];
-    switch (process) {
-      case "like":
-        explorerPostFlowArray.forEach((postData) => {
-          updatedPosts.push(
-            postData.post.postID === postID
-              ? {
-                  post: {
-                    ...postData.post,
-                    isLiked: !postData.post.isLiked,
-                    likeCount: postData.post.isLiked
-                      ? postData.post.likeCount - 1
-                      : postData.post.likeCount + 1,
-                  },
-                  user: { ...postData.user },
-                }
-              : postData
-          );
-        });
-        break;
-      case "save":
-        explorerPostFlowArray.forEach((postData) => {
-          updatedPosts.push(
-            postData.post.postID === postID
-              ? {
-                  post: { ...postData.post, isSaved: !postData.post.isSaved },
-                  user: { ...postData.user },
-                }
-              : postData
-          );
-        });
-        break;
-      default:
-        updatedPosts = explorerPostFlowArray;
-    }
-    setExplorerPostFlowArray(updatedPosts);
-  };
 
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
@@ -143,6 +113,8 @@ const ExplorerPostFlow = ({
             key={postData.post.postID}
             user={postData.user}
             post={postData.post}
+            postFlow={explorerPostFlowArray}
+            setPostFlow={setExplorerPostFlowArray}
             handleUpdatePost={handleUpdatePost}
             handleCatchAxios={handleCatchAxios}
           />

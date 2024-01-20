@@ -6,6 +6,7 @@ import "./profile.css";
 import DataContainer from "./dataContainer";
 import UserPostFlow from "../postfFow/userPostFlow";
 import Navbar from "../navbar/navbar";
+import { updateProfileArray } from "../../usersPfp";
 
 const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
   const userSigned = Cookies.get("username");
@@ -23,7 +24,10 @@ const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
           userSigned,
         },
       })
-      .then((res) => setUserData(res.data))
+      .then((res) => {
+        setUserData(res?.data);
+        updateProfileArray(res?.data?.username, setUserData);
+      })
       .catch((err) => handleCatchAxios(err));
     setIsLoading(false);
     isUserDataGot = true;

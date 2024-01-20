@@ -5,6 +5,7 @@ import axios from "axios";
 import { getLink, updateLink } from "../../API";
 import Cookies from "js-cookie";
 import NotificationComponent from "./notificationComponent";
+import { updateArrayPfp } from "../../usersPfp";
 
 Modal.setAppElement("#root");
 
@@ -25,7 +26,13 @@ const NotificationModal = ({
           token: Cookies.get("token"),
         },
       })
-      .then((res) => setNotificationArray(res?.data))
+      .then((res) => {
+        setNotificationArray(res?.data);
+        for (const noti of res.data) {
+          const username = noti.user.username;
+          updateArrayPfp(username, setNotificationArray);
+        }
+      })
       .catch((err) => handleCatchAxios(err));
     setLoading(false);
   };

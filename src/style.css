@@ -40,11 +40,10 @@ body {
   background: var(--main-bg-light);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
-  /* max-height: 100svh; */
   max-width: 100svw;
-  /* overflow: hidden; */
+  min-height: 100svh;
 }
 
 .navbar-container {

@@ -31,8 +31,10 @@ const PostComponent = ({
   isDarkMode,
   user,
   post,
-  handleUpdatePost,
+  postFlow,
+  setPostFlow,
   visitUser,
+  handleUpdatePost,
   handleCatchAxios,
 }) => {
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
@@ -64,7 +66,7 @@ const PostComponent = ({
   };
 
   const handleLikePost = async () => {
-    handleUpdatePost(post.postID, "like");
+    handleUpdatePost(post.postID, "like", postFlow, setPostFlow);
     await axios
       .post(postLink.likePost, {
         postID: post.postID,
@@ -75,7 +77,7 @@ const PostComponent = ({
   };
 
   const handleSavePost = async () => {
-    handleUpdatePost(post.postID, "save");
+    handleUpdatePost(post.postID, "save", postFlow, setPostFlow);
     await axios
       .post(postLink.savePost, {
         postID: post.postID,

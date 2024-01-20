@@ -3,12 +3,14 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
+import { handleUpdateProfilePost } from "../postfFow/updatePost";
 
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
 import privateLight from "../icon/light-mode/profile/private.png";
 import privateDark from "../icon/dark-mode/profile/private.png";
+import { updatePostFlowFile } from "./getPostFile";
 
 const UserPostFlow = ({
   isDarkMode,
@@ -42,6 +44,11 @@ const UserPostFlow = ({
               ...userPostFlowArray,
               ...res.data?.postFlowArray,
             ]);
+
+          for (const post of res.data?.postFlowArray) {
+            const postID = post.postID;
+            updatePostFlowFile(postID, setUserPostFlowArray);
+          }
         }
       })
       .catch((err) => handleCatchAxios(err));
@@ -63,37 +70,6 @@ const UserPostFlow = ({
     }
     // eslint-disable-next-line
   }, []);
-
-  const handleUpdatePost = (postID, process) => {
-    let updatedPosts = [];
-    switch (process) {
-      case "like":
-        userPostFlowArray.forEach((post) => {
-          updatedPosts.push(
-            post.postID === postID
-              ? {
-                  ...post,
-                  isLiked: !post.isLiked,
-                  likeCount: post.isLiked
-                    ? post.likeCount - 1
-                    : post.likeCount + 1,
-                }
-              : post
-          );
-        });
-        break;
-      case "save":
-        userPostFlowArray.forEach((post) => {
-          updatedPosts.push(
-            post.postID === postID ? { ...post, isSaved: !post.isSaved } : post
-          );
-        });
-        break;
-      default:
-        updatedPosts = userPostFlowArray;
-    }
-    setUserPostFlowArray(updatedPosts);
-  };
 
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
@@ -175,8 +151,10 @@ const UserPostFlow = ({
             key={post.postID}
             user={userData}
             post={post}
-            handleUpdatePost={handleUpdatePost}
+            postFlow={userPostFlowArray}
+            setPostFlow={setUserPostFlowArray}
             visitUser={visitUser}
+            handleUpdatePost={handleUpdateProfilePost}
             handleCatchAxios={handleCatchAxios}
           />
         ))}

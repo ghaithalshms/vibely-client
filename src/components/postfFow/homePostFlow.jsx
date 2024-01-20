@@ -3,6 +3,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
+import { updateArrayPfp } from "../../usersPfp";
+import { updatePostFlowFile } from "./getPostFile";
+import { handleUpdatePost } from "../postfFow/updatePost";
 
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";
@@ -13,7 +16,7 @@ const HomePostFlow = ({
   handleCatchAxios,
   scrollingPercentage,
 }) => {
-  const [homePostFlowArray, setHomePostFlowArray] = useState();
+  const [homePostFlowArray, setHomePostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
@@ -28,7 +31,7 @@ const HomePostFlow = ({
             lastGotPostID,
           },
         })
-        .then((res) => {
+        .then(async (res) => {
           if (res.data !== "no post flow") {
             setLastGotPostID(res.data?.lastGotPostID);
             if (!isOnScrolling) setHomePostFlowArray(res.data?.postFlowArray);
@@ -38,8 +41,16 @@ const HomePostFlow = ({
                 ...homePostFlowArray,
                 ...res.data?.postFlowArray,
               ]);
+
+            for (const postData of res.data?.postFlowArray) {
+              const username = postData.user.username;
+              const postID = postData.post.postID;
+              updateArrayPfp(username, setHomePostFlowArray);
+              updatePostFlowFile(postID, setHomePostFlowArray);
+            }
           }
         })
+
         .catch((err) => handleCatchAxios(err));
     setIsLoading(false);
     setIsPostFlowGot(true);
@@ -51,45 +62,6 @@ const HomePostFlow = ({
     else setIsLoading(false);
     // eslint-disable-next-line
   }, []);
-
-  const handleUpdatePost = (postID, process) => {
-    let updatedPosts = [];
-    switch (process) {
-      case "like":
-        homePostFlowArray.forEach((postData) => {
-          updatedPosts.push(
-            postData.post.postID === postID
-              ? {
-                  post: {
-                    ...postData.post,
-                    isLiked: !postData.post.isLiked,
-                    likeCount: postData.post.isLiked
-                      ? postData.post.likeCount - 1
-                      : postData.post.likeCount + 1,
-                  },
-                  user: { ...postData.user },
-                }
-              : postData
-          );
-        });
-        break;
-      case "save":
-        homePostFlowArray.forEach((postData) => {
-          updatedPosts.push(
-            postData.post.postID === postID
-              ? {
-                  post: { ...postData.post, isSaved: !postData.post.isSaved },
-                  user: { ...postData.user },
-                }
-              : postData
-          );
-        });
-        break;
-      default:
-        updatedPosts = homePostFlowArray;
-    }
-    setHomePostFlowArray(updatedPosts);
-  };
 
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
@@ -142,6 +114,8 @@ const HomePostFlow = ({
             key={postData.post.postID}
             user={postData.user}
             post={postData.post}
+            postFlow={homePostFlowArray}
+            setPostFlow={setHomePostFlowArray}
             handleUpdatePost={handleUpdatePost}
             handleCatchAxios={handleCatchAxios}
           />

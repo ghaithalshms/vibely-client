@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
 import "../../modal.css";
-import CheckboxStyled from "./checkboxStyled";
+// import CheckboxStyled from "./checkboxStyled";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
@@ -101,7 +101,7 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
         >
           Sign out
         </button>
-        <button style={{ display: "flex", justifyContent: "center" }}>
+        {/* <button style={{ display: "flex", justifyContent: "center" }}>
           Dark mode
           <CheckboxStyled
             isCheckedParam={isDarkMode}
@@ -132,8 +132,8 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
               );
               if (metaColorScheme) metaColorScheme.content = "dark";
             }}
-          />
-        </button>
+          /> 
+        </button> */}
       </div>
     </Modal>
   );

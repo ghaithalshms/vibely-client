@@ -20,35 +20,36 @@ const Signin = ({ isDarkMode }) => {
       usernameOrEmail: document.getElementById("username").value,
       password: md5(document.getElementById("password-signin").value),
     };
-    await axios
-      .post(postLink.signIn, user)
-      .then((response) => {
-        Cookies.set("token", response.data.token, { expires: 1000 });
-        Cookies.set("username", response.data.username, { expires: 1000 });
-        window.location.href = "/";
-      })
-      .catch((error) => {
-        setDialogOpen(true);
-        setModalHeader("Ooups");
-        if (error?.code === "ERR_NETWORK") {
-          setModalBody(
-            `Sorry, a problem happened while connecting to the server`
-          );
-          return;
-        }
-        switch (error?.response?.status) {
-          case 401:
-            setModalBody(`Your password is incorrect, try again.`);
-            break;
-          case 404:
-            setModalBody(`This username does not exist.`);
-            break;
-          default:
+    if (user.usernameOrEmail && user.password)
+      await axios
+        .post(postLink.signIn, user)
+        .then((response) => {
+          Cookies.set("token", response.data.token, { expires: 1000 });
+          Cookies.set("username", response.data.username, { expires: 1000 });
+          window.location.href = "/";
+        })
+        .catch((error) => {
+          setDialogOpen(true);
+          setModalHeader("Ooups");
+          if (error?.code === "ERR_NETWORK") {
             setModalBody(
-              `Sorry, an error happened: ${error?.response?.status}`
+              `Sorry, a problem happened while connecting to the server`
             );
-        }
-      });
+            return;
+          }
+          switch (error?.response?.status) {
+            case 401:
+              setModalBody(`Your password is incorrect, try again.`);
+              break;
+            case 404:
+              setModalBody(`This username does not exist.`);
+              break;
+            default:
+              setModalBody(
+                `Sorry, an error happened: ${error?.response?.status}`
+              );
+          }
+        });
   };
   const vibelyIcon = useRef(null);
   let container;
@@ -86,7 +87,7 @@ const Signin = ({ isDarkMode }) => {
         autoComplete="password"
         placeholder="Password"
       />
-      <button onClick={() => handleSignIn()} className="full-width">
+      <button onClick={handleSignIn} className="full-width">
         Sign In
       </button>
       <Link className="a-span" to="/forgot-password">

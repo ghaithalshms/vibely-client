@@ -4,6 +4,7 @@ import "../../modal.css";
 import { getLink } from "../../API";
 import axios from "axios";
 import UserComponent from "./userComponent";
+import { updateUserListArrayPfp } from "../../usersPfp";
 
 Modal.setAppElement("#root");
 
@@ -48,7 +49,13 @@ const GetUserListModal = ({
     };
     await axios
       .get(reqLink, data)
-      .then((res) => setUserList(res.data))
+      .then((res) => {
+        setUserList(res?.data);
+        for (const user of res.data) {
+          const username = user.username;
+          updateUserListArrayPfp(username, setUserList);
+        }
+      })
       .catch((err) => {
         handleCatchAxios(err);
       });

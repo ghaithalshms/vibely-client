@@ -44,12 +44,18 @@ const App = () => {
 
   const handleTheme = () => {
     // check dark mode and enable it
-    if (Cookies.get("dark-mode") === "true")
-      document.body.classList.add("dark-mode");
+
+    // if (Cookies.get("dark-mode") === "true")
+    //   document.body.classList.add("dark-mode");
     // body class listener for dark mode
     const handleSetDarkMode = () => {
       setIsDarkMode(document.body.classList.contains("dark-mode"));
     };
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    )
+      document.body.classList.add("dark-mode");
     // Update theme-color meta tag based on dark mode
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {

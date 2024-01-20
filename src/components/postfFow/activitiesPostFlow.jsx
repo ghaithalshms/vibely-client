@@ -3,10 +3,13 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
+import { updateArrayPfp } from "../../usersPfp";
+import { handleUpdatePost } from "../postfFow/updatePost";
 
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
+import { updatePostFlowFile } from "./getPostFile";
 
 const ActivitiesPostFlow = ({
   isDarkMode,
@@ -54,6 +57,12 @@ const ActivitiesPostFlow = ({
             // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
             else
               setPostFlowArray([...postFlowArray, ...res.data?.postFlowArray]);
+            for (const postData of res.data?.postFlowArray) {
+              const username = postData.user.username;
+              updateArrayPfp(username, setPostFlowArray);
+              const postID = postData.post.postID;
+              updatePostFlowFile(postID, setPostFlowArray);
+            }
           }
         })
         .catch((err) => handleCatchAxios(err));
@@ -67,45 +76,6 @@ const ActivitiesPostFlow = ({
     else setIsLoading(false);
     // eslint-disable-next-line
   }, []);
-
-  const handleUpdatePost = (postID, process) => {
-    let updatedPosts = [];
-    switch (process) {
-      case "like":
-        postFlowArray.forEach((postData) => {
-          updatedPosts.push(
-            postData.post.postID === postID
-              ? {
-                  post: {
-                    ...postData.post,
-                    isLiked: !postData.post.isLiked,
-                    likeCount: postData.post.isLiked
-                      ? postData.post.likeCount - 1
-                      : postData.post.likeCount + 1,
-                  },
-                  user: { ...postData.user },
-                }
-              : postData
-          );
-        });
-        break;
-      case "save":
-        postFlowArray.forEach((postData) => {
-          updatedPosts.push(
-            postData.post.postID === postID
-              ? {
-                  post: { ...postData.post, isSaved: !postData.post.isSaved },
-                  user: { ...postData.user },
-                }
-              : postData
-          );
-        });
-        break;
-      default:
-        updatedPosts = postFlowArray;
-    }
-    setPostFlowArray(updatedPosts);
-  };
 
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
@@ -158,6 +128,8 @@ const ActivitiesPostFlow = ({
             key={postData.post.postID}
             user={postData.user}
             post={postData.post}
+            postFlow={postFlowArray}
+            setPostFlow={setPostFlowArray}
             handleUpdatePost={handleUpdatePost}
             handleCatchAxios={handleCatchAxios}
           />
