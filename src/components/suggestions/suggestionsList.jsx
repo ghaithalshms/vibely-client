@@ -31,16 +31,20 @@ const SuggestionsList = ({ isDarkMode, handleCatchAxios }) => {
       .catch((err) => handleCatchAxios(err));
   };
   return (
-    <div className="suggestions-container">
-      <h3 className="suggestions-h3">Suggestions for you</h3>
-      {suggestionUserArray.map((user, index) => (
-        <SuggestionUserComponent
-          user={user}
-          handleCatchAxios={handleCatchAxios}
-          key={index}
-        />
-      ))}
-    </div>
+    <>
+      {suggestionUserArray?.length > 0 && (
+        <div className="suggestions-container">
+          <h3 className="suggestions-h3">Suggestions for you</h3>
+          {suggestionUserArray?.map((user, index) => (
+            <SuggestionUserComponent
+              user={user}
+              handleCatchAxios={handleCatchAxios}
+              key={index}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 
