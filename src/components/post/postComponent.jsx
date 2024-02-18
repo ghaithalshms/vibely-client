@@ -129,6 +129,10 @@ const PostComponent = ({
         }}
       >
         <img
+          // block right click
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
           className="profile-picture"
           style={{
             width: "43px",
@@ -268,6 +272,20 @@ const PostComponent = ({
     </div>
   );
 
+  const postFileLoading = (
+    <div
+      className="full-width"
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "2rem",
+        paddingBottom: "2rem",
+      }}
+    >
+      <span className="loader" />
+    </div>
+  );
+
   if (isPostDeleted) return <></>;
 
   return (
@@ -275,7 +293,10 @@ const PostComponent = ({
       {/* user info */}
       {postHeader}
       {/* post desc, pic and icons */}
-      {postBody}
+      {/* {post.fileType && !post.file ? postFileLoading : postBody} */}
+      {(post.fileType && post.file) || post.fileType === "null"
+        ? postBody
+        : postFileLoading}
       {/* bottom line */}
       <div className="line">
         <hr />

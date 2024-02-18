@@ -17,6 +17,7 @@ const GetUserListModal = ({
   username,
   postID,
   visitUser,
+  setChatUser,
   handleCatchAxios,
 }) => {
   const [userList, setUserList] = useState([]);
@@ -91,7 +92,8 @@ const GetUserListModal = ({
         },
         content: {
           position: "static",
-          width: "300px",
+          width: "400px",
+          maxWidth: "95vw",
           height: "auto",
           maxHeight: "60svh",
           borderRadius: "8px",
@@ -116,7 +118,12 @@ const GetUserListModal = ({
           </div>
         )}
         {userList?.map((user, index) => (
-          <UserComponent key={index} user={user} visitUser={visitUser} />
+          <UserComponent
+            key={index}
+            user={user}
+            setChatUser={setChatUser}
+            visitUser={visitUser}
+          />
         ))}
       </div>
     </Modal>

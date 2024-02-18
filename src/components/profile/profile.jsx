@@ -6,7 +6,7 @@ import "./profile.css";
 import DataContainer from "./dataContainer";
 import UserPostFlow from "../postfFow/userPostFlow";
 import Navbar from "../navbar/navbar";
-import { updateProfileArray } from "../../usersPfp";
+import { updateUserDataPfp } from "../../usersPfp";
 
 const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
   const userSigned = Cookies.get("username");
@@ -26,7 +26,7 @@ const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
       })
       .then((res) => {
         setUserData(res?.data);
-        updateProfileArray(res?.data?.username, setUserData);
+        updateUserDataPfp(res?.data?.username, setUserData);
       })
       .catch((err) => handleCatchAxios(err));
     setIsLoading(false);
@@ -37,9 +37,9 @@ const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
     // GET USER DATA ON LOAD
     if (!isUserDataGot)
       handleGetUserData(
-        window.location.href.split("/")[
-          window.location.href.split("/").length - 1
-        ]
+        window.location.href
+          .split("/")
+          [window.location.href.split("/").length - 1].split("?")[0]
       );
     // eslint-disable-next-line
   }, []);

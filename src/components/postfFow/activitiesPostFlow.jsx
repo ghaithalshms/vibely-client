@@ -22,10 +22,9 @@ const ActivitiesPostFlow = ({
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const getAxiosLink = () => {
-    const activityType =
-      window.location.href.split("/")[
-        window.location.href.split("/").length - 1
-      ];
+    const activityType = window.location.href
+      .split("/")
+      [window.location.href.split("/").length - 1].split("?")[0];
     switch (activityType) {
       case "liked":
         return getLink.getLikedPostFlow;

@@ -15,6 +15,7 @@ import optionsIconDark from "../icon/dark-mode/navbar/options.png";
 
 import GetUserListModal from "../user/getUserListModal";
 import MoreModal from "../navbar/moreModal";
+import { useNavigate } from "react-router-dom";
 
 const DataContainer = ({
   isDarkMode,
@@ -41,6 +42,8 @@ const DataContainer = ({
 
   const [isUserListModalOpen, setUserListModalOpen] = useState(false);
   const [userListModalType, setUserListModalType] = useState();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // LINK ICON
@@ -140,6 +143,142 @@ const DataContainer = ({
     </div>
   );
 
+  const followerAndFollowingPC = (
+    <div className="container-x">
+      <div
+        className="pointer single-line"
+        onClick={() => {
+          if (
+            userData.username === Cookies.get("username") ||
+            !userData.privacity ||
+            userData.isFollowing
+          ) {
+            setUserListModalOpen(true);
+            setUserListModalType("Followers");
+          }
+        }}
+        style={{ marginRight: "10px" }}
+      >{`${userData.followerCount} follower`}</div>
+      <div
+        className="pointer single-line"
+        onClick={() => {
+          if (
+            userData.username === Cookies.get("username") ||
+            !userData.privacity ||
+            userData.isFollowing
+          ) {
+            setUserListModalOpen(true);
+            setUserListModalType("Following");
+          }
+        }}
+      >{`${userData.followingCount} following`}</div>
+    </div>
+  );
+
+  const optionsIcon = (
+    <img
+      style={{
+        width: "28px",
+        height: "28px",
+      }}
+      src={isDarkMode ? optionsIconDark : optionsIconLight}
+      alt="options"
+      className="pointer"
+      onClick={() => setOptionsModalOpen(true)}
+      // block right click
+      onContextMenu={(event) => {
+        event.preventDefault();
+      }}
+    />
+  );
+
+  const followerAndFollowingMobile = (
+    <div className="container-x">
+      {/* follower */}
+      <div
+        style={{ alignItems: "center", marginRight: "10px" }}
+        className="container-y pointer"
+        onClick={() => {
+          if (
+            userData.username === Cookies.get("username") ||
+            !userData.privacity ||
+            userData.isFollowing
+          ) {
+            setUserListModalOpen(true);
+            setUserListModalType("Followers");
+          }
+        }}
+      >
+        {`${userData.followerCount}`}
+        <div>follower</div>
+      </div>
+      {/* following */}
+      <div
+        style={{ alignItems: "center" }}
+        className="container-y pointer"
+        onClick={() => {
+          if (
+            userData.username === Cookies.get("username") ||
+            !userData.privacity ||
+            userData.isFollowing
+          ) {
+            setUserListModalOpen(true);
+            setUserListModalType("Following");
+          }
+        }}
+      >
+        {`${userData.followingCount}`}
+        <div>following</div>
+      </div>
+    </div>
+  );
+
+  const userLink = (
+    <div
+      className="container-x"
+      style={{
+        marginTop: "8px",
+        alignItems: "center",
+      }}
+    >
+      <img
+        style={{ width: "14px", height: "14px", marginRight: "8px" }}
+        src={isDarkMode ? linkIconDark : linkIconLight}
+        ref={linkIconRef}
+        alt="link"
+        // block right click
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
+      />
+      <div>
+        <a
+          className="link"
+          target="_blank"
+          rel="noreferrer"
+          href={`https://${userData.link}`}
+        >
+          {userData.link}
+        </a>
+      </div>
+    </div>
+  );
+
+  const followMessageButtons = (
+    <div className="container-x" style={{ width: "210px" }}>
+      <button className="full-width" onClick={handleFollow}>
+        {followButtonText}
+      </button>
+      <button
+        onClick={() => {
+          navigate(`/inbox/${userData.username}`);
+        }}
+      >
+        {"Message"}
+      </button>
+    </div>
+  );
+
   return (
     <div className="data-container container-y">
       <div
@@ -150,9 +289,9 @@ const DataContainer = ({
           justifyContent: "space-between",
         }}
       >
-        <div className="container-x">
+        <div className="container-x" style={{ width: "100%" }}>
           <img
-            className="profile-picture"
+            className="profile-picture-page"
             src={handlePfp()}
             alt="Pfp"
             // block right click
@@ -164,150 +303,52 @@ const DataContainer = ({
             className="container-y"
             style={{
               justifyContent: "center",
-              marginLeft: "10%",
+              width: "100%",
+              alignItems: "center",
             }}
           >
             {/* FOR PC NAME AND ICONS */}
             <div className="only-pc">{nameAndIcon}</div>
 
             {/* FOR PC follower and following */}
-            <div className="only-pc" style={{ marginTop: "15px" }}>
-              <div className="container-x">
-                <div
-                  className="pointer single-line"
-                  onClick={() => {
-                    if (
-                      userData.username === Cookies.get("username") ||
-                      !userData.privacity ||
-                      userData.isFollowing
-                    ) {
-                      setUserListModalOpen(true);
-                      setUserListModalType("Followers");
-                    }
-                  }}
-                  style={{ marginRight: "10px" }}
-                >{`${userData.followerCount} follower`}</div>
-                <div
-                  className="pointer single-line"
-                  onClick={() => {
-                    if (
-                      userData.username === Cookies.get("username") ||
-                      !userData.privacity ||
-                      userData.isFollowing
-                    ) {
-                      setUserListModalOpen(true);
-                      setUserListModalType("Following");
-                    }
-                  }}
-                >{`${userData.followingCount} following`}</div>
+            <div className="only-pc">
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: "15px",
+                }}
+              >
+                {followerAndFollowingPC}
+                {tokenUsername !== userData.username && followMessageButtons}
               </div>
-              {tokenUsername !== userData.username && (
-                <button className="full-width" onClick={() => handleFollow()}>
-                  {followButtonText}
-                </button>
-              )}
             </div>
             {/* FOR MOBILE FOLLOW FOLLOWING*/}
-            <div className="only-mobile" style={{ marginTop: "10px" }}>
-              <div className="container-x">
-                {/* follower */}
-                <div
-                  style={{ alignItems: "center", marginRight: "10px" }}
-                  className="container-y pointer"
-                  onClick={() => {
-                    if (
-                      userData.username === Cookies.get("username") ||
-                      !userData.privacity ||
-                      userData.isFollowing
-                    ) {
-                      setUserListModalOpen(true);
-                      setUserListModalType("Followers");
-                    }
-                  }}
-                >
-                  {`${userData.followerCount}`}
-                  <div>follower</div>
-                </div>
-                {/* following */}
-                <div
-                  style={{ alignItems: "center" }}
-                  className="container-y pointer"
-                  onClick={() => {
-                    if (
-                      userData.username === Cookies.get("username") ||
-                      !userData.privacity ||
-                      userData.isFollowing
-                    ) {
-                      setUserListModalOpen(true);
-                      setUserListModalType("Following");
-                    }
-                  }}
-                >
-                  {`${userData.followingCount}`}
-                  <div>following</div>
-                </div>
+            <div className="only-mobile">
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: "10px",
+                }}
+              >
+                {followerAndFollowingMobile}
+                {tokenUsername !== userData.username && followMessageButtons}
               </div>
-              {tokenUsername !== userData.username && (
-                <button className="full-width" onClick={() => handleFollow()}>
-                  {followButtonText}
-                </button>
-              )}
             </div>
           </div>
         </div>
         {/* OPTIONS ICON  */}
-        {userData.username === Cookies.get("username") && (
-          <img
-            style={{
-              width: "28px",
-              height: "28px",
-            }}
-            src={isDarkMode ? optionsIconDark : optionsIconLight}
-            alt="options"
-            className="pointer"
-            onClick={() => setOptionsModalOpen(true)}
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
+        {userData.username === Cookies.get("username") && optionsIcon}
       </div>
       {/* FOR MOBILE NAME AND ICONS */}
       <div className="only-mobile">{nameAndIcon}</div>
       {/* BIOGRAPHY */}
       <div style={{ marginTop: "8px" }}>{userData.biography}</div>
       {/* LINK */}
-      {userData.link && (
-        <div
-          className="container-x"
-          style={{
-            marginTop: "8px",
-            alignItems: "center",
-          }}
-        >
-          <img
-            style={{ width: "14px", height: "14px", marginRight: "8px" }}
-            src={isDarkMode ? linkIconDark : linkIconLight}
-            ref={linkIconRef}
-            alt="link"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-          <div>
-            <a
-              className="link"
-              target="_blank"
-              rel="noreferrer"
-              href={`https://${userData.link}`}
-            >
-              {userData.link}
-            </a>
-          </div>
-        </div>
-      )}
+      {userData.link && userLink}
       {userData?.username && isUserListModalOpen && (
         <GetUserListModal
           isDarkMode={isDarkMode}

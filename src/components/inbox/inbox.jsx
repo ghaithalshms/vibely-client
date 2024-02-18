@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./inbox.css";
 import GetInboxUsers from "./getInboxUsers";
 import ChatComponent from "../chat/chatComponent";
+import axios from "axios";
+import { getLink } from "../../API";
+import Cookies from "js-cookie";
+import { updateUserDataPfp } from "../../usersPfp";
 
 const Inbox = ({
   isDarkMode,
@@ -10,6 +14,28 @@ const Inbox = ({
   clientSocket,
 }) => {
   const [chatUser, setChatUser] = useState(null);
+
+  const setChatUserFromLink = async () => {
+    const username = window.location.href
+      .split("/")
+      [window.location.href.split("/").length - 1].split("?")[0];
+    if (username && username !== "inbox")
+      await axios
+        .get(getLink.getUserData, {
+          params: {
+            username,
+            userSigned: Cookies.get("token"),
+          },
+        })
+        .then((res) => {
+          setChatUser(res?.data);
+          updateUserDataPfp(username, setChatUser);
+        });
+  };
+
+  useEffect(() => {
+    setChatUserFromLink();
+  }, []);
 
   return (
     <div className="inbox-container">

@@ -2,6 +2,7 @@ import React from "react";
 import defaultPfp from "../icon/default profile picture.jpg";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
+import Cookies from "js-cookie";
 
 const InboxUserComponent = ({ user, message, setChatUser }) => {
   const handlePfp = () => {
@@ -42,7 +43,14 @@ const InboxUserComponent = ({ user, message, setChatUser }) => {
         )}
       </div>
       {/* <span>{`@${user.username}`}</span> */}
-      <span>{`${
+      <span
+        style={{
+          fontWeight:
+            message.to === Cookies.get("username") && !message.seen
+              ? "bold"
+              : "normal",
+        }}
+      >{`${
         message.message
           ? message.message
           : message.fileType === "picture"

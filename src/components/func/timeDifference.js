@@ -38,14 +38,14 @@ const timeDifference = (time) => {
       String(postedTime.year)[2] + String(postedTime.year)[3]
     }`;
   } else if (difference.days > 31) {
-    return `${postedTime.day} ${months[postedTime.month]}`;
+    return `on ${postedTime.day} ${months[postedTime.month]}`;
   } else if (difference.days < 31 && difference.days > 0)
-    return `${difference.days} d`;
+    return `${difference.days} days ago`;
   else if (difference.hours < 24 && difference.hours > 0)
-    return `${difference.hours} h`;
+    return `${difference.hours} hours ago`;
   else if (difference.minutes < 60 && difference.minutes > 0)
-    return `${difference.minutes} m`;
-  else if (difference.seconds < 60) return `${difference.seconds} s`;
+    return `${difference.minutes} minutes ago`;
+  else if (difference.seconds < 60) return `${difference.seconds} seconds ago`;
 };
 
 module.exports = { convertDate, timeDifference };

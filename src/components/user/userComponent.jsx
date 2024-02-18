@@ -4,7 +4,7 @@ import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
 
-const UserComponent = ({ user, visitUser }) => {
+const UserComponent = ({ user, visitUser, setChatUser }) => {
   const handlePfp = () => {
     if (user?.picture)
       return `data:image/png;base64,${btoa(
@@ -19,7 +19,9 @@ const UserComponent = ({ user, visitUser }) => {
   const nameAndIcon = (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
-        <h3 style={{ marginRight: "5px" }}>{`${user.firstName} `}</h3>
+        <h3
+          style={{ marginRight: "5px" }}
+        >{`${user.firstName} ${user.lastName}`}</h3>
         {user.isVerified && (
           <img
             style={{ height: "20px", width: "20px", marginRight: "3px" }}
@@ -50,8 +52,13 @@ const UserComponent = ({ user, visitUser }) => {
     <div
       className="container-x pointer"
       onClick={() => {
-        navigate(`/${user.username}`);
-        if (visitUser) visitUser(user.username);
+        if (setChatUser) {
+          navigate(`/inbox/${user.username}`);
+          setChatUser(user);
+        } else {
+          navigate(`/${user.username}`);
+          if (visitUser) visitUser(user.username);
+        }
       }}
       style={{ marginBottom: "5px" }}
     >

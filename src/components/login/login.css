@@ -135,6 +135,7 @@
   .login-container {
     width: 80vw;
     height: 60vh;
+    min-height: 420px;
   }
   .form-container {
     width: 100%;

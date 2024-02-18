@@ -92,11 +92,19 @@ const ChatFooter = ({
           {!message && (
             <div className="chat-icons-container">
               <img
+                // block right click
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                }}
                 className="chat-icon pointer"
                 src={isDarkMode ? micDark : micLight}
                 alt="mic icon"
               />
               <img
+                // block right click
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                }}
                 className="chat-icon pointer"
                 src={isDarkMode ? galleryDark : galleryLight}
                 alt="gallery icon"

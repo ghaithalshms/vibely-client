@@ -5,6 +5,8 @@ import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
 import backLight from "../icon/light-mode/chat/back.png";
 import backDark from "../icon/dark-mode/chat/back.png";
+import { timeDifference } from "../func/timeDifference";
+import spotifyIcon from "../icon/spotify.png";
 
 const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
   const handlePfp = () => {
@@ -27,7 +29,10 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
         marginRight: "1rem",
       }}
       src={isDarkMode ? backDark : backLight}
-      onClick={() => setChatUser(null)}
+      onClick={() => {
+        navigate(`/inbox`);
+        setChatUser(null);
+      }}
       alt="back"
       className="pointer"
       // block right click
@@ -67,6 +72,23 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
             }}
           />
         )}
+        {/* SPOTIFY ICON */}
+        <img
+          style={{
+            display: "none",
+            width: "35px",
+            height: "35px",
+            position: "absolute",
+            right: "20px",
+            top: "20px",
+          }}
+          // block right click
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
+          src={spotifyIcon}
+          alt="spotify"
+        />
       </div>
     </>
   );
@@ -87,7 +109,14 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
             src={handlePfp()}
             alt=""
           />
-          <div>{nameAndIcon}</div>
+          <div className="chat-header-user-container">
+            <div>{nameAndIcon}</div>
+            <span className="last-seen-span">
+              {chatUser.lastSeen === "online"
+                ? "Online"
+                : `Last seen ${timeDifference(chatUser.lastSeen)}`}
+            </span>
+          </div>
         </>
       )}
     </div>

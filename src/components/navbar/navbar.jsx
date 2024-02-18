@@ -88,10 +88,9 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
       return;
     }
 
-    const urlPage =
-      window.location.href.split("/")[
-        window.location.href.split("/").length - 1
-      ];
+    const urlPage = window.location.href
+      .split("/")
+      [window.location.href.split("/").length - 1].split("?")[0];
 
     switch (urlPage) {
       case "":

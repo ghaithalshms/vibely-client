@@ -231,7 +231,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
     <div className="container-y full-width">
       <div
         className="container-x"
-        style={{ alignItems: "center", marginBottom: "0.3rem" }}
+        style={{ alignItems: "center", marginBottom: "1rem" }}
       >
         {profilePicture}
         {textArea}

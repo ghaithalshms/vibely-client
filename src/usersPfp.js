@@ -51,7 +51,7 @@ const updateUserListArrayPfp = async (username, setArray) => {
   });
 };
 
-const updateProfileArray = async (username, setUserData) => {
+const updateUserDataPfp = async (username, setUserData) => {
   const newPicture = await handleGetUserPfp(username);
   setUserData((prevState) => {
     return {
@@ -65,5 +65,5 @@ export {
   handleGetUserPfp,
   updateArrayPfp,
   updateUserListArrayPfp,
-  updateProfileArray,
+  updateUserDataPfp,
 };

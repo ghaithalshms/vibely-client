@@ -23,11 +23,13 @@ const Search = ({ isDarkMode, handleCatchAxios }) => {
 
   useEffect(() => {
     if (username) handleGetSearchUser();
+    document.getElementById("search-txtarea")?.focus();
     // eslint-disable-next-line
   }, [username]);
 
   const searchUserElement = (
     <textarea
+      id="search-txtarea"
       placeholder="Search for a user"
       onChange={(e) => setUsername(e.currentTarget.value)}
       style={{ resize: "none", marginBottom: "1rem", width: "100%" }}

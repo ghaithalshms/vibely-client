@@ -231,7 +231,7 @@ const App = () => {
         />
         {/* INBOX ROUTE */}
         <Route
-          path="/inbox"
+          path="/inbox/*"
           element={
             token && username ? (
               <Inbox

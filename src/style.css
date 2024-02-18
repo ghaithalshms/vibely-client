@@ -70,6 +70,7 @@ pre {
   .only-pc {
     display: none;
   }
+
   /* COMPONENT MAIN CONTAINER  */
   .main-container {
     min-width: 100vw;
@@ -86,6 +87,7 @@ pre {
   .only-mobile {
     display: none;
   }
+
   /* COMPONENT MAIN CONTAINER  */
   .main-container {
     margin-left: 72px;

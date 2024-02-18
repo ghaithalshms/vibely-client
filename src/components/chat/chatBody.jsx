@@ -112,6 +112,7 @@ const ChatBody = ({
         ))}
       {/* MESSAGE SEEN */}
       {chatArray &&
+        !isLoading &&
         chatArray[chatArray.length - 1]?.from === Cookies.get("username") &&
         chatArray[chatArray.length - 1]?.seen && (
           <div
