@@ -8,7 +8,7 @@ self.addEventListener("push", async (event) => {
 
   const notificationOptions = {
     body: payload.body,
-    icon: `http://localhost:8000/api/user/data/picture?username=${payload.title}`,
+    icon: `https://vibely-backend-fkpv.onrender.com/api/user/data/picture?username=${payload.title}`,
     data: { url: `https://vibely.rf.gd/inbox/${payload.title}` },
   };
 
