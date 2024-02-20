@@ -3,7 +3,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
-import { updateArrayPfp } from "../../usersPfp";
 import { updatePostFlowFile } from "./getPostFile";
 import { handleUpdatePost } from "../postfFow/updatePost";
 
@@ -43,9 +42,7 @@ const HomePostFlow = ({
               ]);
 
             for (const postData of res.data?.postFlowArray) {
-              const username = postData.user.username;
               const postID = postData.post.postID;
-              updateArrayPfp(username, setHomePostFlowArray);
               updatePostFlowFile(postID, setHomePostFlowArray);
             }
           }

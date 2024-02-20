@@ -4,7 +4,6 @@ import "../../modal.css";
 import { getLink } from "../../API";
 import axios from "axios";
 import UserComponent from "./userComponent";
-import { updateUserListArrayPfp } from "../../usersPfp";
 
 Modal.setAppElement("#root");
 
@@ -30,6 +29,7 @@ const GetUserListModal = ({
         reqLink = getLink.getUserFollowers;
         break;
       case "Following":
+      case "Inbox":
         reqLink = getLink.getUserFollowing;
         break;
       case "Liked Users":
@@ -38,6 +38,7 @@ const GetUserListModal = ({
       default:
         return;
     }
+
     const data = {
       params:
         type === "Liked Users"
@@ -52,10 +53,6 @@ const GetUserListModal = ({
       .get(reqLink, data)
       .then((res) => {
         setUserList(res?.data);
-        for (const user of res.data) {
-          const username = user.username;
-          updateUserListArrayPfp(username, setUserList);
-        }
       })
       .catch((err) => {
         handleCatchAxios(err);
@@ -82,9 +79,7 @@ const GetUserListModal = ({
       style={{
         overlay: {
           zIndex: 100,
-          backgroundColor: isDarkMode
-            ? "rgba(255, 255, 255, 0.25)"
-            : "rgba(0, 0, 0, 0.25)",
+          backgroundColor: "rgba(0, 0, 0, 0.55)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -97,7 +92,7 @@ const GetUserListModal = ({
           height: "auto",
           maxHeight: "60svh",
           borderRadius: "8px",
-          backgroundColor: isDarkMode ? "black" : "white",
+          backgroundColor: isDarkMode ? "#202020" : "white",
           borderColor: isDarkMode ? "black" : "white",
           animation: "fadeIn 0.3s",
         },
@@ -123,6 +118,8 @@ const GetUserListModal = ({
             user={user}
             setChatUser={setChatUser}
             visitUser={visitUser}
+            followBtn={type !== "Inbox"}
+            handleCatchAxios={handleCatchAxios}
           />
         ))}
       </div>

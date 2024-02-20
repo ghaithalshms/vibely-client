@@ -1,20 +1,9 @@
 import React from "react";
-import defaultPfp from "../icon/default profile picture.jpg";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import Cookies from "js-cookie";
 
 const InboxUserComponent = ({ user, message, setChatUser }) => {
-  const handlePfp = () => {
-    if (user?.picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(user.picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
-  };
   const nameAndIcon = (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
@@ -75,7 +64,7 @@ const InboxUserComponent = ({ user, message, setChatUser }) => {
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={handlePfp()}
+        src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
         alt=""
       />
       <div>{nameAndIcon}</div>

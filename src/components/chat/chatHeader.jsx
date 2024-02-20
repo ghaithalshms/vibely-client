@@ -1,5 +1,4 @@
 import React from "react";
-import defaultPfp from "../icon/default profile picture.jpg";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
@@ -9,16 +8,6 @@ import { timeDifference } from "../func/timeDifference";
 import spotifyIcon from "../icon/spotify.png";
 
 const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
-  const handlePfp = () => {
-    if (chatUser?.picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(chatUser?.picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
-  };
   const navigate = useNavigate();
 
   const backIconElement = (
@@ -106,7 +95,7 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
               marginBottom: "0.5rem",
             }}
             onClick={() => navigate(`/${chatUser?.username}`)}
-            src={handlePfp()}
+            src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`}
             alt=""
           />
           <div className="chat-header-user-container">

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import defaultPfp from "../icon/default profile picture.jpg";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
@@ -44,14 +43,12 @@ const PostComponent = ({
   const [isPostDeleted, setPostDeleted] = useState(false);
 
   const handlePicture = (picture) => {
-    if (picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
+    return `data:image/png;base64,${btoa(
+      new Uint8Array(picture.data).reduce(
+        (data, byte) => data + String.fromCharCode(byte),
+        ""
+      )
+    )}`;
   };
 
   const handleVideo = (video) => {
@@ -140,7 +137,7 @@ const PostComponent = ({
             marginRight: "0.8rem",
             marginBottom: "0.5rem",
           }}
-          src={handlePicture(user?.picture)}
+          src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
           alt=""
         />
         <div>{nameIconDate}</div>

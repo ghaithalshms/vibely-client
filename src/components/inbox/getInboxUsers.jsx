@@ -4,7 +4,6 @@ import { getLink } from "../../API";
 import InboxUserComponent from "./inboxUserComponent";
 import Cookies from "js-cookie";
 import Navbar from "../navbar/navbar";
-import { updateArrayPfp } from "../../usersPfp";
 import sendMsgDark from "../icon/dark-mode/inbox/send_message.png";
 import sendMsgLight from "../icon/light-mode/inbox/send_message.png";
 import GetUserListModal from "../user/getUserListModal";
@@ -32,10 +31,6 @@ const GetInboxUsers = ({
       })
       .then((res) => {
         setInboxUsers(res?.data);
-        for (const postData of res.data) {
-          const username = postData.user.username;
-          updateArrayPfp(username, setInboxUsers);
-        }
       })
       .catch((err) => handleCatchAxios(err));
     setLoading(false);
@@ -68,7 +63,7 @@ const GetInboxUsers = ({
           <h2>Inbox</h2>
           <img
             className="pointer"
-            onClick={setUserListModalOpen}
+            onClick={() => setUserListModalOpen(true)}
             style={{ width: "25px", height: "25px", marginRight: "1rem" }}
             src={isDarkMode ? sendMsgDark : sendMsgLight}
             alt="send_msg"
@@ -117,7 +112,7 @@ const GetInboxUsers = ({
           isOpen={userListModalIsOpen}
           onRequestClose={() => setUserListModalOpen(false)}
           header={"Send a message"}
-          type={"Following"}
+          type={"Inbox"}
           username={Cookies.get("username")}
           setChatUser={(user) => {
             setChatUser(user);

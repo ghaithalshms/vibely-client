@@ -5,7 +5,6 @@ import verifiedIcon from "../icon/verified.png";
 import adminIcon from "../icon/admin.png";
 import { postLink } from "../../API";
 
-import defaultPfp from "../icon/default profile picture.jpg";
 // LIGHT THEME ICON
 import linkIconLight from "../icon/light-mode/profile/link.png";
 import optionsIconLight from "../icon/light-mode/navbar/options.png";
@@ -56,17 +55,6 @@ const DataContainer = ({
         : optionsIconLight;
   }, [isDarkMode]);
 
-  const handlePfp = () => {
-    if (userData?.picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(userData.picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
-  };
-
   const handleFollow = async () => {
     setFollowButtonText(
       userData.isFollowing
@@ -85,7 +73,11 @@ const DataContainer = ({
       .then((res) => {
         switch (res.data) {
           case "followed":
-            setUserData((prevState) => ({ ...prevState, isFollowing: true }));
+            setUserData((prevState) => ({
+              ...prevState,
+              isFollowing: true,
+              followerCount: userData.followerCount + 1,
+            }));
             break;
           case "follow requested":
             setUserData((prevState) => ({
@@ -94,7 +86,11 @@ const DataContainer = ({
             }));
             break;
           case "unfollowed":
-            setUserData((prevState) => ({ ...prevState, isFollowing: false }));
+            setUserData((prevState) => ({
+              ...prevState,
+              isFollowing: false,
+              followerCount: userData.followerCount - 1,
+            }));
             break;
           case "follow request deleted":
             setUserData((prevState) => ({
@@ -292,7 +288,7 @@ const DataContainer = ({
         <div className="container-x" style={{ width: "100%" }}>
           <img
             className="profile-picture-page"
-            src={handlePfp()}
+            src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`}
             alt="Pfp"
             // block right click
             onContextMenu={(event) => {

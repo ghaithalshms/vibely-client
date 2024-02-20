@@ -45,8 +45,8 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
   const handleUpdateProfilePicture = async () => {
     if (picture?.size > 2 * 1024 * 1024) {
       alert("File size exceeds the maximum allowed size (2MB).");
-      setPicture(null);
-      pictureRef.current.src = null;
+      setPicture(defaultPfp);
+      pictureRef.current.src = defaultPfp;
     } else {
       axios.defaults.maxBodyLength = 2 * 1024 * 1024;
       const formData = new FormData();
@@ -81,7 +81,6 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
       .then((res) => {
         setUserData(res.data);
         setUsername(res.data.username);
-        setPicture(res.data.picture);
         setFirstName(res.data.firstName);
         setLastName(res.data.lastName);
         setBiography(res.data.biography);
@@ -121,8 +120,8 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
       const file = e.target.files[0];
       if (file.size > 2 * 1024 * 1024) {
         setWarning("Sorry, max file size is 2mb");
-        pictureRef.current.src = null;
-        setPicture(null);
+        pictureRef.current.src = defaultPfp;
+        setPicture(defaultPfp);
         setPictureLoaded(false);
       } else if (file.type.startsWith("image/")) {
         setPictureLoaded(true);
@@ -131,8 +130,8 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
       } else {
         setPictureLoaded(false);
         setWarning("Invalid file type, please upload an image");
-        setPicture(null);
-        pictureRef.current.src = null;
+        setPicture(defaultPfp);
+        pictureRef.current.src = defaultPfp;
       }
     }
   };
@@ -155,35 +154,20 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
         cursor: "pointer",
       }}
       onClick={() => {
-        setPicture(null);
-        pictureRef.current.src = null;
+        setPicture(defaultPfp);
+        pictureRef.current.src = defaultPfp;
       }}
     >
       <span style={{ color: "white" }}>X</span>
     </div>
   );
 
-  const handlePfp = (picture) => {
-    if (picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
-  };
-
   const pictureDisplay = (
     <img
-      className="profile-picture"
-      style={{ width: "130px", height: "130px" }}
+      className="edit-profile-picture"
+      style={{ borderRadius: "100%", width: "130px", height: "130px" }}
       ref={pictureRef}
-      src={
-        handlePfp(picture) !== "data:image/png;base64,"
-          ? handlePfp(picture)
-          : pictureRef?.current?.src
-      }
+      src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData?.username}`}
       alt="pfp"
       onClick={handleUploadPictureClick}
     />

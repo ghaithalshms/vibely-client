@@ -3,10 +3,13 @@ import React, { useEffect, useState } from "react";
 import { getLink } from "../../API";
 import Cookies from "js-cookie";
 import "./suggestions.css";
-import { updateUserListArrayPfp } from "../../usersPfp";
 import SuggestionUserComponent from "./suggestionUserComponent";
 
-const SuggestionsList = ({ isDarkMode, handleCatchAxios }) => {
+const SuggestionsList = ({
+  isDarkMode,
+  handleCatchAxios,
+  setHomeContainerMargin,
+}) => {
   const [suggestionUserArray, setSuggestionUserArray] = useState([]);
 
   useEffect(() => {
@@ -23,10 +26,7 @@ const SuggestionsList = ({ isDarkMode, handleCatchAxios }) => {
       })
       .then((res) => {
         setSuggestionUserArray(res.data);
-        for (const user of res.data) {
-          const username = user.username;
-          updateUserListArrayPfp(username, setSuggestionUserArray);
-        }
+        if (res.data?.length > 0) setHomeContainerMargin(true);
       })
       .catch((err) => handleCatchAxios(err));
   };

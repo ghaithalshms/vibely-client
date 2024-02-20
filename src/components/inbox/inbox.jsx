@@ -5,7 +5,6 @@ import ChatComponent from "../chat/chatComponent";
 import axios from "axios";
 import { getLink } from "../../API";
 import Cookies from "js-cookie";
-import { updateUserDataPfp } from "../../usersPfp";
 
 const Inbox = ({
   isDarkMode,
@@ -29,7 +28,6 @@ const Inbox = ({
         })
         .then((res) => {
           setChatUser(res?.data);
-          updateUserDataPfp(username, setChatUser);
         });
   };
 

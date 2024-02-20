@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import defaultPfp from "../icon/default profile picture.jpg";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
@@ -10,17 +9,26 @@ import Cookies from "js-cookie";
 const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
   const [followBtnText, setFollowBtnText] = useState("Follow");
 
-  const handlePfp = () => {
-    if (user?.picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(user.picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
-  };
   const navigate = useNavigate();
+
+  const handleSetFollowBtnText = (resData) => {
+    switch (resData) {
+      case "followed":
+        setFollowBtnText("Unfollow");
+        break;
+      case "follow requested":
+        setFollowBtnText("Requested");
+        break;
+      case "unfollowed":
+        setFollowBtnText("Follow");
+        break;
+      case "follow request deleted":
+        setFollowBtnText("Follow");
+        break;
+      default:
+        return;
+    }
+  };
 
   const handleFollow = async () => {
     await axios
@@ -29,22 +37,7 @@ const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
         token: Cookies.get("token"),
       })
       .then((res) => {
-        switch (res.data) {
-          case "followed":
-            setFollowBtnText("Unfollow");
-            break;
-          case "follow requested":
-            setFollowBtnText("Requested");
-            break;
-          case "unfollowed":
-            setFollowBtnText("Follow");
-            break;
-          case "follow request deleted":
-            setFollowBtnText("Follow");
-            break;
-          default:
-            return;
-        }
+        handleSetFollowBtnText(res.data);
       })
       .catch((err) => handleCatchAxios(err));
   };
@@ -94,12 +87,12 @@ const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
             navigate(`/${user.username}`);
             if (visitUser) visitUser(user.username);
           }}
-          src={handlePfp()}
+          src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
           alt=""
         />
         {nameAndIcon}
       </div>
-      <div className="only-pc" style={{ paddingTop: "11px" }}>
+      <div className="suggestions-user-follow-btn">
         <span className="pointer" onClick={handleFollow}>
           {followBtnText}
         </span>

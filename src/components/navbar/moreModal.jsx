@@ -19,9 +19,7 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
       style={{
         overlay: {
           zIndex: 100,
-          backgroundColor: isDarkMode
-            ? "rgba(255, 255, 255, 0.25)"
-            : "rgba(0, 0, 0, 0.25)",
+          backgroundColor: "rgba(0, 0, 0, 0.55)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -33,7 +31,7 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
           height: "auto",
           maxHeight: "99svh",
           borderRadius: "8px",
-          backgroundColor: isDarkMode ? "black" : "white",
+          backgroundColor: isDarkMode ? "#202020" : "white",
           borderColor: isDarkMode ? "black" : "white",
           animation: "fadeIn 0.3s",
         },

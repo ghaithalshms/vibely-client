@@ -3,7 +3,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
-import { updateArrayPfp } from "../../usersPfp";
 import { handleUpdatePost } from "../postfFow/updatePost";
 
 // ICON
@@ -57,8 +56,6 @@ const ActivitiesPostFlow = ({
             else
               setPostFlowArray([...postFlowArray, ...res.data?.postFlowArray]);
             for (const postData of res.data?.postFlowArray) {
-              const username = postData.user.username;
-              updateArrayPfp(username, setPostFlowArray);
               const postID = postData.post.postID;
               updatePostFlowFile(postID, setPostFlowArray);
             }

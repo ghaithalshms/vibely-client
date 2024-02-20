@@ -103,7 +103,9 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
         marginRight: "0.5rem",
       }}
       alt="pfp"
-      src={JSON.parse(sessionStorage.getItem("picture"))?.url}
+      src={`${
+        process.env.REACT_APP_API_URL
+      }/api/user/data/picture?username=${Cookies.get("username")}`}
     />
   );
 

@@ -1,5 +1,4 @@
 import React from "react";
-import defaultPfp from "../icon/default profile picture.jpg";
 // import adminIcon from "../icon/admin.png";
 // import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
@@ -15,17 +14,6 @@ const NotificationComponent = ({
   refreshNoitfication,
   setLoading,
 }) => {
-  const handlePfp = () => {
-    if (user?.picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(user.picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-    else return defaultPfp;
-  };
-
   const navigate = useNavigate();
 
   const notificationMessage = () => {
@@ -66,7 +54,7 @@ const NotificationComponent = ({
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={handlePfp()}
+        src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
         alt="pfp"
         onClick={() => {
           navigate(`/${user.username}`);
