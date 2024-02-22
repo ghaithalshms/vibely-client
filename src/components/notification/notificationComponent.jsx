@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 // import adminIcon from "../icon/admin.png";
 // import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
 import { postLink } from "../../API";
 import Cookies from "js-cookie";
 import axios from "axios";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 const NotificationComponent = ({
   user,
@@ -14,6 +15,7 @@ const NotificationComponent = ({
   refreshNoitfication,
   setLoading,
 }) => {
+  const [pfpLoaded, setPfpLoaded] = useState(false);
   const navigate = useNavigate();
 
   const notificationMessage = () => {
@@ -54,8 +56,14 @@ const NotificationComponent = ({
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
-        alt="pfp"
+        src={
+          pfpLoaded
+            ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+            : defaultPfp
+        }
+        onLoad={() => setPfpLoaded(true)}
+        onError={() => setPfpLoaded(false)}
+        alt="Pfp"
         onClick={() => {
           navigate(`/${user.username}`);
           if (visitUser) visitUser(user.username);

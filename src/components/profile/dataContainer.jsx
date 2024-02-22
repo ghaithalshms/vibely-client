@@ -4,6 +4,7 @@ import axios from "axios";
 import verifiedIcon from "../icon/verified.png";
 import adminIcon from "../icon/admin.png";
 import { postLink } from "../../API";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 // LIGHT THEME ICON
 import linkIconLight from "../icon/light-mode/profile/link.png";
@@ -27,6 +28,7 @@ const DataContainer = ({
   const token = Cookies.get("token");
   const linkIconRef = useRef();
   const optionsIconRef = useRef();
+  const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const [followButtonText, setFollowButtonText] = useState(
     userData.isFollowing
@@ -288,7 +290,13 @@ const DataContainer = ({
         <div className="container-x" style={{ width: "100%" }}>
           <img
             className="profile-picture-page"
-            src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`}
+            src={
+              pfpLoaded
+                ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`
+                : defaultPfp
+            }
+            onLoad={() => setPfpLoaded(true)}
+            onError={() => setPfpLoaded(false)}
             alt="Pfp"
             // block right click
             onContextMenu={(event) => {

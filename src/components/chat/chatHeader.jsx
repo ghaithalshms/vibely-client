@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
@@ -6,9 +6,11 @@ import backLight from "../icon/light-mode/chat/back.png";
 import backDark from "../icon/dark-mode/chat/back.png";
 import { timeDifference } from "../func/timeDifference";
 import spotifyIcon from "../icon/spotify.png";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
   const navigate = useNavigate();
+  const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const backIconElement = (
     <img
@@ -95,8 +97,14 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
               marginBottom: "0.5rem",
             }}
             onClick={() => navigate(`/${chatUser?.username}`)}
-            src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`}
-            alt=""
+            src={
+              pfpLoaded
+                ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`
+                : defaultPfp
+            }
+            onLoad={() => setPfpLoaded(true)}
+            onError={() => setPfpLoaded(false)}
+            alt="Pfp"
           />
           <div className="chat-header-user-container">
             <div>{nameAndIcon}</div>

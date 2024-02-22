@@ -223,6 +223,17 @@ textarea {
   animation: rotation 1s linear infinite;
 }
 
+.mini-loader {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 3px solid #000;
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -273,5 +284,8 @@ textarea {
   background-color: var(--input-bg-dark);
 }
 .dark-mode .loader {
+  border-top: 3px solid #fff;
+}
+.dark-mode .mini-loader {
   border-top: 3px solid #fff;
 }

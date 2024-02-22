@@ -3,7 +3,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
-import { updatePostFlowFile } from "./getPostFile";
 import { handleUpdatePost } from "../postfFow/updatePost";
 
 // ICON
@@ -40,11 +39,6 @@ const HomePostFlow = ({
                 ...homePostFlowArray,
                 ...res.data?.postFlowArray,
               ]);
-
-            for (const postData of res.data?.postFlowArray) {
-              const postID = postData.post.postID;
-              updatePostFlowFile(postID, setHomePostFlowArray);
-            }
           }
         })
 
@@ -62,7 +56,7 @@ const HomePostFlow = ({
 
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
-    if (scrollingPercentage > 75) {
+    if (scrollingPercentage > 60) {
       handleGetHomePostFlow(true);
     }
     // eslint-disable-next-line

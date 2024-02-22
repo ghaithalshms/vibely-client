@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import Cookies from "js-cookie";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 const InboxUserComponent = ({ user, message, setChatUser }) => {
+  const [pfpLoaded, setPfpLoaded] = useState(false);
+
   const nameAndIcon = (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
@@ -64,8 +67,14 @@ const InboxUserComponent = ({ user, message, setChatUser }) => {
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
-        alt=""
+        src={
+          pfpLoaded
+            ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+            : defaultPfp
+        }
+        onLoad={() => setPfpLoaded(true)}
+        onError={() => setPfpLoaded(false)}
+        alt="Pfp"
       />
       <div>{nameAndIcon}</div>
     </div>

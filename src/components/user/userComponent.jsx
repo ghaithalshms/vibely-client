@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { postLink } from "../../API";
 import Cookies from "js-cookie";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 const UserComponent = ({
   user,
@@ -13,6 +14,8 @@ const UserComponent = ({
   followBtn,
   handleCatchAxios,
 }) => {
+  const [pfpLoaded, setPfpLoaded] = useState(false);
+
   const [followBtnText, setFollowBtnText] = useState(
     user.isFollowing
       ? "Unfollow"
@@ -109,8 +112,14 @@ const UserComponent = ({
             height: "43px",
             marginRight: "0.8rem",
           }}
-          src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
-          alt=""
+          src={
+            pfpLoaded
+              ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+              : defaultPfp
+          }
+          onLoad={() => setPfpLoaded(true)}
+          onError={() => setPfpLoaded(false)}
+          alt="Pfp"
         />
         <div>{nameAndIcon}</div>
       </div>

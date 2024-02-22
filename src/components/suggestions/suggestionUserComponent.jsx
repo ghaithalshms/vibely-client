@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { postLink } from "../../API";
 import Cookies from "js-cookie";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
   const [followBtnText, setFollowBtnText] = useState("Follow");
+  const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -87,8 +89,14 @@ const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
             navigate(`/${user.username}`);
             if (visitUser) visitUser(user.username);
           }}
-          src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
-          alt=""
+          src={
+            pfpLoaded
+              ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+              : defaultPfp
+          }
+          onLoad={() => setPfpLoaded(true)}
+          onError={() => setPfpLoaded(false)}
+          alt="Pfp"
         />
         {nameAndIcon}
       </div>

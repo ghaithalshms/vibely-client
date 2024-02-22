@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
   const navigate = useNavigate();
+  const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const userSigned = Cookies.get("username");
   const [isLoading, setIsLoading] = useState(true);
@@ -167,8 +168,14 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
       className="edit-profile-picture"
       style={{ borderRadius: "100%", width: "130px", height: "130px" }}
       ref={pictureRef}
-      src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData?.username}`}
-      alt="pfp"
+      src={
+        pfpLoaded
+          ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`
+          : defaultPfp
+      }
+      onLoad={() => setPfpLoaded(true)}
+      onError={() => setPfpLoaded(false)}
+      alt="Pfp"
       onClick={handleUploadPictureClick}
     />
   );

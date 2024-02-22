@@ -8,7 +8,6 @@ import { handleUpdatePost } from "../postfFow/updatePost";
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
-import { updatePostFlowFile } from "./getPostFile";
 
 const ActivitiesPostFlow = ({
   isDarkMode,
@@ -55,10 +54,6 @@ const ActivitiesPostFlow = ({
             // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
             else
               setPostFlowArray([...postFlowArray, ...res.data?.postFlowArray]);
-            for (const postData of res.data?.postFlowArray) {
-              const postID = postData.post.postID;
-              updatePostFlowFile(postID, setPostFlowArray);
-            }
           }
         })
         .catch((err) => handleCatchAxios(err));
@@ -75,7 +70,7 @@ const ActivitiesPostFlow = ({
 
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
-    if (scrollingPercentage > 75) {
+    if (scrollingPercentage > 60) {
       handleGetPostFlow(true);
     }
     // eslint-disable-next-line

@@ -1,10 +1,15 @@
 const handleSetScrollPercentage = (setScrollingPercentage) => {
-  const scrollingPercent =
-    (window.scrollY /
-      (document.scrollingElement.scrollHeight - window.innerHeight)) *
-    100;
-
-  setScrollingPercentage(scrollingPercent);
+  const isElementScrollable =
+    document.scrollingElement.scrollHeight > window.innerHeight;
+  if (isElementScrollable) {
+    const scrollingPercent =
+      (window.scrollY /
+        (document.scrollingElement.scrollHeight - window.innerHeight)) *
+      100;
+    setScrollingPercentage(scrollingPercent);
+  } else {
+    setScrollingPercentage(100);
+  }
 };
 
 const handleAddScrollListener = (setScrollingPercentage) => {

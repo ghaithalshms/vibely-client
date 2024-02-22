@@ -12,7 +12,10 @@ const ChatComponent = ({
   handleCatchAxios,
   clientSocket,
 }) => {
-  const [chatArray, setChatArray] = useState();
+  const [chatArray, setChatArray] = useState([]);
+
+  const handleUpdateChatArray = (messageData) =>
+    setChatArray((prevChatArray) => [...prevChatArray, messageData]);
 
   const startChatElement = (
     <div
@@ -54,6 +57,7 @@ const ChatComponent = ({
             clientSocket={clientSocket}
             chatArray={chatArray}
             setChatArray={setChatArray}
+            handleUpdateChatArray={handleUpdateChatArray}
           />
           <ChatFooter
             isDarkMode={isDarkMode}
@@ -62,6 +66,7 @@ const ChatComponent = ({
             clientSocket={clientSocket}
             chatArray={chatArray}
             setChatArray={setChatArray}
+            handleUpdateChatArray={handleUpdateChatArray}
           />
         </>
       )}

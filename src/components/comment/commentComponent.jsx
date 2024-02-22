@@ -13,6 +13,7 @@ import deleteLight from "../icon/light-mode/post/delete.png";
 import like0Dark from "../icon/dark-mode/post/like 0.png";
 import like1Dark from "../icon/dark-mode/post/like 1.png";
 import deleteDark from "../icon/dark-mode/post/delete.png";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 const CommentComponent = ({
   isDarkMode,
@@ -22,6 +23,7 @@ const CommentComponent = ({
   handleUpdateComments,
 }) => {
   const [isCommentDeleted, setIsCommentDeleted] = useState(false);
+  const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const handleLikeComment = async () => {
     handleUpdateComments(comment.commentID);
@@ -144,8 +146,14 @@ const CommentComponent = ({
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}`}
-        alt=""
+        src={
+          pfpLoaded
+            ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}`
+            : defaultPfp
+        }
+        onLoad={() => setPfpLoaded(true)}
+        onError={() => setPfpLoaded(false)}
+        alt="Pfp"
         onClick={() => {
           navigate(`/${comment.username}`);
           if (visitUser) visitUser(comment.username);

@@ -26,6 +26,7 @@ const Signin = ({ isDarkMode }) => {
         .then((response) => {
           Cookies.set("token", response.data.token, { expires: 1000 });
           Cookies.set("username", response.data.username, { expires: 1000 });
+          Cookies.set("browser-id", response.data.browserID, { expires: 1000 });
           window.location.href = "/";
         })
         .catch((error) => {

@@ -4,11 +4,29 @@ import "../../modal.css";
 // import CheckboxStyled from "./checkboxStyled";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { deleteLink } from "../../API";
 
 Modal.setAppElement("#root");
 
 const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
   const navigate = useNavigate();
+
+  const unsubscribeWebPush = async () => {
+    await axios.post(deleteLink.unsubscribeWebPush, {
+      token: Cookies.get("token"),
+      browserID: Cookies.get("browser-id"),
+    });
+  };
+
+  const removeAllCookies = () => {
+    const cookies = document.cookie.split(";");
+    cookies.forEach((cookie) => {
+      const cookieKey = cookie.split("=")[0].trim();
+      Cookies.remove(cookieKey);
+    });
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -90,10 +108,9 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
         <br />
         <h3 className="uppercase">Settings</h3>
         <button
-          onClick={() => {
-            Cookies.remove("token");
-            Cookies.remove("username");
-            sessionStorage.removeItem("picture");
+          onClick={async () => {
+            await unsubscribeWebPush();
+            removeAllCookies();
             window.location.href = "/login";
           }}
         >

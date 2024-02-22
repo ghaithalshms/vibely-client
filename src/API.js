@@ -39,7 +39,6 @@ const getLink = {
   // POST
   getPostComments: `${host}/api/post/comments`,
   getPostLikedUsers: `${host}/api/post/liked-users`,
-  getPostFile: `${host}/api/post/file`,
   // NOTIFICATION
   getNotification: `${host}/api/notification`,
   getNotificationCount: `${host}/api/notification/count`,
@@ -59,6 +58,8 @@ const deleteLink = {
   deleteComment: `${host}/api/comment/delete`,
   // USER
   deleteFollowRequest: `${host}/api/user/follow/request/delete`,
+  // WEB PUSH NOTIFICATIONS
+  unsubscribeWebPush: `${host}/api/notification/unsubscribe`,
 };
 
 const updateLink = {

@@ -15,6 +15,8 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
   const pictureRef = useRef();
   const [videoSrc, setVideoSrc] = useState(null);
 
+  const [shareButtonDisabled, setShareButtonDisabled] = useState(false);
+
   const handleOnChangeDescription = (value) => {
     setDescription(value);
   };
@@ -64,6 +66,10 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
         alert("File size exceeds the maximum allowed size (2MB).");
         setPicture(null);
       } else {
+        setShareButtonDisabled(true);
+        const btnShare = document.getElementById("btn-share");
+        btnShare.setAttribute("disabled", "");
+
         axios.defaults.maxBodyLength = 2 * 1024 * 1024;
         const formData = new FormData();
         formData.append("token", Cookies.get("token"));
@@ -76,6 +82,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
           .then((res) => {
             if (res.status === 200)
               window.location.href = `/${Cookies.get("username")}`;
+            btnShare.removeAttribute("disabled");
           })
           .catch((err) => {
             handleCatchAxios(err);
@@ -241,11 +248,15 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
       {addedFileDisplay}
       <div className="container-x" style={{ alignItems: "center" }}>
         <button
+          id="btn-share"
           className="full-width"
           style={{ margin: "0" }}
           onClick={handleCreatePost}
         >
-          Share
+          {shareButtonDisabled && (
+            <span style={{ marginBottom: "5px" }} className="mini-loader" />
+          )}
+          {!shareButtonDisabled && "Share"}
         </button>
         {addPictureIcon}
       </div>

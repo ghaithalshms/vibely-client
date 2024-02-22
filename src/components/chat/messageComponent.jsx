@@ -1,29 +1,10 @@
 import Cookies from "js-cookie";
-import React from "react";
+import React, { useState } from "react";
+import AudioPlayer from "../audioPlayer/audioPlayer";
 
 const MessageComponent = ({ isDarkMode, message }) => {
+  const [fileLoaded, setFileLoaded] = useState(false);
   const userSigned = Cookies.get("username");
-
-  const handlePicture = (picture) => {
-    if (picture)
-      return `data:image/png;base64,${btoa(
-        new Uint8Array(picture.data).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )}`;
-  };
-
-  const handleVideo = (video) => {
-    return video
-      ? `data:video/mp4;base64,${btoa(
-          new Uint8Array(video.data).reduce(
-            (data, byte) => data + String.fromCharCode(byte),
-            ""
-          )
-        )}`
-      : null;
-  };
 
   const messageElement = (
     <div
@@ -62,26 +43,77 @@ const MessageComponent = ({ isDarkMode, message }) => {
     </div>
   );
 
-  const pictureElement = (
+  const fileLoading = (
     <div
-      className="message"
+      className="full-width"
       style={{
-        flexDirection: message.from === userSigned ? "row-reverse" : "row",
-        borderTopRightRadius: message.from === userSigned ? "0" : "22px",
-        borderTopLeftRadius: message.from !== userSigned ? "0" : "22px",
-        marginLeft: message.from === userSigned ? "auto" : "0",
-        marginRight: message.from === userSigned ? "5px" : "0",
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "2rem",
+        paddingBottom: "2rem",
       }}
     >
-      <img
-        className="message-picture"
-        src={handlePicture(message.file)}
-        alt="msg img"
-      />
+      <span className="loader" />
     </div>
   );
 
+  const pictureElement = (
+    <>
+      {!fileLoaded && fileLoading}
+      <img
+        className="message-picture"
+        loading="lazy"
+        src={`${
+          process.env.REACT_APP_API_URL
+        }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+          message.id
+        }`}
+        onLoad={() => setFileLoaded(true)}
+        onError={() => setFileLoaded(false)}
+        alt="Chat pic"
+        // block right click
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
+      />
+    </>
+  );
+
   const videoElement = (
+    <video
+      style={{ display: fileLoaded ? "inline" : "none" }}
+      className="message-video"
+      loading="lazy"
+      src={`${
+        process.env.REACT_APP_API_URL
+      }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+        message.id
+      }`}
+      onLoadedData={() => setFileLoaded(true)}
+      onError={() => setFileLoaded(false)}
+      type="video/mp4"
+      controls
+      controlsList="nodownload"
+      // block right click
+      onContextMenu={(event) => {
+        event.preventDefault();
+      }}
+    />
+  );
+
+  const audioElement = (
+    <AudioPlayer
+      isDarkMode={isDarkMode}
+      audioFile={`${
+        process.env.REACT_APP_API_URL
+      }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+        message.id
+      }`}
+      sentByTheUser={message.from === userSigned}
+    />
+  );
+
+  const messageFileElement = (
     <div
       className="message"
       style={{
@@ -90,23 +122,28 @@ const MessageComponent = ({ isDarkMode, message }) => {
         borderTopLeftRadius: message.from !== userSigned ? "0" : "22px",
         marginLeft: message.from === userSigned ? "auto" : "0",
         marginRight: message.from === userSigned ? "5px" : "0",
+        backgroundColor:
+          message.fileType !== "picture" && message.fileType !== "video"
+            ? message.from === userSigned
+              ? isDarkMode
+                ? "#68053a"
+                : "#f874bb"
+              : isDarkMode
+              ? "#292929"
+              : "#e6e5e5"
+            : "",
       }}
     >
-      <video
-        src={handleVideo(message.file)}
-        type="video/mp4"
-        controls
-        controlsList="nodownload"
-        className="message-video"
-      />
+      {message.fileType === "picture" && pictureElement}
+      {message.fileType === "video" && videoElement}
+      {message.fileType === "audio" && audioElement}
     </div>
   );
 
   return (
     <div>
-      {message.message && messageElement}
-      {message.file && message.fileType === "picture" && pictureElement}
-      {message.file && message.fileType === "video" && videoElement}
+      {!message.fileType && message.message && messageElement}
+      {message.fileType && messageFileElement}
     </div>
   );
 };

@@ -91,8 +91,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
     const urlPage = window.location.href
       .split("/")
       [window.location.href.split("/").length - 1].split("?")[0];
-
-    switch (urlPage) {
+    switch (urlPage.split("/")[0]) {
       case "":
         setActualPage("home");
         break;

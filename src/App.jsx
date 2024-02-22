@@ -18,7 +18,7 @@ import { handleAddScrollListener } from "./components/func/scrollPercentage";
 import Home from "./components/home/home";
 import Explorer from "./components/explorer/explorer";
 import Search from "./components/search/search";
-import defaultPfp from "./components/icon/default profile picture.jpg";
+// import defaultPfp from "./components/icon/default profile picture.jpg";
 import Activities from "./components/activities/activities";
 import EditProfile from "./components/edit profile/editProfile";
 import Inbox from "./components/inbox/inbox";
@@ -32,7 +32,7 @@ const App = () => {
   const [dialogModalBody, setDialogModalBody] = useState("");
 
   const [scrollingPercentage, setScrollingPercentage] = useState(0);
-  const [profilePicture, setProfilePicture] = useState(null);
+  // const [profilePicture, setProfilePicture] = useState(null);
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,64 +108,10 @@ const App = () => {
     setIsLoading(false);
   };
 
-  const handleGetUserPicture = async () => {
-    axios
-      .get(getLink.getUserPicture, {
-        params: {
-          username: Cookies.get("username"),
-        },
-      })
-      .then((res) => {
-        // sessionStorage.setItem("picture", res.data);
-        sessionStorage.setItem(
-          "picture",
-          JSON.stringify({
-            url: res.data.picture
-              ? `data:image/png;base64,${btoa(
-                  new Uint8Array(res.data.picture.data).reduce(
-                    (data, byte) => data + String.fromCharCode(byte),
-                    ""
-                  )
-                )}`
-              : defaultPfp,
-          })
-        );
-        setProfilePicture(
-          "picture",
-          JSON.stringify({
-            url: res.data.picture
-              ? `data:image/png;base64,${btoa(
-                  new Uint8Array(res.data.picture.data).reduce(
-                    (data, byte) => data + String.fromCharCode(byte),
-                    ""
-                  )
-                )}`
-              : defaultPfp,
-          })
-        );
-      })
-
-      .catch((err) => {
-        sessionStorage.setItem(
-          "picture",
-          JSON.stringify({
-            url: defaultPfp,
-          })
-        );
-        setProfilePicture(
-          "picture",
-          JSON.stringify({
-            url: defaultPfp,
-          })
-        );
-      });
-  };
-
   useEffect(() => {
     handleAddScrollListener(setScrollingPercentage);
     handleTheme();
     handleIsServerWorking();
-    handleGetUserPicture();
     // eslint-disable-next-line
   }, []);
 
@@ -175,14 +121,14 @@ const App = () => {
       setClientSocket(socket);
     }
   };
-  useEffect(
-    () => handleSetClientSocket(),
+
+  useEffect(() => {
+    handleSetClientSocket();
     // eslint-disable-next-line
-    [socket.connected]
-  );
+  }, [socket]);
 
   // LOADING SCREEN
-  if (isLoading || !profilePicture) return <IsLoadingComponent />;
+  if (isLoading) return <IsLoadingComponent />;
 
   // IF SERVER ERROR, ERROR MODAL
   if (isDialogOpen)

@@ -53,7 +53,7 @@
   width: fit-content;
   margin-top: 0.4rem;
 }
-.send-message-textarea {
+#send-message-textarea {
   resize: none;
   padding-right: 83px;
   position: absolute;
@@ -88,6 +88,19 @@
 .message-picture,
 .message-video {
   border-radius: 10px;
-  width: 300px;
-  max-width: 80%;
+  max-width: 90%;
+  max-height: 300px;
+}
+
+.react-mic-comp {
+  position: absolute;
+  bottom: 25px;
+  width: calc(100% - 115px);
+  left: calc(1% + 10px);
+  height: 40px;
+  border-radius: 8px;
+}
+
+.display-none {
+  display: none;
 }

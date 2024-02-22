@@ -26,6 +26,8 @@ const SelectMedia = ({
   const pictureRef = useRef();
   const [videoSrc, setVideoSrc] = useState(null);
 
+  const [sendButtonDisabled, setSendButtonDisabled] = useState(false);
+
   const handleSendMessageToDB = async () => {
     axios.defaults.maxBodyLength = 2 * 1024 * 1024;
     const formData = new FormData();
@@ -50,8 +52,8 @@ const SelectMedia = ({
         id,
         from: Cookies.get("username"),
         to: chatUser.username,
-        file,
         fileType,
+        seen: false,
       };
       clientSocket.emit("send_message", messageData);
     }
@@ -75,6 +77,10 @@ const SelectMedia = ({
   };
 
   const handleSend = async () => {
+    setSendButtonDisabled(true);
+    const btnSend = document.getElementById("btn-send");
+    btnSend.setAttribute("disabled", "");
+
     const data = await handleSendMessageToDB();
     handleSendMessageToSocket(data.id, data.file);
     handleUpdateChatArray(data.id, data.file);
@@ -83,9 +89,10 @@ const SelectMedia = ({
     setFile(null);
     setFileType(null);
     onRequestClose();
+
+    btnSend.removeAttribute("disabled");
   };
 
-  //UPLOAD POST PICTURE
   const handleFileLoad = (e) => {
     setWarning("");
     if (e.target.files[0]) {
@@ -251,11 +258,15 @@ const SelectMedia = ({
       >
         {file && (
           <button
+            id="btn-send"
             className="full-width"
             style={{ margin: "0" }}
             onClick={handleSend}
           >
-            Send
+            {sendButtonDisabled && (
+              <span style={{ marginBottom: "5px" }} className="mini-loader" />
+            )}
+            {!sendButtonDisabled && "Send"}
           </button>
         )}
         {addPictureIcon}

@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import CommentsModal from "../comment/commentsModal";
 import GetUserListModal from "../user/getUserListModal";
 import PostMoreModal from "./postMoreModal";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 // LIGHT MODE ICONS
 import like0Light from "../icon/light-mode/post/like 0.png";
@@ -39,28 +40,13 @@ const PostComponent = ({
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [isUserListModalOpen, setUserListModalOpen] = useState(false);
 
+  const [pfpLoaded, setPfpLoaded] = useState(false);
+  const [fileLoaded, setFileLoaded] = useState(
+    post.fileType === "null" ? true : false
+  );
+
   const [isPostMoreModalOpen, setPostMoreModalOpen] = useState(false);
   const [isPostDeleted, setPostDeleted] = useState(false);
-
-  const handlePicture = (picture) => {
-    return `data:image/png;base64,${btoa(
-      new Uint8Array(picture.data).reduce(
-        (data, byte) => data + String.fromCharCode(byte),
-        ""
-      )
-    )}`;
-  };
-
-  const handleVideo = (video) => {
-    return video
-      ? `data:video/mp4;base64,${btoa(
-          new Uint8Array(video.data).reduce(
-            (data, byte) => data + String.fromCharCode(byte),
-            ""
-          )
-        )}`
-      : null;
-  };
 
   const handleLikePost = async () => {
     handleUpdatePost(post.postID, "like", postFlow, setPostFlow);
@@ -137,8 +123,14 @@ const PostComponent = ({
             marginRight: "0.8rem",
             marginBottom: "0.5rem",
           }}
-          src={`${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`}
-          alt=""
+          src={
+            pfpLoaded
+              ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+              : defaultPfp
+          }
+          onLoad={() => setPfpLoaded(true)}
+          onError={() => setPfpLoaded(false)}
+          alt="Pfp"
         />
         <div>{nameIconDate}</div>
       </div>
@@ -156,6 +148,20 @@ const PostComponent = ({
           onClick={() => setPostMoreModalOpen(true)}
         />
       )}
+    </div>
+  );
+
+  const postFileLoading = (
+    <div
+      className="full-width"
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "2rem",
+        paddingBottom: "2rem",
+      }}
+    >
+      <span className="loader" />
     </div>
   );
 
@@ -244,42 +250,45 @@ const PostComponent = ({
   const postBody = (
     <div className="post-content container-y">
       <pre>{post.description}</pre>
-      {post?.file && post.fileType === "picture" && (
+      {!fileLoaded && postFileLoading}
+      {post.fileType === "picture" && (
         <img
           className="post-file"
-          src={handlePicture(post?.file)}
-          alt="post pic"
+          loading="lazy"
+          src={`${
+            process.env.REACT_APP_API_URL
+          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
+          onLoad={() => setFileLoaded(true)}
+          onError={() => setFileLoaded(false)}
+          alt="Post pic"
           // block right click
           onContextMenu={(event) => {
             event.preventDefault();
           }}
         />
       )}
-      {post?.file && post.fileType === "video" && (
+      {post.fileType === "video" && (
         <video
-          src={handleVideo(post?.file)}
+          style={{ display: fileLoaded ? "inline" : "none" }}
+          className="post-file"
+          loading="lazy"
+          src={`${
+            process.env.REACT_APP_API_URL
+          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
+          onLoadedData={() => setFileLoaded(true)}
+          onError={() => setFileLoaded(false)}
           type="video/mp4"
           controls
           controlsList="nodownload"
-          className="post-file"
+          // block right click
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
         />
       )}
+
       {/* POST ICONS */}
       {postIcons}
-    </div>
-  );
-
-  const postFileLoading = (
-    <div
-      className="full-width"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        paddingTop: "2rem",
-        paddingBottom: "2rem",
-      }}
-    >
-      <span className="loader" />
     </div>
   );
 
@@ -290,10 +299,7 @@ const PostComponent = ({
       {/* user info */}
       {postHeader}
       {/* post desc, pic and icons */}
-      {/* {post.fileType && !post.file ? postFileLoading : postBody} */}
-      {(post.fileType && post.file) || post.fileType === "null"
-        ? postBody
-        : postFileLoading}
+      {postBody}
       {/* bottom line */}
       <div className="line">
         <hr />

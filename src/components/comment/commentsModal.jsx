@@ -20,6 +20,8 @@ const CommentsModal = ({
   const [commentsArray, setCommentsArray] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
+  const [publishButtonDisabled, setPublishButtonDisabled] = useState(false);
+
   const [comment, setComment] = useState("");
 
   const handleGetComments = async () => {
@@ -56,6 +58,9 @@ const CommentsModal = ({
   };
 
   const handleCreateComment = async () => {
+    setPublishButtonDisabled(true);
+    const btnPublish = document.getElementById("btn-publish");
+    btnPublish.setAttribute("disabled", "");
     axios
       .post(postLink.createComment, {
         token: Cookies.get("token"),
@@ -65,6 +70,7 @@ const CommentsModal = ({
       .then(() => {
         setComment("");
         handleGetComments();
+        btnPublish.removeAttribute("disabled");
       })
       .catch((err) => handleCatchAxios(err));
   };
@@ -113,10 +119,14 @@ const CommentsModal = ({
       />
       {comment && (
         <button
+          id="btn-publish"
           style={{ padding: "10px 15px", margin: "5px 0", marginLeft: "5px" }}
           onClick={handleCreateComment}
         >
-          Publish
+          {publishButtonDisabled && (
+            <span style={{ marginBottom: "5px" }} className="mini-loader" />
+          )}
+          {!publishButtonDisabled && "Publish"}
         </button>
       )}
     </div>

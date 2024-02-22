@@ -10,7 +10,6 @@ import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
 import privateLight from "../icon/light-mode/profile/private.png";
 import privateDark from "../icon/dark-mode/profile/private.png";
-import { updatePostFlowFile } from "./getPostFile";
 
 const UserPostFlow = ({
   isDarkMode,
@@ -44,11 +43,6 @@ const UserPostFlow = ({
               ...userPostFlowArray,
               ...res.data?.postFlowArray,
             ]);
-
-          for (const post of res.data?.postFlowArray) {
-            const postID = post.postID;
-            updatePostFlowFile(postID, setUserPostFlowArray);
-          }
         }
       })
       .catch((err) => handleCatchAxios(err));
@@ -74,7 +68,7 @@ const UserPostFlow = ({
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
     if (
-      scrollingPercentage > 75 &&
+      scrollingPercentage > 60 &&
       userData?.postCount > userPostFlowArray?.length
     ) {
       handleGetUserPostFlow(true);
