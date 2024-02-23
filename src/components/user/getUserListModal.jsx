@@ -44,6 +44,7 @@ const GetUserListModal = ({
         type === "Liked Users"
           ? {
               postID,
+              username: Cookies.get("username"),
             }
           : {
               username,

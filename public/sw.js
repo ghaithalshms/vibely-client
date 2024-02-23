@@ -8,10 +8,10 @@ self.addEventListener("push", async (event) => {
 
   const notificationOptions = {
     body: payload.body,
-    // icon: `https://vibely-backend-fkpv.onrender.com/api/user/data/picture?username=${payload.title}`,
-    icon: `http://localhost:8000/api/user/data/picture?username=${payload.title}`,
-    // data: { url: `https://vibely.rf.gd/inbox/${payload.title}` },
-    data: { url: `http://localhost:3000/inbox/${payload.title}` },
+    // icon: `http://localhost:8000/api/user/data/picture?username=${payload.title}`,
+    // data: { url: `http://localhost:3000/inbox/${payload.title}` },
+    icon: `https://vibely-backend-fkpv.onrender.com/api/user/data/picture?username=${payload.title}`,
+    data: { url: `https://vibely.rf.gd/inbox/${payload.title}` },
   };
 
   event.waitUntil(

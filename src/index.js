@@ -31,15 +31,13 @@ try {
   if (
     document.cookie.length > 0 &&
     "Notification" in window &&
-    "serviceWorker" in navigator &&
     Notification.permission !== "denied"
   ) {
     Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        subscribe();
-      }
+      if (permission === "granted") subscribe();
     });
   }
+  if (document.cookie.length > 0 && "serviceWorker" in navigator) subscribe();
 } catch (error) {
   // There's nothing we can do...
 }

@@ -16,7 +16,7 @@ const NotificationModal = ({
   visitUser,
 }) => {
   const [isLoading, setLoading] = useState(true);
-  const [notificationArray, setNotificationArray] = useState();
+  const [notificationArray, setNotificationArray] = useState([]);
 
   const handleGetNotification = async () => {
     await axios
