@@ -4,6 +4,7 @@ import "../../modal.css";
 import { getLink } from "../../API";
 import axios from "axios";
 import UserComponent from "./userComponent";
+import Cookies from "js-cookie";
 
 Modal.setAppElement("#root");
 
