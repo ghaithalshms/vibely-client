@@ -50,7 +50,8 @@ const ChatBody = ({
   const handleReceiveMessage = () => {
     clientSocket.on("receive_message", (messageData) => {
       console.log(messageData);
-      handleUpdateChatArray(messageData);
+      if (chatUser.username === messageData.from)
+        handleUpdateChatArray(messageData);
     });
   };
 
