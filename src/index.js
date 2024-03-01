@@ -31,13 +31,16 @@ try {
   if (
     document.cookie.length > 0 &&
     "Notification" in window &&
-    Notification.permission !== "denied"
+    "serviceWorker" in navigator &&
+    Cookies.get("token") &&
+    Cookies.get("browser-id")
   ) {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") subscribe();
-    });
+    if (Notification.permission !== "denied")
+      Notification.requestPermission().then((premission) => {
+        if (premission === "granted") subscribe();
+      });
+    else if (Notification.permission === "granted") subscribe();
   }
-  if (document.cookie.length > 0 && "serviceWorker" in navigator) subscribe();
 } catch (error) {
   // There's nothing we can do...
 }
