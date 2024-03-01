@@ -69,7 +69,7 @@ const HomePostFlow = ({
         style={{
           display: "flex",
           justifyContent: "center",
-          paddingTop: "30vh",
+          paddingTop: "20vh",
         }}
       >
         <span className="loader" />

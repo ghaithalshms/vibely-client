@@ -14,8 +14,9 @@ const GetInboxUsers = ({
   handleCatchAxios,
   chatUser,
   setChatUser,
+  inboxUsers,
+  setInboxUsers,
 }) => {
-  const [inboxUsers, setInboxUsers] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isDataGot, setDataGot] = useState(false);
   const [userListModalIsOpen, setUserListModalOpen] = useState(false);

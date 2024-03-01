@@ -49,7 +49,7 @@ const InboxUserComponent = ({ user, message, setChatUser }) => {
           ? "Picture"
           : message.fileType === "video"
           ? "Video"
-          : ""
+          : "Audio"
       }`}</span>
     </div>
   );

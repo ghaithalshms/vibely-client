@@ -12,7 +12,26 @@ const Inbox = ({
   handleCatchAxios,
   clientSocket,
 }) => {
+  const [inboxUsers, setInboxUsers] = useState([]);
   const [chatUser, setChatUser] = useState(null);
+
+  const handleUpdateInboxUsers = (messageData) => {
+    setInboxUsers((preUsetInboxUsers) => {
+      let newInboxUsers = [];
+      preUsetInboxUsers.forEach((inboxUser) => {
+        if (
+          inboxUser.user.username === messageData.from ||
+          inboxUser.user.username === messageData.to
+        ) {
+          newInboxUsers.unshift({
+            user: inboxUser.user,
+            message: messageData,
+          });
+        } else newInboxUsers.push(inboxUser);
+      });
+      return newInboxUsers;
+    });
+  };
 
   const setChatUserFromLink = async () => {
     const username = window.location.href
@@ -42,6 +61,8 @@ const Inbox = ({
         handleCatchAxios={handleCatchAxios}
         setChatUser={setChatUser}
         chatUser={chatUser}
+        inboxUsers={inboxUsers}
+        setInboxUsers={setInboxUsers}
       />
       <ChatComponent
         isDarkMode={isDarkMode}
@@ -49,6 +70,7 @@ const Inbox = ({
         setChatUser={setChatUser}
         handleCatchAxios={handleCatchAxios}
         clientSocket={clientSocket}
+        handleUpdateInboxUsers={handleUpdateInboxUsers}
       />
     </div>
   );

@@ -11,6 +11,7 @@ const ChatComponent = ({
   setChatUser,
   handleCatchAxios,
   clientSocket,
+  handleUpdateInboxUsers,
 }) => {
   const [chatArray, setChatArray] = useState([]);
 
@@ -57,6 +58,7 @@ const ChatComponent = ({
             clientSocket={clientSocket}
             chatArray={chatArray}
             setChatArray={setChatArray}
+            handleUpdateInboxUsers={handleUpdateInboxUsers}
             handleUpdateChatArray={handleUpdateChatArray}
           />
           <ChatFooter
@@ -67,6 +69,7 @@ const ChatComponent = ({
             chatArray={chatArray}
             setChatArray={setChatArray}
             handleUpdateChatArray={handleUpdateChatArray}
+            handleUpdateInboxUsers={handleUpdateInboxUsers}
           />
         </>
       )}

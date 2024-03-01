@@ -11,6 +11,7 @@ const ChatBody = ({
   clientSocket,
   chatArray,
   setChatArray,
+  handleUpdateInboxUsers,
   handleUpdateChatArray,
 }) => {
   const [isLoading, setLoading] = useState(false);
@@ -49,9 +50,9 @@ const ChatBody = ({
   // SOCKET'S RECEIVE MESSAGE
   const handleReceiveMessage = () => {
     clientSocket.on("receive_message", (messageData) => {
-      console.log(messageData);
       if (chatUser.username === messageData.from)
         handleUpdateChatArray(messageData);
+      handleUpdateInboxUsers(messageData);
     });
   };
 

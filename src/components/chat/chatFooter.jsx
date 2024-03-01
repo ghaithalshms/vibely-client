@@ -18,6 +18,7 @@ const ChatFooter = ({
   chatArray,
   setChatArray,
   handleUpdateChatArray,
+  handleUpdateInboxUsers,
 }) => {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
@@ -78,6 +79,7 @@ const ChatFooter = ({
     };
     handleUpdateChatArray(messageData);
     handleSendMessageToSocket(messageData);
+    handleUpdateInboxUsers(messageData);
     handleClearTextArea();
   };
 
