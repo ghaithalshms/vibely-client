@@ -106,6 +106,7 @@ const ChatBody = ({
             key={message.id}
             isDarkMode={isDarkMode}
             message={message}
+            handleScrollChatBodyToEnd={handleScrollChatBodyToEnd}
           />
         ))}
       {/* MESSAGE SEEN */}

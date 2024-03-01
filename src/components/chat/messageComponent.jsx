@@ -2,7 +2,11 @@ import Cookies from "js-cookie";
 import React, { useState } from "react";
 import AudioPlayer from "../audioPlayer/audioPlayer";
 
-const MessageComponent = ({ isDarkMode, message }) => {
+const MessageComponent = ({
+  isDarkMode,
+  message,
+  handleScrollChatBodyToEnd,
+}) => {
   const [fileLoaded, setFileLoaded] = useState(false);
   const userSigned = Cookies.get("username");
 
@@ -68,7 +72,10 @@ const MessageComponent = ({ isDarkMode, message }) => {
         }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
           message.id
         }`}
-        onLoad={() => setFileLoaded(true)}
+        onLoad={() => {
+          setFileLoaded(true);
+          handleScrollChatBodyToEnd();
+        }}
         onError={() => setFileLoaded(false)}
         alt="Chat pic"
         // block right click
@@ -89,7 +96,10 @@ const MessageComponent = ({ isDarkMode, message }) => {
       }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
         message.id
       }`}
-      onLoadedData={() => setFileLoaded(true)}
+      onLoadedData={() => {
+        setFileLoaded(true);
+        handleScrollChatBodyToEnd();
+      }}
       onError={() => setFileLoaded(false)}
       type="video/mp4"
       controls
