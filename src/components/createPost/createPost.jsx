@@ -60,33 +60,35 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
   };
 
   const handleCreatePost = async (e) => {
-    if (picture || video || description) {
-      e.preventDefault();
-      if (picture?.size > 2 * 1024 * 1024) {
-        alert("File size exceeds the maximum allowed size (2MB).");
-        setPicture(null);
-      } else {
-        setShareButtonDisabled(true);
-        const btnShare = document.getElementById("btn-share");
-        btnShare.setAttribute("disabled", "");
+    if (!shareButtonDisabled) {
+      if (picture || video || description) {
+        e.preventDefault();
+        if (picture?.size > 2 * 1024 * 1024) {
+          alert("File size exceeds the maximum allowed size (2MB).");
+          setPicture(null);
+        } else {
+          setShareButtonDisabled(true);
+          const btnShare = document.getElementById("btn-share");
+          btnShare.setAttribute("disabled", "");
 
-        axios.defaults.maxBodyLength = 2 * 1024 * 1024;
-        const formData = new FormData();
-        formData.append("token", Cookies.get("token"));
-        formData.append("description", description);
-        formData.append("fileType", fileType);
-        formData.append("file", picture || video || null);
+          axios.defaults.maxBodyLength = 2 * 1024 * 1024;
+          const formData = new FormData();
+          formData.append("token", Cookies.get("token"));
+          formData.append("description", description);
+          formData.append("fileType", fileType);
+          formData.append("file", picture || video || null);
 
-        axios
-          .post(postLink.createPost, formData)
-          .then((res) => {
-            if (res.status === 200)
-              window.location.href = `/${Cookies.get("username")}`;
-            btnShare.removeAttribute("disabled");
-          })
-          .catch((err) => {
-            handleCatchAxios(err);
-          });
+          axios
+            .post(postLink.createPost, formData)
+            .then((res) => {
+              btnShare.removeAttribute("disabled");
+              if (res.status === 200)
+                window.location.href = `/${Cookies.get("username")}`;
+            })
+            .catch((err) => {
+              handleCatchAxios(err);
+            });
+        }
       }
     }
   };
