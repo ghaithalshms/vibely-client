@@ -8,8 +8,7 @@ import Cookies from "js-cookie";
 
 const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
   const [description, setDescription] = useState("");
-  const [picture, setPicture] = useState(null);
-  const [video, setVideo] = useState(null);
+  const [file, setFile] = useState(null);
   const [fileType, setFileType] = useState(null);
   const [warning, setWarning] = useState("");
   const pictureRef = useRef();
@@ -27,22 +26,17 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
     if (e.target.files[0]) {
       const file = e.target.files[0];
 
-      if (file.size > 2 * 1024 * 1024) {
-        setWarning("Sorry, max file size is 2mb");
+      if (file.size > 3 * 1024 * 1024) {
+        setWarning("Sorry, max file size is 3 MB");
         pictureRef.current.src = null;
         setVideoSrc(null);
-        setPicture(null);
-        setVideo(null);
+        setFile(null);
       } else {
-        if (file.type.startsWith("image/")) {
-          setPicture(file);
-          setFileType("picture");
-          setVideo(null);
+        setFile(file);
+        setFileType(file.type);
+        if (file.type?.startsWith("image/"))
           pictureRef.current.src = URL.createObjectURL(file);
-        } else if (file.type.startsWith("video/")) {
-          setVideo(file);
-          setFileType("video");
-          setPicture(null);
+        else if (file.type?.startsWith("video/")) {
           const reader = new FileReader();
           reader.onloadend = () => {
             const base64Data = reader.result;
@@ -51,8 +45,8 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
           reader.readAsDataURL(file);
         } else {
           setWarning("Invalid file type, please upload an image or video");
-          setPicture(null);
-          setVideo(null);
+          setFile(null);
+          setVideoSrc(null);
           pictureRef.current.src = null;
         }
       }
@@ -61,11 +55,11 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
 
   const handleCreatePost = async (e) => {
     if (!shareButtonDisabled) {
-      if (picture || video || description) {
+      if (file || file || description) {
         e.preventDefault();
-        if (picture?.size > 2 * 1024 * 1024) {
-          alert("File size exceeds the maximum allowed size (2MB).");
-          setPicture(null);
+        if (file?.size > 3 * 1024 * 1024) {
+          alert("File size exceeds the maximum allowed size (3MB).");
+          setFile(null);
         } else {
           setShareButtonDisabled(true);
           const btnShare = document.getElementById("btn-share");
@@ -76,7 +70,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
           formData.append("token", Cookies.get("token"));
           formData.append("description", description);
           formData.append("fileType", fileType);
-          formData.append("file", picture || video || null);
+          formData.append("file", file);
 
           axios
             .post(postLink.createPost, formData)
@@ -145,23 +139,22 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
         top: "5px",
         right: "5px",
         cursor: "pointer",
-        display:
-          fileType === "picture"
-            ? pictureRef.current && picture
-              ? pictureRef.current.src.split("/").some((element) => {
-                  return element === "null";
-                })
-                ? "none"
-                : "flex"
-              : "none"
-            : videoSrc && video
-            ? "flex"
-            : "none",
+        display: fileType?.startsWith("image/")
+          ? pictureRef.current && file
+            ? pictureRef.current.src.split("/").some((element) => {
+                return element === "null";
+              })
+              ? "none"
+              : "flex"
+            : "none"
+          : videoSrc && file
+          ? "flex"
+          : "none",
       }}
       onClick={() => {
-        setPicture(null);
+        setFile(null);
         pictureRef.current.src = null;
-        setVideo(null);
+        setFile(null);
         setVideoSrc(null);
       }}
     >
@@ -176,7 +169,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
       alt="Added"
       style={{
         display:
-          pictureRef.current && picture
+          fileType?.startsWith("image/") && pictureRef.current && file
             ? pictureRef.current.src.split("/").some((element) => {
                 return element === "null";
               })
@@ -195,7 +188,8 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
       controlsList="nodownload"
       className="post-file"
       style={{
-        display: videoSrc && video ? "block" : "none",
+        display:
+          fileType?.startsWith("video/") && videoSrc && file ? "block" : "none",
       }}
     />
   );
@@ -231,7 +225,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
           height: "25px",
           marginLeft: ".5rem",
           cursor: "pointer",
-          display: picture ? "none" : "flex",
+          display: file ? "none" : "flex",
         }}
         onClick={handleUploadPictureClick}
       />
