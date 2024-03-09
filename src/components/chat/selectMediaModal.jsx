@@ -9,15 +9,7 @@ const SelectMediaModal = ({
   isDarkMode,
   isOpen,
   onRequestClose,
-  handleCatchAxios,
-  file,
-  setFile,
-  fileType,
-  setFileType,
-  chatUser,
-  chatArray,
-  setChatArray,
-  clientSocket,
+  handleSendMessage,
 }) => {
   return (
     <Modal
@@ -53,16 +45,8 @@ const SelectMediaModal = ({
       <div>
         <SelectMedia
           isDarkMode={isDarkMode}
-          handleCatchAxios={handleCatchAxios}
-          file={file}
-          setFile={setFile}
-          fileType={fileType}
-          setFileType={setFileType}
-          chatUser={chatUser}
-          chatArray={chatArray}
-          setChatArray={setChatArray}
-          clientSocket={clientSocket}
           onRequestClose={onRequestClose}
+          handleSendMessage={handleSendMessage}
         />
       </div>
     </Modal>
