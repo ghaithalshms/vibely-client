@@ -10,6 +10,7 @@ Modal.setAppElement("#root");
 const PostMoreModal = ({
   isDarkMode,
   isOpen,
+  isArchived,
   onRequestClose,
   setPostDeleted,
   postID,
@@ -29,6 +30,16 @@ const PostMoreModal = ({
     setPostDeleted();
     await axios
       .post(updateLink.archivePost, {
+        token: Cookies.get("token"),
+        postID,
+      })
+      .then()
+      .catch((err) => handleCatchAxios(err));
+  };
+  const handleUnarchivePost = async () => {
+    setPostDeleted();
+    await axios
+      .post(updateLink.unarchivePost, {
         token: Cookies.get("token"),
         postID,
       })
@@ -69,7 +80,11 @@ const PostMoreModal = ({
       <h2>More</h2>
       <div className="container-y">
         <button onClick={handleDeletePost}>Delete</button>
-        <button onClick={handleArchivePost}>Archive</button>
+        {isArchived ? (
+          <button onClick={handleUnarchivePost}>Unarchive</button>
+        ) : (
+          <button onClick={handleArchivePost}>Archive</button>
+        )}
       </div>
     </Modal>
   );

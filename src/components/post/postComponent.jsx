@@ -105,7 +105,8 @@ const PostComponent = ({
   const postMoreIcons = (
     // MOUAZ KRAL ADAM
     <>
-      {post.postedUser === Cookies.get("username") && (
+      {(post.username === Cookies.get("username") ||
+        user.username === Cookies.get("username")) && (
         <img
           className="pointer"
           style={{ height: "20px", width: "20px" }}
@@ -341,16 +342,19 @@ const PostComponent = ({
           postID={post.postID}
         />
       )}
-      {isPostMoreModalOpen && post.postedUser === Cookies.get("username") && (
-        <PostMoreModal
-          isDarkMode={isDarkMode}
-          isOpen={isPostMoreModalOpen}
-          onRequestClose={() => setPostMoreModalOpen(false)}
-          setPostDeleted={() => setPostDeleted(true)}
-          postID={post.postID}
-          handleCatchAxios={handleCatchAxios}
-        />
-      )}
+      {isPostMoreModalOpen &&
+        (post.username === Cookies.get("username") ||
+          user.username === Cookies.get("username")) && (
+          <PostMoreModal
+            isDarkMode={isDarkMode}
+            isOpen={isPostMoreModalOpen}
+            onRequestClose={() => setPostMoreModalOpen(false)}
+            setPostDeleted={() => setPostDeleted(true)}
+            postID={post.postID}
+            handleCatchAxios={handleCatchAxios}
+            isArchived={post.isArchived}
+          />
+        )}
     </div>
   );
 };

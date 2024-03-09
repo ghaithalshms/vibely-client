@@ -65,6 +65,7 @@ const deleteLink = {
 const updateLink = {
   // POST
   archivePost: `${host}/api/post/archive`,
+  unarchivePost: `${host}/api/post/unarchive`,
   // USER
   updateProfileData: `${host}/api/user/update/data`,
   updateProfilePicture: `${host}/api/user/update/picture`,
