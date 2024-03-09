@@ -133,7 +133,8 @@ const MessageComponent = ({
         marginLeft: message.from === userSigned ? "auto" : "0",
         marginRight: message.from === userSigned ? "5px" : "0",
         backgroundColor:
-          message.fileType !== "picture" && message.fileType !== "video"
+          !message.fileType?.startsWith("image") &&
+          !message.fileType?.startsWith("video")
             ? message.from === userSigned
               ? isDarkMode
                 ? "#68053a"
@@ -144,9 +145,9 @@ const MessageComponent = ({
             : "",
       }}
     >
-      {message.fileType === "picture" && pictureElement}
-      {message.fileType === "video" && videoElement}
-      {message.fileType === "audio" && audioElement}
+      {message.fileType?.startsWith("image") && pictureElement}
+      {message.fileType?.startsWith("video") && videoElement}
+      {message.fileType?.startsWith("audio") && audioElement}
     </div>
   );
 
