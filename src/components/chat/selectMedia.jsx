@@ -1,89 +1,27 @@
-import React, { useState, useRef } from "react";
-import axios from "axios";
-import { postLink } from "../../API";
+import React, { useState, useRef, useEffect } from "react";
 
 import galeryIconLight from "../icon/light-mode/create post/galery.png";
 import galeryIconDark from "../icon/dark-mode/create post/galery.png";
-import Cookies from "js-cookie";
 
-const SelectMedia = ({
-  isDarkMode,
-  handleCatchAxios,
-  file,
-  setFile,
-  fileType,
-  setFileType,
-  chatUser,
-  chatArray,
-  setChatArray,
-  clientSocket,
-  onRequestClose,
-}) => {
-  // const [picture, setPicture] = useState(null);
-  // const [video, setVideo] = useState(null);
-  // const [fileType, setFileType] = useState(null);
+const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
+  const [file, setFile] = useState(null);
+  const [fileType, setFileType] = useState(null);
   const [warning, setWarning] = useState("");
   const pictureRef = useRef();
   const [videoSrc, setVideoSrc] = useState(null);
 
   const [sendButtonDisabled, setSendButtonDisabled] = useState(false);
 
-  const handleSendMessageToDB = async () => {
-    axios.defaults.maxBodyLength = 2 * 1024 * 1024;
-    const formData = new FormData();
-    formData.append("token", Cookies.get("token"));
-    formData.append("username", chatUser.username);
-    formData.append("fileType", fileType);
-    formData.append("file", file);
-
-    let data;
-
-    await axios
-      .post(postLink.sendMessageToDB, formData)
-      .then((res) => (data = res?.data))
-      .catch((err) => handleCatchAxios(err));
-
-    return data;
-  };
-
-  const handleSendMessageToSocket = (id, file) => {
-    if (clientSocket && Cookies.get("username")) {
-      const messageData = {
-        id,
-        from: Cookies.get("username"),
-        to: chatUser.username,
-        fileType,
-        seen: false,
-      };
-      clientSocket.emit("send_message", messageData);
-    }
-  };
-
-  const handleUpdateChatArray = (id, file) => {
-    if (chatArray) {
-      setChatArray([
-        ...chatArray,
-        {
-          id,
-          from: Cookies.get("username"),
-          to: chatUser.username,
-          // sentDate: messageData.sent_date, FIXXX
-          file,
-          fileType,
-          seen: false,
-        },
-      ]);
-    }
-  };
+  useEffect(() => handleUploadPictureClick(), []);
 
   const handleSend = async () => {
     setSendButtonDisabled(true);
+
     const btnSend = document.getElementById("btn-send");
     btnSend.setAttribute("disabled", "");
 
-    const data = await handleSendMessageToDB();
-    handleSendMessageToSocket(data.id, data.file);
-    handleUpdateChatArray(data.id, data.file);
+    handleSendMessage(file, fileType);
+
     pictureRef.current.src = null;
     setVideoSrc(null);
     setFile(null);
@@ -98,19 +36,17 @@ const SelectMedia = ({
     if (e.target.files[0]) {
       const file = e.target.files[0];
 
-      if (file.size > 2 * 1024 * 1024) {
-        setWarning("Sorry, max file size is 2mb");
+      if (file.size > 3 * 1024 * 1024) {
+        setWarning("Sorry, max file size is 3 mb");
         pictureRef.current.src = null;
         setVideoSrc(null);
         setFile(null);
       } else {
-        if (file.type.startsWith("image/")) {
-          setFile(file);
-          setFileType("picture");
+        setFile(file);
+        setFileType(file.type);
+        if (file.type?.startsWith("image"))
           pictureRef.current.src = URL.createObjectURL(file);
-        } else if (file.type.startsWith("video/")) {
-          setFile(file);
-          setFileType("video");
+        else if (file.type?.startsWith("video")) {
           const reader = new FileReader();
           reader.onloadend = () => {
             const base64Data = reader.result;
@@ -120,6 +56,8 @@ const SelectMedia = ({
         } else {
           setWarning("Invalid file type, please upload an image or video");
           setFile(null);
+          setFileType(null);
+          setVideoSrc(null);
           pictureRef.current.src = null;
         }
       }
@@ -150,18 +88,17 @@ const SelectMedia = ({
         top: "5px",
         right: "5px",
         cursor: "pointer",
-        display:
-          fileType === "picture"
-            ? pictureRef.current && file
-              ? pictureRef.current.src.split("/").some((element) => {
-                  return element === "null";
-                })
-                ? "none"
-                : "flex"
-              : "none"
-            : videoSrc && file
-            ? "flex"
-            : "none",
+        display: fileType?.startsWith("image")
+          ? pictureRef.current && file
+            ? pictureRef.current.src.split("/").some((element) => {
+                return element === "null";
+              })
+              ? "none"
+              : "flex"
+            : "none"
+          : videoSrc && file
+          ? "flex"
+          : "none",
       }}
       onClick={() => {
         setFile(null);
@@ -180,7 +117,7 @@ const SelectMedia = ({
       alt="Added"
       style={{
         display:
-          pictureRef.current && file
+          fileType?.startsWith("image") && pictureRef.current && file
             ? pictureRef.current.src.split("/").some((element) => {
                 return element === "null";
               })
@@ -199,7 +136,8 @@ const SelectMedia = ({
       controlsList="nodownload"
       className="post-file"
       style={{
-        display: videoSrc && file ? "block" : "none",
+        display:
+          fileType?.startsWith("video") && videoSrc && file ? "block" : "none",
       }}
     />
   );
