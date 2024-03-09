@@ -102,6 +102,25 @@ const PostComponent = ({
     </div>
   );
 
+  const postMoreIcons = (
+    // MOUAZ KRAL ADAM
+    <>
+      {post.postedUser === Cookies.get("username") && (
+        <img
+          className="pointer"
+          style={{ height: "20px", width: "20px" }}
+          src={isDarkMode ? optionsDark : optionsLight}
+          alt="options"
+          // block right click
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
+          onClick={() => setPostMoreModalOpen(true)}
+        />
+      )}
+    </>
+  );
+
   const postHeader = (
     <div className="post-header">
       <div
@@ -135,19 +154,7 @@ const PostComponent = ({
         <div>{nameIconDate}</div>
       </div>
       {/* POST MORE ICON */}
-      {post.postedUser === Cookies.get("username") && (
-        <img
-          className="pointer"
-          style={{ height: "20px", width: "20px" }}
-          src={isDarkMode ? optionsDark : optionsLight}
-          alt="options"
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
-          onClick={() => setPostMoreModalOpen(true)}
-        />
-      )}
+      {postMoreIcons}
     </div>
   );
 
