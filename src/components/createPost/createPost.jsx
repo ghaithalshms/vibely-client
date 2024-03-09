@@ -65,7 +65,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
           const btnShare = document.getElementById("btn-share");
           btnShare.setAttribute("disabled", "");
 
-          axios.defaults.maxBodyLength = 2 * 1024 * 1024;
+          axios.defaults.maxBodyLength = 3 * 1024 * 1024;
           const formData = new FormData();
           formData.append("token", Cookies.get("token"));
           formData.append("description", description);
