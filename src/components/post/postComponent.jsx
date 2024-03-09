@@ -251,7 +251,7 @@ const PostComponent = ({
     <div className="post-content container-y">
       <pre>{post.description}</pre>
       {!fileLoaded && postFileLoading}
-      {post.fileType === "picture" && (
+      {post.fileType?.startsWith("image") && (
         <img
           className="post-file"
           loading="lazy"
@@ -267,7 +267,7 @@ const PostComponent = ({
           }}
         />
       )}
-      {post.fileType === "video" && (
+      {post.fileType?.startsWith("video") && (
         <video
           style={{ display: fileLoaded ? "inline" : "none" }}
           className="post-file"
