@@ -36,9 +36,9 @@ const AudioPlayer = ({ isDarkMode, audioFile, sentByTheUser }) => {
 
     wavesurfer.current.load(audioFile);
 
-    wavesurfer.current.on("ready", () => {
-      setLoading(false);
-    });
+    wavesurfer.current.on("ready", () => setLoading(false));
+
+    wavesurfer.current.on("finish", () => setPlaying(false));
 
     return () => wavesurfer.current.destroy();
     // eslint-disable-next-line
