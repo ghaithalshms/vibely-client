@@ -211,17 +211,26 @@ const PostComponent = ({
             onClick={handleLikePost}
           />
           {/* COMMENT ICON */}
-          <img
-            className="pointer"
-            style={{ height: "22px", width: "22px" }}
-            src={isDarkMode ? commentDark : commentLight}
-            alt="comment"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
+          <div
+            className="container-x pointer"
             onClick={() => setIsCommentsModalOpen(true)}
-          />
+            style={{ alignItems: "center", justifyContent: "center" }}
+          >
+            <img
+              style={{ height: "22px", width: "22px" }}
+              src={isDarkMode ? commentDark : commentLight}
+              alt="comment"
+              // block right click
+              onContextMenu={(event) => {
+                event.preventDefault();
+              }}
+            />
+            {post.commentCount > 0 && (
+              <span
+                style={{ marginLeft: "10px" }}
+              >{`${post.commentCount}`}</span>
+            )}
+          </div>
         </div>
         {/* SAVE ICON */}
         <img
