@@ -15,14 +15,10 @@ const ChatFooter = ({
   chatUser,
   handleCatchAxios,
   clientSocket,
-  chatArray,
-  setChatArray,
   handleUpdateChatArray,
   handleUpdateInboxUsers,
 }) => {
   const [message, setMessage] = useState("");
-  const [file, setFile] = useState(null);
-  const [fileType, setFileType] = useState(null);
   const [isMediaModalOpen, setMediaModalOpen] = useState(false);
   const [isRecording, setRecording] = useState(false);
 
@@ -31,17 +27,17 @@ const ChatFooter = ({
     const audioFile = new File([recordedBlob.blob], "audio.mp3", {
       type: "audio/mp3",
     });
-    handleSendMessage(audioFile, "audio");
+    handleSendMessage(audioFile, "audio/mp3");
   };
 
-  const handleSendMessageToDB = async (_file, _fileType) => {
-    axios.defaults.maxBodyLength = 2 * 1024 * 1024;
+  const handleSendMessageToDB = async (file, fileType) => {
+    axios.defaults.maxBodyLength = 3 * 1024 * 1024;
     const formData = new FormData();
     formData.append("token", Cookies.get("token"));
     formData.append("username", chatUser.username);
     formData.append("message", message);
-    formData.append("fileType", _fileType || fileType);
-    formData.append("file", _file || file);
+    formData.append("fileType", fileType);
+    formData.append("file", file);
 
     let id = 0;
 
@@ -66,15 +62,16 @@ const ChatFooter = ({
     document.getElementById("send-message-textarea")?.focus();
   };
 
-  const handleSendMessage = async (_file, _fileType) => {
-    const id = await handleSendMessageToDB(_file, _fileType);
+  // FIXME: TIME
+  const handleSendMessage = async (file, fileType) => {
+    const id = await handleSendMessageToDB(file, fileType);
     const messageData = {
       id,
       message,
       from: Cookies.get("username"),
       to: chatUser.username,
       // sentDate: messageData.sent_date, FIXXX
-      fileType: _fileType || fileType,
+      fileType: fileType,
       seen: false,
     };
     handleUpdateChatArray(messageData);
@@ -161,15 +158,7 @@ const ChatFooter = ({
           isDarkMode={isDarkMode}
           isOpen={isMediaModalOpen}
           onRequestClose={() => setMediaModalOpen(false)}
-          handleCatchAxios={handleCatchAxios}
-          file={file}
-          setFile={setFile}
-          fileType={fileType}
-          setFileType={setFileType}
-          chatUser={chatUser}
-          chatArray={chatArray}
-          setChatArray={setChatArray}
-          clientSocket={clientSocket}
+          handleSendMessage={handleSendMessage}
         />
       )}
     </div>
