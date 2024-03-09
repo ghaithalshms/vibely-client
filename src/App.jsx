@@ -86,7 +86,6 @@ const App = () => {
     } else if (err?.response?.status === 401) {
       Cookies.remove("token");
       Cookies.remove("username");
-      sessionStorage.removeItem("picture");
       window.location.href = "/login";
     } else if (err?.response?.status === 404) {
       setDialogOpen(true);
