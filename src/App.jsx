@@ -7,7 +7,7 @@ import {
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import "./style.css";
-import Login from "./components/login/login";
+import Login from "./components/auth/login";
 import Profile from "./components/profile/profile";
 import axios from "axios";
 import { getLink } from "./API";
