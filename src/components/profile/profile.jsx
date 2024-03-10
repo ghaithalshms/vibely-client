@@ -4,7 +4,7 @@ import { getLink } from "../../API";
 import Cookies from "js-cookie";
 import "./profile.css";
 import DataContainer from "./dataContainer";
-import UserPostFlow from "../postfFow/userPostFlow";
+import UserPostFlow from "../postFlow/userPostFlow";
 import Navbar from "../navbar/navbar";
 
 const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {

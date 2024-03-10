@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "../navbar/navbar";
-import ActivitiesPostFlow from "../postfFow/activitiesPostFlow";
+import ActivitiesPostFlow from "../postFlow/activitiesPostFlow";
 
 const Activities = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
   return (

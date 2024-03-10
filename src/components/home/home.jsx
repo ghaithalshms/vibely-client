@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import HomePostFlow from "../postfFow/homePostFlow";
+import HomePostFlow from "../postFlow/homePostFlow";
 import Navbar from "../navbar/navbar";
 import CreatePost from "../createPost/createPost";
 import SuggestionsList from "../suggestions/suggestionsList";

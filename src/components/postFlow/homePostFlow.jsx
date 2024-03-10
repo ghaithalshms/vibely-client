@@ -3,59 +3,45 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
-import { handleUpdatePost } from "../postfFow/updatePost";
+import { handleUpdatePost } from "../postFlow/updatePost";
 
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";
 import cameraDark from "../icon/dark-mode/profile/camera.png";
 
-const ActivitiesPostFlow = ({
+const HomePostFlow = ({
   isDarkMode,
   handleCatchAxios,
   scrollingPercentage,
 }) => {
-  const [postFlowArray, setPostFlowArray] = useState();
+  const [homePostFlowArray, setHomePostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
-  const getAxiosLink = () => {
-    const activityType = window.location.href
-      .split("/")
-      [window.location.href.split("/").length - 1].split("?")[0];
-    switch (activityType) {
-      case "liked":
-        return getLink.getLikedPostFlow;
-      case "saved":
-        return getLink.getSavedPostFlow;
-      case "archived":
-        return getLink.getArchivedPostFlow;
-      default:
-        break;
-    }
-  };
-
-  const handleGetPostFlow = async (isOnScrolling) => {
-    const axiosLink = getAxiosLink();
-    if (!axiosLink) return;
+  const handleGetHomePostFlow = async (isOnScrolling) => {
     if (!isOnScrolling) setIsLoading(true);
     if (lastGotPostID >= 0)
       await axios
-        .get(axiosLink, {
+        .get(getLink.getHomePostFlow, {
           params: {
             token: Cookies.get("token"),
             lastGotPostID,
           },
         })
-        .then((res) => {
+        .then(async (res) => {
           if (res.data !== "no post flow") {
             setLastGotPostID(res.data?.lastGotPostID);
-            if (!isOnScrolling) setPostFlowArray(res.data?.postFlowArray);
+            if (!isOnScrolling) setHomePostFlowArray(res.data?.postFlowArray);
             // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
             else
-              setPostFlowArray([...postFlowArray, ...res.data?.postFlowArray]);
+              setHomePostFlowArray([
+                ...homePostFlowArray,
+                ...res.data?.postFlowArray,
+              ]);
           }
         })
+
         .catch((err) => handleCatchAxios(err));
     setIsLoading(false);
     setIsPostFlowGot(true);
@@ -63,7 +49,7 @@ const ActivitiesPostFlow = ({
 
   useEffect(() => {
     // GET USER POST FLOW ON LOAD
-    if (!isPostFlowGot) handleGetPostFlow();
+    if (!isPostFlowGot) handleGetHomePostFlow();
     else setIsLoading(false);
     // eslint-disable-next-line
   }, []);
@@ -71,7 +57,7 @@ const ActivitiesPostFlow = ({
   // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
     if (scrollingPercentage > 60) {
-      handleGetPostFlow(true);
+      handleGetHomePostFlow(true);
     }
     // eslint-disable-next-line
   }, [scrollingPercentage]);
@@ -83,7 +69,7 @@ const ActivitiesPostFlow = ({
         style={{
           display: "flex",
           justifyContent: "center",
-          paddingTop: "40svh",
+          paddingTop: "20vh",
         }}
       >
         <span className="loader" />
@@ -97,7 +83,7 @@ const ActivitiesPostFlow = ({
       style={{
         alignItems: "center",
         justifyContent: "center",
-        marginTop: "40%",
+        marginTop: "30vh",
       }}
     >
       <img
@@ -111,16 +97,16 @@ const ActivitiesPostFlow = ({
 
   return (
     <div className="container-y post-container">
-      {!isLoading && postFlowArray?.length === 0 && noAnyPost}
-      {Array.isArray(postFlowArray) &&
-        postFlowArray?.map((postData) => (
+      {!isLoading && homePostFlowArray?.length === 0 && noAnyPost}
+      {Array.isArray(homePostFlowArray) &&
+        homePostFlowArray?.map((postData) => (
           <PostComponent
             isDarkMode={isDarkMode}
             key={postData.post.postID}
             user={postData.user}
             post={postData.post}
-            postFlow={postFlowArray}
-            setPostFlow={setPostFlowArray}
+            postFlow={homePostFlowArray}
+            setPostFlow={setHomePostFlowArray}
             handleUpdatePost={handleUpdatePost}
             handleCatchAxios={handleCatchAxios}
           />
@@ -129,4 +115,4 @@ const ActivitiesPostFlow = ({
   );
 };
 
-export default ActivitiesPostFlow;
+export default HomePostFlow;

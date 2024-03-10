@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
-import { handleUpdatePost } from "../postfFow/updatePost";
+import { handleUpdatePost } from "../postFlow/updatePost";
 
 // ICON
 import cameraLight from "../icon/light-mode/profile/camera.png";

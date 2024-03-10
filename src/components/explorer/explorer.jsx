@@ -1,5 +1,5 @@
 import React from "react";
-import ExplorerPostFlow from "../postfFow/explorerPostFlow";
+import ExplorerPostFlow from "../postFlow/explorerPostFlow";
 import Navbar from "../navbar/navbar";
 
 const Explorer = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
