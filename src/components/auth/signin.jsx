@@ -81,12 +81,19 @@ const Signin = ({ isDarkMode }) => {
         type="email text"
         autoComplete="email username"
         placeholder="Username or Email"
+        onKeyDown={(event) => {
+          if (event.key === "Enter")
+            document.getElementById("password-signin")?.focus();
+        }}
       />
       <input
         id="password-signin"
         type="password"
         autoComplete="password"
         placeholder="Password"
+        onKeyDown={(event) => {
+          if (event.key === "Enter") handleSignIn();
+        }}
       />
       <button onClick={handleSignIn} className="full-width">
         Sign In
