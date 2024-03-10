@@ -8,7 +8,6 @@ import UserPostFlow from "../postfFow/userPostFlow";
 import Navbar from "../navbar/navbar";
 
 const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
-  const userSigned = Cookies.get("username");
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,7 +19,7 @@ const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
       .get(getLink.getUserData, {
         params: {
           username,
-          userSigned,
+          token: Cookies.get("token"),
         },
       })
       .then((res) => {
