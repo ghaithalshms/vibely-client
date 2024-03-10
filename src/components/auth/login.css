@@ -31,7 +31,23 @@
   height: 480px;
 }
 
-.login-container .form-container {
+.forgot-password-container {
+  background-color: #fff;
+  box-shadow: 0 5px 15px var(--shadow-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  position: relative;
+  overflow: hidden;
+  width: 400px;
+  max-width: 100%;
+  height: 330px;
+  padding: 20px 40px;
+}
+
+.form-container {
   background-color: #fff;
   display: flex;
   align-items: center;
@@ -151,16 +167,14 @@
 }
 
 /* Dark Mode */
-.dark-mode .login-container {
+.dark-mode .login-container,
+.dark-mode .forgot-password-container {
   background-color: #000;
   box-shadow: 0 5px 15px var(--shadow-dark);
 }
 .dark-mode .toggle {
   background: var(--toggle-bg-dark);
 }
-.dark-mode .login-container {
-  background-color: #000;
-}
-.dark-mode .login-container .form-container {
+.dark-mode .form-container {
   background-color: #000;
 }

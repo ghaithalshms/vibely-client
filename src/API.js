@@ -63,6 +63,9 @@ const deleteLink = {
 };
 
 const updateLink = {
+  // AUTH
+  forgotPassword: `${host}/api/auth/forgot-password`,
+  resetPassword: `${host}/api/auth/reset-password`,
   // POST
   archivePost: `${host}/api/post/archive`,
   unarchivePost: `${host}/api/post/unarchive`,

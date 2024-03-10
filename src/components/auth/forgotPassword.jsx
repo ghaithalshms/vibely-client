@@ -1,93 +1,77 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { postLink } from "../../API";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { updateLink } from "../../API";
 import axios from "axios";
-import md5 from "md5";
-import Cookies from "js-cookie";
-import YesNoDialog from "./yesNoDialog/yesNoDialog";
 
 // ICONS
-import IconLight from "./icon/light-mode/vibely-text-light.png";
-import IconDark from "./icon/dark-mode/vibely-text-dark.png";
+import IconLight from "../icon/light-mode/vibely-text-light.png";
+import IconDark from "../icon/dark-mode/vibely-text-dark.png";
 
-const ForgotPassword = ({ isDarkMode }) => {
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [modalHeader, setModalHeader] = useState("");
-  const [modalBody, setModalBody] = useState("");
+const ForgotPassword = ({ isDarkMode, handleCatchAxios }) => {
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailAddress, setEmailAddress] = useState(null);
 
-  const handleSignIn = async () => {
-    const user = {
-      usernameOrEmail: document.getElementById("username").value,
-      password: md5(document.getElementById("password-signin").value),
-    };
-    axios
-      .post(postLink.signIn, user)
-      .then((response) => Cookies.set("token", response.data.token))
+  const navigate = useNavigate();
+
+  const handleForgotPassword = async () => {
+    const usernameOrEmail = document.getElementById("username").value;
+
+    await axios
+      .post(updateLink.forgotPassword, {
+        usernameOrEmail,
+      })
+      .then((res) => {
+        setEmailAddress(res.data.email);
+        setEmailSent(true);
+      })
       .catch((err) => {
-        setDialogOpen(true);
-        setModalHeader("Ooups");
-        if (err?.code === "ERR_NETWORK")
-          setModalBody(
-            `Sorry, a problem happened while connecting to the server`
-          );
-        else setModalBody(`Sorry, an error happened: ${err?.response?.status}`);
+        handleCatchAxios(err);
       });
   };
-  const vibelyIcon = useRef(null);
-  let container;
-  useEffect(() => {
-    // eslint-disable-next-line
-    container = document.getElementById("login-container");
-  });
-  useEffect(() => {
-    if (vibelyIcon.current)
-      vibelyIcon.current.src = isDarkMode ? IconDark : IconLight;
-  }, [isDarkMode]);
 
-  return (
-    <div className="form-container sign-in">
-      <img
-        className="login-icon"
-        src={isDarkMode ? IconDark : IconLight}
-        ref={vibelyIcon}
-        alt=""
-        // block right click
-        onContextMenu={(event) => {
-          event.preventDefault();
-        }}
-      />
-      <h2 className="only-mobile">Welcome Back!</h2>
+  const returnElement = !emailSent ? (
+    <>
+      <span style={{ margin: "10px 0" }}>
+        Enter your email or username and we'll send you a link to get back into
+        your account.
+      </span>
       <input
         id="username"
         type="email text"
         autoComplete="email username"
         placeholder="Username or Email"
       />
-      <input
-        id="password-signin"
-        type="password"
-        autoComplete="password"
-        placeholder="Password"
-      />
-      <button onClick={() => handleSignIn()} className="full-width">
-        Sign In
+      <button onClick={() => handleForgotPassword()} className="full-width">
+        Next
       </button>
-      <Link className="a-span" to="/forgot-password">
-        Forgot Your Password?
-      </Link>
-      <span
-        className="only-mobile a-span"
-        onClick={() => container.classList.add("active")}
-      >
-        Don't have an account? Sign up!
+      <Link to="/login">Go back to login page</Link>
+    </>
+  ) : (
+    <>
+      <span style={{ margin: "10px 0" }}>
+        {`An email has been sent to ${emailAddress}. if you don't see it, please
+        check your spam folder.`}
       </span>
-      <YesNoDialog
-        isDarkMode={isDarkMode}
-        isOpen={isDialogOpen}
-        header={modalHeader}
-        body={modalBody}
-        onNo={() => setDialogOpen(false)}
-      />
+      <button onClick={() => navigate("/login")} className="full-width">
+        Go back to login page
+      </button>
+    </>
+  );
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", height: "100svh" }}>
+      <div className="forgot-password-container" id="forgot-password-container">
+        <img
+          className="login-icon"
+          src={isDarkMode ? IconDark : IconLight}
+          alt=""
+          // block right click
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
+        />
+        {returnElement}
+      </div>
     </div>
   );
 };

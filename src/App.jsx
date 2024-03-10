@@ -12,7 +12,7 @@ import Profile from "./components/profile/profile";
 import axios from "axios";
 import { getLink } from "./API";
 import IsLoadingComponent from "./components/isLoadingComponent/isLoadingComponent";
-// import ForgotPassword from "./components/forgotPassword";
+import ForgotPassword from "./components/auth/forgotPassword";
 import DialogModal from "./components/dialogModal/dialogModal";
 import { handleAddScrollListener } from "./components/func/scrollPercentage";
 import Home from "./components/home/home";
@@ -24,6 +24,7 @@ import EditProfile from "./components/edit profile/editProfile";
 import Inbox from "./components/inbox/inbox";
 //socket io
 import io from "socket.io-client";
+import ResetPassword from "./components/auth/resetPassword";
 const socket = io.connect(process.env.REACT_APP_API_URL);
 const App = () => {
   // FOR ERROR MODAL
@@ -257,6 +258,32 @@ const App = () => {
           element={
             !(token && username) ? (
               <Login isDarkMode={isDarkMode} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            !(token && username) ? (
+              <ForgotPassword
+                isDarkMode={isDarkMode}
+                handleCatchAxios={handleCatchAxios}
+              />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            !(token && username) ? (
+              <ResetPassword
+                isDarkMode={isDarkMode}
+                handleCatchAxios={handleCatchAxios}
+              />
             ) : (
               <Navigate to="/" />
             )
