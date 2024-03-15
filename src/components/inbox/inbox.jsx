@@ -42,7 +42,7 @@ const Inbox = ({
         .get(getLink.getUserData, {
           params: {
             username,
-            userSigned: Cookies.get("token"),
+            token: Cookies.get("token"),
           },
         })
         .then((res) => {
