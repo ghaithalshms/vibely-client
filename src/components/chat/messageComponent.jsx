@@ -153,8 +153,8 @@ const MessageComponent = ({
 
   return (
     <div>
-      {!message.fileType && message.message && messageElement}
-      {message.fileType && messageFileElement}
+      {message.fileType === "text/plain" && message.message && messageElement}
+      {message.fileType !== "text/plain" && messageFileElement}
     </div>
   );
 };
