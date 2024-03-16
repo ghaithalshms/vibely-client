@@ -114,7 +114,7 @@ const MessageComponent = ({
   const audioElement = (
     <AudioPlayer
       isDarkMode={isDarkMode}
-      audioFile={`${
+      audioUrl={`${
         process.env.REACT_APP_API_URL
       }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
         message.id

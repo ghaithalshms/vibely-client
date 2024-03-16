@@ -5,7 +5,7 @@ import pauseIcon from "../icon/light-mode/chat/pause.png";
 import playIconBlack from "../icon/light-mode/chat/play-black.png";
 import pauseIconBlack from "../icon/light-mode/chat/pause-black.png";
 
-const AudioPlayer = ({ isDarkMode, audioFile, sentByTheUser }) => {
+const AudioPlayer = ({ isDarkMode, audioUrl, sentByTheUser }) => {
   const waveformRef = useRef(null);
   const wavesurfer = useRef(null);
   const [playing, setPlaying] = useState(false);
@@ -31,15 +31,12 @@ const AudioPlayer = ({ isDarkMode, audioFile, sentByTheUser }) => {
   });
 
   useEffect(() => {
+    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
     const options = formWaveOptions(waveformRef.current);
     wavesurfer.current = WaveSurfer.create(options);
-
-    wavesurfer.current.load(audioFile);
-
+    wavesurfer.current.load(proxyUrl + audioUrl);
     wavesurfer.current.on("ready", () => setLoading(false));
-
     wavesurfer.current.on("finish", () => setPlaying(false));
-
     return () => wavesurfer.current.destroy();
     // eslint-disable-next-line
   }, []);
