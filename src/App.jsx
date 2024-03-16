@@ -13,7 +13,7 @@ import axios from "axios";
 import { getLink } from "./API";
 import IsLoadingComponent from "./components/isLoadingComponent/isLoadingComponent";
 import ForgotPassword from "./components/auth/forgotPassword";
-import DialogModal from "./components/dialogModal/dialogModal";
+// import DialogModal from "./components/dialogModal/dialogModal";
 import { handleAddScrollListener } from "./components/func/scrollPercentage";
 import Home from "./components/home/home";
 import Explorer from "./components/explorer/explorer";
@@ -25,12 +25,16 @@ import Inbox from "./components/inbox/inbox";
 //socket io
 import io from "socket.io-client";
 import ResetPassword from "./components/auth/resetPassword";
+import Error404 from "./components/error/error404";
+import Error500 from "./components/error/error500";
 const socket = io.connect(process.env.REACT_APP_API_URL);
 const App = () => {
   // FOR ERROR MODAL
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [dialogModalHeader, setDialogModalHeader] = useState("");
-  const [dialogModalBody, setDialogModalBody] = useState("");
+  const [errorCode, setErrorCode] = useState(0);
+
+  // const [isDialogOpen, setDialogOpen] = useState(false);
+  // const [dialogModalHeader, setDialogModalHeader] = useState("");
+  // const [dialogModalBody, setDialogModalBody] = useState("");
 
   const [scrollingPercentage, setScrollingPercentage] = useState(0);
   // const [profilePicture, setProfilePicture] = useState(null);
@@ -79,19 +83,21 @@ const App = () => {
 
   const handleCatchAxios = (err) => {
     if (err?.code === "ERR_NETWORK") {
-      setDialogOpen(true);
-      setDialogModalHeader("Ooups");
-      setDialogModalBody(
-        `Sorry, a problem happened while connecting to the server`
-      );
+      setErrorCode(500);
+      // setDialogOpen(true);
+      // setDialogModalHeader("Ooups");
+      // setDialogModalBody(
+      //   `Sorry, a problem happened while connecting to the server`
+      // );
     } else if (err?.response?.status === 401) {
       Cookies.remove("token");
       Cookies.remove("username");
       window.location.href = "/login";
     } else if (err?.response?.status === 404) {
-      setDialogOpen(true);
-      setDialogModalHeader("Ooups");
-      setDialogModalBody(`Sorry, this page does not exist`);
+      setErrorCode(404);
+      // setDialogOpen(true);
+      // setDialogModalHeader("Ooups");
+      // setDialogModalBody(`Sorry, this page does not exist`);
     }
     console.error(err);
 
@@ -131,20 +137,29 @@ const App = () => {
   if (isLoading) return <IsLoadingComponent />;
 
   // IF SERVER ERROR, ERROR MODAL
-  if (isDialogOpen)
-    return (
-      <DialogModal
-        isDarkMode={isDarkMode}
-        isOpen={isDialogOpen}
-        header={dialogModalHeader}
-        body={dialogModalBody}
-        onNo={() => (window.location.href = "/")}
-      />
+  // if (isDialogOpen)
+  //   return (
+  //     <DialogModal
+  //       isDarkMode={isDarkMode}
+  //       isOpen={isDialogOpen}
+  //       header={dialogModalHeader}
+  //       body={dialogModalBody}
+  //       onNo={() => (window.location.href = "/")}
+  //     />
+  //   );
+
+  const errorCodeElement =
+    errorCode === 404 ? (
+      <Error404 isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+    ) : (
+      <Error500 isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
     );
 
   return (
     <Router>
       <Routes>
+        {/* ERROR PAGES */}
+        {errorCode > 0 && <Route path="/*" element={errorCodeElement} />}
         {/*  WITH TOKEN */}
         {/* HOME ROUTE */}
         <Route
