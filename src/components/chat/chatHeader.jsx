@@ -8,7 +8,7 @@ import { timeDifference } from "../func/timeDifference";
 import spotifyIcon from "../icon/spotify.png";
 import defaultPfp from "../icon/default profile picture.jpg";
 
-const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
+const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
   const navigate = useNavigate();
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
@@ -21,6 +21,7 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
       }}
       src={isDarkMode ? backDark : backLight}
       onClick={() => {
+        setErrorCode(0);
         navigate(`/inbox`);
         setChatUser(null);
       }}
@@ -38,7 +39,10 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
       <div
         className="container-x pointer"
         style={{ alignItems: "center" }}
-        onClick={() => navigate(`/${chatUser?.username}`)}
+        onClick={() => {
+          setErrorCode(0);
+          navigate(`/${chatUser?.username}`);
+        }}
       >
         <h3 style={{ marginRight: "5px" }}>{`${chatUser?.firstName} `}</h3>
         {chatUser?.isVerified && (
@@ -96,7 +100,10 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser }) => {
               marginRight: "0.8rem",
               marginBottom: "0.5rem",
             }}
-            onClick={() => navigate(`/${chatUser?.username}`)}
+            onClick={() => {
+              setErrorCode(0);
+              navigate(`/${chatUser?.username}`);
+            }}
             src={
               pfpLoaded
                 ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`

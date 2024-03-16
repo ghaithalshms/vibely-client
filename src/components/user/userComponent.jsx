@@ -13,6 +13,7 @@ const UserComponent = ({
   setChatUser,
   followBtn,
   handleCatchAxios,
+  setErrorCode,
 }) => {
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
@@ -96,9 +97,11 @@ const UserComponent = ({
         className="container-x pointer"
         onClick={() => {
           if (setChatUser) {
+            setErrorCode(0);
             navigate(`/inbox/${user.username}`);
             setChatUser(user);
           } else {
+            setErrorCode(0);
             navigate(`/${user.username}`);
             if (visitUser) visitUser(user.username);
           }

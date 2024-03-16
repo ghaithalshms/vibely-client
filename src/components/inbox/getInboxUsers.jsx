@@ -16,6 +16,7 @@ const GetInboxUsers = ({
   setChatUser,
   inboxUsers,
   setInboxUsers,
+  setErrorCode,
 }) => {
   const [isLoading, setLoading] = useState(true);
   const [isDataGot, setDataGot] = useState(false);
@@ -47,7 +48,11 @@ const GetInboxUsers = ({
 
   return (
     <div className={chatUser ? "only-pc" : ""}>
-      <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
       <div className="inbox-users-container">
         <div
           className="container-x"
@@ -91,6 +96,7 @@ const GetInboxUsers = ({
               user={inbox.user}
               message={inbox.message}
               setChatUser={(user) => {
+                setErrorCode(0);
                 navigate(`/inbox/${user.username}`);
                 setChatUser(user);
               }}
@@ -120,6 +126,7 @@ const GetInboxUsers = ({
             setUserListModalOpen(false);
           }}
           handleCatchAxios={handleCatchAxios}
+          setErrorCode={setErrorCode}
         />
       )}
     </div>

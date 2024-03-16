@@ -12,6 +12,7 @@ const ChatComponent = ({
   handleCatchAxios,
   clientSocket,
   handleUpdateInboxUsers,
+  setErrorCode,
 }) => {
   const [chatArray, setChatArray] = useState([]);
 
@@ -50,6 +51,7 @@ const ChatComponent = ({
             isDarkMode={isDarkMode}
             chatUser={chatUser}
             setChatUser={setChatUser}
+            setErrorCode={setErrorCode}
           />
           <ChatBody
             isDarkMode={isDarkMode}

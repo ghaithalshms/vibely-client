@@ -16,6 +16,7 @@ const CommentsModal = ({
   postID,
   visitUser,
   handleCatchAxios,
+  setErrorCode,
 }) => {
   const [commentsArray, setCommentsArray] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -103,6 +104,7 @@ const CommentsModal = ({
           visitUser={visitUser}
           handleCatchAxios={handleCatchAxios}
           handleUpdateComments={handleUpdateComments}
+          setErrorCode={setErrorCode}
         />
       ))
     ) : (

@@ -42,7 +42,7 @@ import optionsDark from "../icon/dark-mode/navbar/options.png";
 import axios from "axios";
 import { getLink } from "../../API";
 
-const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
+const Navbar = ({ isDarkMode, visitUser, handleCatchAxios, setErrorCode }) => {
   const [actualPage, setActualPage] = useState("home");
   const [isCreatePostModalOpen, setCreatePostModalOpen] = useState(false);
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
@@ -140,6 +140,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
       onClick={() => {
         handleCloseModals();
         setActualPage("profile");
+        setErrorCode(0);
         navigate("/");
       }}
       // block right click
@@ -169,6 +170,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
       onClick={() => {
         handleCloseModals();
         setActualPage("search");
+        setErrorCode(0);
         navigate("/search");
       }}
       // block right click
@@ -205,6 +207,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
         onClick={() => {
           handleCloseModals();
           setActualPage("inbox");
+          setErrorCode(0);
           navigate("/inbox");
         }}
         // block right click
@@ -265,6 +268,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
       onClick={() => {
         handleCloseModals();
         setActualPage("explorer");
+        setErrorCode(0);
         navigate("/explorer");
       }}
       // block right click
@@ -342,6 +346,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
         if (visitUser) visitUser(Cookies.get("username"));
         handleCloseModals();
         setActualPage("profile");
+        setErrorCode(0);
         navigate(`/${Cookies.get("username")}`);
       }}
       // block right click
@@ -401,6 +406,7 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios }) => {
           className="pointer"
           onClick={() => {
             setActualPage("home");
+            setErrorCode(0);
             navigate("/");
           }}
           // block right click

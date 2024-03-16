@@ -36,6 +36,7 @@ const PostComponent = ({
   visitUser,
   handleUpdatePost,
   handleCatchAxios,
+  setErrorCode,
 }) => {
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [isUserListModalOpen, setUserListModalOpen] = useState(false);
@@ -127,6 +128,7 @@ const PostComponent = ({
       <div
         className="container-x pointer"
         onClick={() => {
+          setErrorCode(0);
           navigate(`/${user.username}`);
           if (visitUser) visitUser(user.username);
         }}
@@ -334,6 +336,7 @@ const PostComponent = ({
             if (visitUser) visitUser(username);
           }}
           handleCatchAxios={handleCatchAxios}
+          setErrorCode={setErrorCode}
         />
       )}
       {post.likeCount > 0 && isUserListModalOpen && (
@@ -349,6 +352,7 @@ const PostComponent = ({
           }}
           handleCatchAxios={handleCatchAxios}
           postID={post.postID}
+          setErrorCode={setErrorCode}
         />
       )}
       {isPostMoreModalOpen &&

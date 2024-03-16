@@ -19,6 +19,7 @@ const GetUserListModal = ({
   visitUser,
   setChatUser,
   handleCatchAxios,
+  setErrorCode,
 }) => {
   const [userList, setUserList] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -122,6 +123,7 @@ const GetUserListModal = ({
             visitUser={visitUser}
             followBtn={type !== "Inbox"}
             handleCatchAxios={handleCatchAxios}
+            setErrorCode={setErrorCode}
           />
         ))}
       </div>

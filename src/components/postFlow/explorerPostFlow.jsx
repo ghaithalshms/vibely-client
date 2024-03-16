@@ -13,6 +13,7 @@ const ExplorerPostFlow = ({
   isDarkMode,
   handleCatchAxios,
   scrollingPercentage,
+  setErrorCode,
 }) => {
   const [explorerPostFlowArray, setExplorerPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
@@ -109,6 +110,7 @@ const ExplorerPostFlow = ({
             setPostFlow={setExplorerPostFlowArray}
             handleUpdatePost={handleUpdatePost}
             handleCatchAxios={handleCatchAxios}
+            setErrorCode={setErrorCode}
           />
         ))}
     </div>

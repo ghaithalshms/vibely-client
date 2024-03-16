@@ -7,7 +7,12 @@ import DataContainer from "./dataContainer";
 import UserPostFlow from "../postFlow/userPostFlow";
 import Navbar from "../navbar/navbar";
 
-const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
+const Profile = ({
+  isDarkMode,
+  scrollingPercentage,
+  handleCatchAxios,
+  setErrorCode,
+}) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -47,6 +52,7 @@ const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
         isDarkMode={isDarkMode}
         visitUser={handleGetUserData}
         handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
       />
       {isLoading && (
         <div className="loader-container">
@@ -61,6 +67,7 @@ const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
             visitUser={handleGetUserData}
             setUserData={setUserData}
             handleCatchAxios={handleCatchAxios}
+            setErrorCode={setErrorCode}
           />
           <UserPostFlow
             isDarkMode={isDarkMode}
@@ -68,6 +75,7 @@ const Profile = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
             visitUser={handleGetUserData}
             handleCatchAxios={handleCatchAxios}
             scrollingPercentage={scrollingPercentage}
+            setErrorCode={setErrorCode}
           />
         </>
       )}

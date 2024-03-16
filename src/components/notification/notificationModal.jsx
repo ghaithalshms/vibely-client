@@ -33,9 +33,11 @@ const NotificationModal = ({
   };
 
   const handleSetNotificationSeen = () => {
-    axios.post(updateLink.setNotificationSeen, {
-      token: Cookies.get("token"),
-    });
+    axios
+      .post(updateLink.setNotificationSeen, {
+        token: Cookies.get("token"),
+      })
+      .catch((err) => handleCatchAxios(err));
   };
 
   useEffect(() => {

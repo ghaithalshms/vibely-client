@@ -8,7 +8,7 @@ import IconLight from "../icon/light-mode/vibely-text-light.png";
 import IconDark from "../icon/dark-mode/vibely-text-dark.png";
 import md5 from "md5";
 
-const ResetPassword = ({ isDarkMode, handleCatchAxios }) => {
+const ResetPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const [token, setToken] = useState(null);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState("");
@@ -91,7 +91,10 @@ const ResetPassword = ({ isDarkMode, handleCatchAxios }) => {
   ) : (
     <>
       <span
-        onClick={() => navigate(isTokenWrong ? "/forgot-password" : "/login")}
+        onClick={() => {
+          setErrorCode(0);
+          navigate(isTokenWrong ? "/forgot-password" : "/login");
+        }}
         className="pointer"
         style={{ fontSize: "1.1rem", margin: "7px 0" }}
       >

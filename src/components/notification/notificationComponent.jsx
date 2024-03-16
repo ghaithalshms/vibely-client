@@ -14,6 +14,7 @@ const NotificationComponent = ({
   handleCatchAxios,
   refreshNoitfication,
   setLoading,
+  setErrorCode,
 }) => {
   const [pfpLoaded, setPfpLoaded] = useState(false);
   const navigate = useNavigate();
@@ -65,6 +66,7 @@ const NotificationComponent = ({
         onError={() => setPfpLoaded(false)}
         alt="Pfp"
         onClick={() => {
+          setErrorCode(0);
           navigate(`/${user.username}`);
           if (visitUser) visitUser(user.username);
         }}
@@ -77,6 +79,7 @@ const NotificationComponent = ({
           <span
             className="pointer"
             onClick={() => {
+              setErrorCode(0);
               navigate(`/${user.username}`);
               if (visitUser) visitUser(user.username);
             }}

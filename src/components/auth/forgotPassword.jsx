@@ -7,7 +7,7 @@ import axios from "axios";
 import IconLight from "../icon/light-mode/vibely-text-light.png";
 import IconDark from "../icon/dark-mode/vibely-text-dark.png";
 
-const ForgotPassword = ({ isDarkMode, handleCatchAxios }) => {
+const ForgotPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const [emailSent, setEmailSent] = useState(false);
   const [emailAddress, setEmailAddress] = useState(null);
 
@@ -52,7 +52,13 @@ const ForgotPassword = ({ isDarkMode, handleCatchAxios }) => {
         {`An email has been sent to ${emailAddress}. if you don't see it, please
         check your spam folder.`}
       </span>
-      <button onClick={() => navigate("/login")} className="full-width">
+      <button
+        onClick={() => {
+          setErrorCode(0);
+          navigate("/login");
+        }}
+        className="full-width"
+      >
         Go back to login page
       </button>
     </>

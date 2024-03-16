@@ -9,7 +9,7 @@ import { deleteLink } from "../../API";
 
 Modal.setAppElement("#root");
 
-const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
+const MoreModal = ({ isDarkMode, isOpen, onRequestClose, setErrorCode }) => {
   const navigate = useNavigate();
 
   const unsubscribeWebPush = async () => {
@@ -65,9 +65,10 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
               window.location.href.split("/")[
                 window.location.href.split("/").length - 2
               ] !== "activities"
-            )
+            ) {
+              setErrorCode(0);
               navigate("/activities/liked");
-            else window.location.href = "/activities/liked";
+            } else window.location.href = "/activities/liked";
           }}
         >
           Liked posts
@@ -78,9 +79,10 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
               window.location.href.split("/")[
                 window.location.href.split("/").length - 2
               ] !== "activities"
-            )
+            ) {
+              setErrorCode(0);
               navigate("/activities/saved");
-            else window.location.href = "/activities/saved";
+            } else window.location.href = "/activities/saved";
           }}
         >
           Saved posts
@@ -91,16 +93,22 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose }) => {
               window.location.href.split("/")[
                 window.location.href.split("/").length - 2
               ] !== "activities"
-            )
+            ) {
+              setErrorCode(0);
               navigate("/activities/archived");
-            else window.location.href = "/activities/archived";
+            } else window.location.href = "/activities/archived";
           }}
         >
           Archived posts
         </button>
         <br />
         <h3 className="uppercase">Account</h3>
-        <button onClick={() => navigate("/account/edit-profile")}>
+        <button
+          onClick={() => {
+            setErrorCode(0);
+            navigate("/account/edit-profile");
+          }}
+        >
           Edit your profile
         </button>
         <button> Change your password</button>

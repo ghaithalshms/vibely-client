@@ -28,6 +28,7 @@ import ResetPassword from "./components/auth/resetPassword";
 import Error404 from "./components/error/error404";
 import Error500 from "./components/error/error500";
 const socket = io.connect(process.env.REACT_APP_API_URL);
+
 const App = () => {
   // FOR ERROR MODAL
   const [errorCode, setErrorCode] = useState(0);
@@ -99,7 +100,8 @@ const App = () => {
       // setDialogModalHeader("Ooups");
       // setDialogModalBody(`Sorry, this page does not exist`);
     }
-    console.error(err);
+    console.error(err?.code);
+    console.error(errorCode);
 
     // setDialogModalBody(`Sorry, an error happened: ${err?.response?.status}`);
   };
@@ -150,15 +152,24 @@ const App = () => {
 
   const errorCodeElement =
     errorCode === 404 ? (
-      <Error404 isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Error404
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
     ) : (
-      <Error500 isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Error500
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
     );
 
   return (
     <Router>
       <Routes>
         {/* ERROR PAGES */}
+        {errorCode > 0 && <Route path="" element={errorCodeElement} />}
         {errorCode > 0 && <Route path="/*" element={errorCodeElement} />}
         {/*  WITH TOKEN */}
         {/* HOME ROUTE */}
@@ -170,6 +181,7 @@ const App = () => {
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/login" />
@@ -184,6 +196,7 @@ const App = () => {
               <Search
                 isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/login" />
@@ -200,6 +213,7 @@ const App = () => {
                 scrollingPercentage={scrollingPercentage}
                 handleCatchAxios={handleCatchAxios}
                 clientSocket={clientSocket}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/login" />
@@ -215,6 +229,7 @@ const App = () => {
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/login" />
@@ -230,6 +245,7 @@ const App = () => {
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/login" />
@@ -245,6 +261,7 @@ const App = () => {
               <EditProfile
                 isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/login" />
@@ -261,6 +278,7 @@ const App = () => {
                 isDarkMode={isDarkMode}
                 scrollingPercentage={scrollingPercentage}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/login" />
@@ -272,7 +290,7 @@ const App = () => {
           path="/login"
           element={
             !(token && username) ? (
-              <Login isDarkMode={isDarkMode} />
+              <Login isDarkMode={isDarkMode} setErrorCode={setErrorCode} />
             ) : (
               <Navigate to="/" />
             )
@@ -285,6 +303,7 @@ const App = () => {
               <ForgotPassword
                 isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/" />
@@ -298,6 +317,7 @@ const App = () => {
               <ResetPassword
                 isDarkMode={isDarkMode}
                 handleCatchAxios={handleCatchAxios}
+                setErrorCode={setErrorCode}
               />
             ) : (
               <Navigate to="/" />

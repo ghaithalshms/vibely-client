@@ -11,14 +11,15 @@ const Inbox = ({
   scrollingPercentage,
   handleCatchAxios,
   clientSocket,
+  setErrorCode,
 }) => {
   const [inboxUsers, setInboxUsers] = useState([]);
   const [chatUser, setChatUser] = useState(null);
 
   const handleUpdateInboxUsers = (messageData) => {
-    setInboxUsers((preUsetInboxUsers) => {
+    setInboxUsers((prevUserInboxUsers) => {
       let newInboxUsers = [];
-      preUsetInboxUsers.forEach((inboxUser) => {
+      prevUserInboxUsers.forEach((inboxUser) => {
         if (
           inboxUser.user.username === messageData.from ||
           inboxUser.user.username === messageData.to
@@ -47,11 +48,13 @@ const Inbox = ({
         })
         .then((res) => {
           setChatUser(res?.data);
-        });
+        })
+        .catch((err) => handleCatchAxios(err));
   };
 
   useEffect(() => {
     setChatUserFromLink();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -63,6 +66,7 @@ const Inbox = ({
         chatUser={chatUser}
         inboxUsers={inboxUsers}
         setInboxUsers={setInboxUsers}
+        setErrorCode={setErrorCode}
       />
       <ChatComponent
         isDarkMode={isDarkMode}
@@ -71,6 +75,7 @@ const Inbox = ({
         handleCatchAxios={handleCatchAxios}
         clientSocket={clientSocket}
         handleUpdateInboxUsers={handleUpdateInboxUsers}
+        setErrorCode={setErrorCode}
       />
     </div>
   );

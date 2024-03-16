@@ -13,6 +13,7 @@ const ActivitiesPostFlow = ({
   isDarkMode,
   handleCatchAxios,
   scrollingPercentage,
+  setErrorCode,
 }) => {
   const [postFlowArray, setPostFlowArray] = useState();
   const [lastGotPostID, setLastGotPostID] = useState(0);
@@ -123,6 +124,7 @@ const ActivitiesPostFlow = ({
             setPostFlow={setPostFlowArray}
             handleUpdatePost={handleUpdatePost}
             handleCatchAxios={handleCatchAxios}
+            setErrorCode={setErrorCode}
           />
         ))}
     </div>

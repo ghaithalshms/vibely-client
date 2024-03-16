@@ -13,6 +13,7 @@ const HomePostFlow = ({
   isDarkMode,
   handleCatchAxios,
   scrollingPercentage,
+  setErrorCode,
 }) => {
   const [homePostFlowArray, setHomePostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
@@ -109,6 +110,7 @@ const HomePostFlow = ({
             setPostFlow={setHomePostFlowArray}
             handleUpdatePost={handleUpdatePost}
             handleCatchAxios={handleCatchAxios}
+            setErrorCode={setErrorCode}
           />
         ))}
     </div>

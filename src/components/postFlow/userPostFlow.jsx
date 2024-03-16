@@ -17,6 +17,7 @@ const UserPostFlow = ({
   visitUser,
   handleCatchAxios,
   scrollingPercentage,
+  setErrorCode,
 }) => {
   const [userPostFlowArray, setUserPostFlowArray] = useState();
   const [lastGotPostID, setLastGotPostID] = useState(0);
@@ -150,6 +151,7 @@ const UserPostFlow = ({
             visitUser={visitUser}
             handleUpdatePost={handleUpdateProfilePost}
             handleCatchAxios={handleCatchAxios}
+            setErrorCode={setErrorCode}
           />
         ))}
     </div>

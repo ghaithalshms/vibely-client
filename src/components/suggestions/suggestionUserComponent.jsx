@@ -7,7 +7,12 @@ import { postLink } from "../../API";
 import Cookies from "js-cookie";
 import defaultPfp from "../icon/default profile picture.jpg";
 
-const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
+const SuggestionUserComponent = ({
+  user,
+  visitUser,
+  handleCatchAxios,
+  setErrorCode,
+}) => {
   const [followBtnText, setFollowBtnText] = useState("Follow");
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
@@ -48,6 +53,7 @@ const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
     <div
       className="container-x pointer"
       onClick={() => {
+        setErrorCode(0);
         navigate(`/${user.username}`);
         if (visitUser) visitUser(user.username);
       }}
@@ -86,6 +92,7 @@ const SuggestionUserComponent = ({ user, visitUser, handleCatchAxios }) => {
         <img
           className="suggestion-profile-picture pointer"
           onClick={() => {
+            setErrorCode(0);
             navigate(`/${user.username}`);
             if (visitUser) visitUser(user.username);
           }}

@@ -8,7 +8,7 @@ import CheckboxStyled from "../navbar/checkboxStyled";
 import defaultPfp from "../icon/default profile picture.jpg";
 import { useNavigate } from "react-router-dom";
 
-const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
+const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const navigate = useNavigate();
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
@@ -67,6 +67,7 @@ const EditProfile = ({ isDarkMode, handleCatchAxios }) => {
       Cookies.set("username", username, { expires: 1000 });
       window.location.href = "/";
     }
+    setErrorCode(0);
     navigate("/");
   };
 

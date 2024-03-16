@@ -4,7 +4,7 @@ import error500iconLight from "../icon/light-mode/error/error500.png";
 import error500iconDark from "../icon/dark-mode/error/error500.png";
 import { useNavigate } from "react-router-dom";
 
-const Error500 = ({ isDarkMode, handleCatchAxios }) => {
+const Error500 = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const navigate = useNavigate();
 
   return (
@@ -16,9 +16,16 @@ const Error500 = ({ isDarkMode, handleCatchAxios }) => {
         alignItems: "center",
         justifyContent: "center",
       }}
-      onClick={() => navigate("/")}
+      onClick={() => {
+        setErrorCode(0);
+        navigate("/");
+      }}
     >
-      <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
       <div
         className="container-y"
         style={{
@@ -28,7 +35,7 @@ const Error500 = ({ isDarkMode, handleCatchAxios }) => {
         <h1 style={{ fontSize: "4rem" }}>500</h1>
         <h3>Sorry, the connection to the server has failed.</h3>
         <img
-          style={{ maxWidth: "80svw" }}
+          style={{ maxWidth: "80svw", width: "500px" }}
           src={isDarkMode ? error500iconDark : error500iconLight}
           alt="error404"
         />

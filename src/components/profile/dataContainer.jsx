@@ -23,6 +23,7 @@ const DataContainer = ({
   setUserData,
   visitUser,
   handleCatchAxios,
+  setErrorCode,
 }) => {
   const tokenUsername = Cookies.get("username");
   const token = Cookies.get("token");
@@ -269,6 +270,7 @@ const DataContainer = ({
       </button>
       <button
         onClick={() => {
+          setErrorCode(0);
           navigate(`/inbox/${userData.username}`);
         }}
       >
@@ -366,6 +368,7 @@ const DataContainer = ({
             visitUser(username);
           }}
           handleCatchAxios={handleCatchAxios}
+          setErrorCode={setErrorCode}
         />
       )}
       {isOptionsModalOpen && (

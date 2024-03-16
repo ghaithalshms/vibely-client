@@ -3,7 +3,7 @@ import Navbar from "../navbar/navbar";
 import error404icon from "../icon/light-mode/error/error404.png";
 import { useNavigate } from "react-router-dom";
 
-const Error404 = ({ isDarkMode, handleCatchAxios }) => {
+const Error404 = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const navigate = useNavigate();
 
   return (
@@ -15,9 +15,16 @@ const Error404 = ({ isDarkMode, handleCatchAxios }) => {
         alignItems: "center",
         justifyContent: "center",
       }}
-      onClick={() => navigate("/")}
+      onClick={() => {
+        setErrorCode(0);
+        navigate("/");
+      }}
     >
-      <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
       <div
         className="container-y"
         style={{
@@ -26,7 +33,11 @@ const Error404 = ({ isDarkMode, handleCatchAxios }) => {
       >
         <h1 style={{ fontSize: "4rem" }}>404</h1>
         <h3>They don't know this page doesn't exist</h3>
-        <img style={{ maxWidth: "80svw" }} src={error404icon} alt="error404" />
+        <img
+          style={{ maxWidth: "80svw", width: "500px" }}
+          src={error404icon}
+          alt="error404"
+        />
       </div>
     </div>
   );

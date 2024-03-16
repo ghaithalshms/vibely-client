@@ -4,7 +4,7 @@ import { getLink } from "../../API";
 import UserComponent from "../user/userComponent";
 import Navbar from "../navbar/navbar";
 
-const Search = ({ isDarkMode, handleCatchAxios }) => {
+const Search = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const [username, setUsername] = useState();
   const [userList, setUserList] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -53,14 +53,18 @@ const Search = ({ isDarkMode, handleCatchAxios }) => {
         </div>
       )}
       {userList?.map((user, index) => (
-        <UserComponent key={index} user={user} />
+        <UserComponent key={index} user={user} setErrorCode={setErrorCode} />
       ))}
     </>
   );
 
   return (
     <div className="main-container">
-      <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
       {searchUserElement}
       {userListElement}
     </div>

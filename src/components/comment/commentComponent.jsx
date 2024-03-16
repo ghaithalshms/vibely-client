@@ -21,6 +21,7 @@ const CommentComponent = ({
   visitUser,
   handleCatchAxios,
   handleUpdateComments,
+  setErrorCode,
 }) => {
   const [isCommentDeleted, setIsCommentDeleted] = useState(false);
   const [pfpLoaded, setPfpLoaded] = useState(false);
@@ -155,6 +156,7 @@ const CommentComponent = ({
         onError={() => setPfpLoaded(false)}
         alt="Pfp"
         onClick={() => {
+          setErrorCode(0);
           navigate(`/${comment.username}`);
           if (visitUser) visitUser(comment.username);
         }}
@@ -163,6 +165,7 @@ const CommentComponent = ({
         <div
           className="pointer"
           onClick={() => {
+            setErrorCode(0);
             navigate(`/${comment.username}`);
             if (visitUser) visitUser(comment.username);
           }}

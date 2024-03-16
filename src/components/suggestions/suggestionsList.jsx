@@ -9,6 +9,7 @@ const SuggestionsList = ({
   isDarkMode,
   handleCatchAxios,
   setHomeContainerMargin,
+  setErrorCode,
 }) => {
   const [suggestionUserArray, setSuggestionUserArray] = useState([]);
 
@@ -40,6 +41,7 @@ const SuggestionsList = ({
               user={user}
               handleCatchAxios={handleCatchAxios}
               key={index}
+              setErrorCode={setErrorCode}
             />
           ))}
         </div>

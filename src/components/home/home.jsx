@@ -4,7 +4,12 @@ import Navbar from "../navbar/navbar";
 import CreatePost from "../createPost/createPost";
 import SuggestionsList from "../suggestions/suggestionsList";
 
-const Home = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
+const Home = ({
+  isDarkMode,
+  scrollingPercentage,
+  handleCatchAxios,
+  setErrorCode,
+}) => {
   const [homeContainerMargin, setHomeContainerMargin] = useState(false);
   return (
     <div
@@ -14,7 +19,11 @@ const Home = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
           : "container-y  main-container"
       }
     >
-      <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
       <div className="only-pc">
         <CreatePost
           isDarkMode={isDarkMode}
@@ -25,11 +34,13 @@ const Home = ({ isDarkMode, scrollingPercentage, handleCatchAxios }) => {
         isDarkMode={isDarkMode}
         handleCatchAxios={handleCatchAxios}
         setHomeContainerMargin={setHomeContainerMargin}
+        setErrorCode={setErrorCode}
       />
       <HomePostFlow
         isDarkMode={isDarkMode}
         handleCatchAxios={handleCatchAxios}
         scrollingPercentage={scrollingPercentage}
+        setErrorCode={setErrorCode}
       />
     </div>
   );
