@@ -64,14 +64,14 @@ const ChatFooter = ({
 
   // FIXME: TIME
   const handleSendMessage = async (file, fileType) => {
-    const id = await handleSendMessageToDB(file, fileType);
+    const id = await handleSendMessageToDB(file, fileType || "text/plain");
     const messageData = {
       id,
       message,
       from: Cookies.get("username"),
       to: chatUser.username,
       // sentDate: messageData.sent_date, FIXXX
-      fileType: fileType,
+      fileType: fileType || "text/plain",
       seen: false,
     };
     handleUpdateChatArray(messageData);
