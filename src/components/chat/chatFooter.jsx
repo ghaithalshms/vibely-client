@@ -31,7 +31,7 @@ const ChatFooter = ({
   };
 
   const handleSendMessageToDB = async (file, fileType) => {
-    axios.defaults.maxBodyLength = 3 * 1024 * 1024;
+    axios.defaults.maxBodyLength = 30 * 1024 * 1024;
     const formData = new FormData();
     formData.append("token", Cookies.get("token"));
     formData.append("username", chatUser.username);

@@ -36,8 +36,8 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
     if (e.target.files[0]) {
       const file = e.target.files[0];
 
-      if (file.size > 3 * 1024 * 1024) {
-        setWarning("Sorry, max file size is 3 mb");
+      if (file.size > 30 * 1024 * 1024) {
+        setWarning("Sorry, max file size is 30 mb");
         pictureRef.current.src = null;
         setVideoSrc(null);
         setFile(null);

@@ -26,8 +26,8 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
     if (e.target.files[0]) {
       const file = e.target.files[0];
 
-      if (file.size > 3 * 1024 * 1024) {
-        setWarning("Sorry, max file size is 3 MB");
+      if (file.size > 30 * 1024 * 1024) {
+        setWarning("Sorry, max file size is 30 MB");
         pictureRef.current.src = null;
         setVideoSrc(null);
         setFile(null);
@@ -57,15 +57,15 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
     if (!shareButtonDisabled) {
       if (file || file || description) {
         e.preventDefault();
-        if (file?.size > 3 * 1024 * 1024) {
-          alert("File size exceeds the maximum allowed size (3MB).");
+        if (file?.size > 30 * 1024 * 1024) {
+          alert("File size exceeds the maximum allowed size (30 MB).");
           setFile(null);
         } else {
           setShareButtonDisabled(true);
           const btnShare = document.getElementById("btn-share");
           btnShare.setAttribute("disabled", "");
 
-          axios.defaults.maxBodyLength = 3 * 1024 * 1024;
+          axios.defaults.maxBodyLength = 30 * 1024 * 1024;
           const formData = new FormData();
           formData.append("token", Cookies.get("token"));
           formData.append("description", description);
