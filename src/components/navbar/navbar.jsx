@@ -42,7 +42,13 @@ import optionsDark from "../icon/dark-mode/navbar/options.png";
 import axios from "axios";
 import { getLink } from "../../API";
 
-const Navbar = ({ isDarkMode, visitUser, handleCatchAxios, setErrorCode }) => {
+const Navbar = ({
+  isDarkMode,
+  visitUser,
+  handleCatchAxios,
+  setErrorCode,
+  error500,
+}) => {
   const [actualPage, setActualPage] = useState("home");
   const [isCreatePostModalOpen, setCreatePostModalOpen] = useState(false);
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
@@ -471,7 +477,9 @@ const Navbar = ({ isDarkMode, visitUser, handleCatchAxios, setErrorCode }) => {
 
   const navbarMobile = (
     <div style={{ display: "flex" }}>
-      {(actualPage === "home" || actualPage === "notification") && homeHeader}
+      {!error500 &&
+        (actualPage === "home" || actualPage === "notification") &&
+        homeHeader}
       <div
         className="container-x navbar-icon navbar-container"
         style={{

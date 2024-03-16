@@ -25,6 +25,7 @@ const Error500 = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
         isDarkMode={isDarkMode}
         handleCatchAxios={handleCatchAxios}
         setErrorCode={setErrorCode}
+        error500={true}
       />
       <div
         className="container-y"
@@ -37,7 +38,7 @@ const Error500 = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
         <img
           style={{ maxWidth: "80svw", width: "500px" }}
           src={isDarkMode ? error500iconDark : error500iconLight}
-          alt="error404"
+          alt="error500"
         />
       </div>
     </div>
