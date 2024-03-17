@@ -31,7 +31,7 @@ const AudioPlayer = ({ isDarkMode, audioUrl, sentByTheUser }) => {
   });
 
   useEffect(() => {
-    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+    const proxyUrl = "https://corsproxy.io/?";
     const options = formWaveOptions(waveformRef.current);
     wavesurfer.current = WaveSurfer.create(options);
     wavesurfer.current.load(proxyUrl + audioUrl);
