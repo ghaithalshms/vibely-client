@@ -376,6 +376,7 @@ const DataContainer = ({
           isDarkMode={isDarkMode}
           isOpen={isOptionsModalOpen}
           onRequestClose={() => setOptionsModalOpen(false)}
+          setErrorCode={setErrorCode}
         />
       )}
     </div>
