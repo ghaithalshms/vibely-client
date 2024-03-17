@@ -10,7 +10,11 @@ const Activities = ({
 }) => {
   return (
     <div className="container-y  main-container">
-      <Navbar isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
+      />
       <br />
       <ActivitiesPostFlow
         isDarkMode={isDarkMode}
