@@ -46,10 +46,11 @@ const GetUserListModal = ({
         type === "Liked Users"
           ? {
               postID,
-              username: Cookies.get("username"),
+              token: Cookies.get("token"),
             }
           : {
               username,
+              token: Cookies.get("token"),
             },
     };
     await axios

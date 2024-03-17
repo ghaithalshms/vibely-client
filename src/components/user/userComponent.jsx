@@ -126,7 +126,7 @@ const UserComponent = ({
         />
         <div>{nameAndIcon}</div>
       </div>
-      {followBtn && (
+      {user.username !== Cookies.get("username") && followBtn && (
         <button
           onClick={handleFollow}
           style={{ margin: "0", padding: "3px 3%", width: "103px" }}
