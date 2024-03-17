@@ -43,7 +43,7 @@ const PostComponent = ({
 
   const [pfpLoaded, setPfpLoaded] = useState(false);
   const [fileLoaded, setFileLoaded] = useState(
-    post.fileType === "null" ? true : false
+    post.fileType === "text/plain" ? true : false
   );
 
   const [isPostMoreModalOpen, setPostMoreModalOpen] = useState(false);
