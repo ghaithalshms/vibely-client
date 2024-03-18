@@ -77,7 +77,7 @@ const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
       .get(getLink.getUserData, {
         params: {
           username: userSigned,
-          userSigned,
+          token: Cookies.get("token"),
         },
       })
       .then((res) => {
