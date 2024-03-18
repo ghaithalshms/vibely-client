@@ -43,13 +43,10 @@ const InboxUserComponent = ({ user, message, setChatUser }) => {
               : "normal",
         }}
       >{`${
-        message.message
+        message.fileType.startsWith("text")
           ? message.message
-          : message.fileType === "picture"
-          ? "Picture"
-          : message.fileType === "video"
-          ? "Video"
-          : "Audio"
+          : message.fileType.split("/")[0].charAt(0).toUpperCase() +
+            message.fileType.split("/")[0].slice(1)
       }`}</span>
     </div>
   );
