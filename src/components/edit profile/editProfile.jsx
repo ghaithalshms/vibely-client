@@ -350,6 +350,7 @@ const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
         isDarkMode={isDarkMode}
         visitUser={handleGetUserData}
         handleCatchAxios={handleCatchAxios}
+        setErrorCode={setErrorCode}
       />
       {isLoading && (
         <div className="loader-container">
