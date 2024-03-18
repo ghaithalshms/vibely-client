@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { postLink } from "../../API";
 import Cookies from "js-cookie";
@@ -21,6 +21,10 @@ const ChatFooter = ({
   const [message, setMessage] = useState("");
   const [isMediaModalOpen, setMediaModalOpen] = useState(false);
   const [isRecording, setRecording] = useState(false);
+
+  useEffect(() => {
+    document.getElementById("send-message-textarea")?.focus();
+  }, []);
 
   const handleOnEndRecording = (recordedBlob) => {
     setRecording(false);
