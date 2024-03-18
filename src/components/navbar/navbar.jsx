@@ -535,6 +535,7 @@ const Navbar = ({
             setNotificationModalOpen(false);
             if (visitUser) visitUser(username);
           }}
+          setErrorCode={setErrorCode}
         />
       )}
     </div>

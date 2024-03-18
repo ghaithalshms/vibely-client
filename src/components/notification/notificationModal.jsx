@@ -14,6 +14,7 @@ const NotificationModal = ({
   onRequestClose,
   handleCatchAxios,
   visitUser,
+  setErrorCode,
 }) => {
   const [isLoading, setLoading] = useState(true);
   const [notificationArray, setNotificationArray] = useState([]);
@@ -101,6 +102,7 @@ const NotificationModal = ({
                 handleCatchAxios={handleCatchAxios}
                 refreshNoitfication={handleGetNotification}
                 setLoading={setLoading}
+                setErrorCode={setErrorCode}
               />
             ))}
           </div>
