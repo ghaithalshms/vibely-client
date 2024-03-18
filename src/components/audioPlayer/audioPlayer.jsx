@@ -31,10 +31,9 @@ const AudioPlayer = ({ isDarkMode, audioUrl, sentByTheUser }) => {
   });
 
   useEffect(() => {
-    const proxyUrl = "https://corsproxy.io/?";
     const options = formWaveOptions(waveformRef.current);
     wavesurfer.current = WaveSurfer.create(options);
-    wavesurfer.current.load(proxyUrl + audioUrl);
+    wavesurfer.current.load(audioUrl);
     wavesurfer.current.on("ready", () => setLoading(false));
     wavesurfer.current.on("finish", () => setPlaying(false));
     return () => wavesurfer.current.destroy();
