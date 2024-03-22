@@ -17,10 +17,9 @@ const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
 
   const [userData, setUserData] = useState();
 
-  const [isPictureLoaded, setPictureLoaded] = useState(false);
-
   const [username, setUsername] = useState("");
   const [picture, setPicture] = useState(null);
+  const [fileType, setFileType] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [biography, setBiography] = useState("");
@@ -30,42 +29,34 @@ const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   let isUserDataGot = false;
 
   const handleUpdateProfileData = async () => {
-    await axios
-      .post(updateLink.updateProfileData, {
-        token: Cookies.get("token"),
-        username,
-        firstName,
-        lastName,
-        biography,
-        link,
-        privacity,
-      })
-      .catch((err) => handleCatchAxios(err));
-  };
-
-  const handleUpdateProfilePicture = async () => {
-    if (picture?.size > 2 * 1024 * 1024) {
-      alert("File size exceeds the maximum allowed size (2MB).");
+    if (picture?.size > 30 * 1024 * 1024) {
+      alert("File size exceeds the maximum allowed size (30 MB).");
       setPicture(defaultPfp);
       pictureRef.current.src = defaultPfp;
     } else {
-      axios.defaults.maxBodyLength = 2 * 1024 * 1024;
+      axios.defaults.maxBodyLength = 30 * 1024 * 1024;
       const formData = new FormData();
       formData.append("token", Cookies.get("token"));
-      formData.append("file", picture || null);
+      formData.append("username", username);
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("biography", biography);
+      formData.append("link", link);
+      formData.append("privacity", privacity);
+      formData.append("file", picture);
+      formData.append("fileType", fileType);
 
       await axios
-        .post(updateLink.updateProfilePicture, formData)
+        .post(updateLink.updateProfileData, formData)
         .catch((err) => handleCatchAxios(err));
     }
   };
 
   const handleUpdate = async () => {
-    if (isPictureLoaded) await handleUpdateProfilePicture();
     await handleUpdateProfileData();
     if (userData.username !== username || pictureRef?.current?.src) {
       Cookies.set("username", username, { expires: 1000 });
-      window.location.href = "/";
+      // window.location.href = "/";
     }
     setErrorCode(0);
     navigate("/");
@@ -120,19 +111,19 @@ const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
     setWarning("");
     if (e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 2 * 1024 * 1024) {
-        setWarning("Sorry, max file size is 2mb");
+      if (file.size > 10 * 1024 * 1024) {
+        setWarning("Sorry, max file size is 10 mb");
         pictureRef.current.src = defaultPfp;
-        setPicture(defaultPfp);
-        setPictureLoaded(false);
+        setPicture(null);
+        setFileType(null);
       } else if (file.type.startsWith("image/")) {
-        setPictureLoaded(true);
         setPicture(file);
+        setFileType(file.type);
         pictureRef.current.src = URL.createObjectURL(file);
       } else {
-        setPictureLoaded(false);
         setWarning("Invalid file type, please upload an image");
-        setPicture(defaultPfp);
+        setPicture(null);
+        setFileType(null);
         pictureRef.current.src = defaultPfp;
       }
     }
@@ -156,7 +147,8 @@ const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
         cursor: "pointer",
       }}
       onClick={() => {
-        setPicture(defaultPfp);
+        setPicture(null);
+        setFileType("image/png");
         pictureRef.current.src = defaultPfp;
       }}
     >
