@@ -120,7 +120,7 @@ const ChatFooter = ({
   );
 
   const sendMessageButton = (
-    <button className="send-message-button" onClick={() => handleSendMessage()}>
+    <button className="send-message-button" onClick={handleSendMessage}>
       Send
     </button>
   );
@@ -131,6 +131,9 @@ const ChatFooter = ({
       value={message}
       onChange={(e) => setMessage(e.currentTarget.value)}
       placeholder="Your message..."
+      onKeyDown={(event) => {
+        if (event.key === "Enter") handleSendMessage();
+      }}
     />
   );
 
