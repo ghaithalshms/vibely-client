@@ -18,7 +18,6 @@ const ActivitiesPostFlow = ({
   const [postFlowArray, setPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const getAxiosLink = () => {
     const activityType = window.location.href
@@ -57,8 +56,10 @@ const ActivitiesPostFlow = ({
       handleCatchAxios(error);
     }
     setIsLoading(false);
-    setIsPostFlowGot(true);
+    isPostFlowGot = true;
   };
+
+  let isPostFlowGot = false;
 
   useEffect(() => {
     if (!isPostFlowGot) {

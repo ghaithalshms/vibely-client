@@ -18,7 +18,7 @@ const ExplorerPostFlow = ({
   const [explorerPostFlowArray, setExplorerPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPostFlowGot, setIsPostFlowGot] = useState(false);
+  // const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const handleGetUserPostFlow = async (isOnScrolling) => {
     setIsLoading(!isOnScrolling);
@@ -41,8 +41,10 @@ const ExplorerPostFlow = ({
       handleCatchAxios(error);
     }
     setIsLoading(false);
-    setIsPostFlowGot(true);
+    isPostFlowGot = true;
   };
+
+  let isPostFlowGot = false;
 
   useEffect(() => {
     if (!isPostFlowGot) {

@@ -22,7 +22,6 @@ const UserPostFlow = ({
   const [userPostFlowArray, setUserPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const handleGetUserPostFlow = async (isOnScrolling) => {
     const axiosLink = getLink.getUserPostFlow;
@@ -53,9 +52,9 @@ const UserPostFlow = ({
     }
 
     setIsLoading(false);
-    setIsPostFlowGot(true);
+    isPostFlowGot = true;
   };
-
+  let isPostFlowGot = false;
   useEffect(() => {
     if (
       !isPostFlowGot &&

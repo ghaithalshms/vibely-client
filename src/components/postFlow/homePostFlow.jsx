@@ -18,7 +18,6 @@ const HomePostFlow = ({
   const [homePostFlowArray, setHomePostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const handleGetHomePostFlow = async (isOnScrolling) => {
     setIsLoading(true);
@@ -43,9 +42,9 @@ const HomePostFlow = ({
       handleCatchAxios(error);
     }
     setIsLoading(false);
-    setIsPostFlowGot(true);
+    isPostFlowGot = true;
   };
-
+  let isPostFlowGot = false;
   useEffect(() => {
     if (!isPostFlowGot) {
       handleGetHomePostFlow(false);
