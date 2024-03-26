@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import adminIcon from "../icon/admin.png";
-import verifiedIcon from "../icon/verified.png";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { postLink } from "../../API";
 import Cookies from "js-cookie";
 import defaultPfp from "../icon/default profile picture.jpg";
+import adminIcon from "../icon/admin.png";
+import verifiedIcon from "../icon/verified.png";
 
 const UserComponent = ({
   user,
@@ -16,75 +16,73 @@ const UserComponent = ({
   setErrorCode,
 }) => {
   const [pfpLoaded, setPfpLoaded] = useState(false);
-
-  const [followBtnText, setFollowBtnText] = useState(
-    user.isFollowing
-      ? "Unfollow"
-      : user.isFollowRequested
-      ? "Requested"
-      : "Follow"
-  );
-
-  const handleFollow = async () => {
-    await axios
-      .post(postLink.follow, {
-        username: user.username,
-        token: Cookies.get("token"),
-      })
-      .then((res) => {
-        switch (res.data) {
-          case "followed":
-            setFollowBtnText("Unfollow");
-            break;
-          case "follow requested":
-            setFollowBtnText("Requested");
-            break;
-          case "unfollowed":
-            setFollowBtnText("Follow");
-            break;
-          case "follow request deleted":
-            setFollowBtnText("Follow");
-            break;
-          default:
-            setFollowBtnText("Follow");
-        }
-      })
-      .catch((err) => handleCatchAxios(err));
-  };
+  const [followBtnText, setFollowBtnText] = useState("Follow");
 
   const navigate = useNavigate();
-  const nameAndIcon = (
+
+  const getFollowButtonText = (user) => {
+    if (user.isFollowing) return "Unfollow";
+    if (user.isFollowRequested) return "Requested";
+    return "Follow";
+  };
+
+  useEffect(() => {
+    setFollowBtnText(getFollowButtonText(user)); // eslint-disable-next-line
+  }, []);
+
+  const handleFollow = async () => {
+    try {
+      const res = await axios.post(postLink.follow, {
+        username: user.username,
+        token: Cookies.get("token"),
+      });
+
+      switch (res.data) {
+        case "followed":
+        case "unfollowed":
+        case "follow request deleted":
+          setFollowBtnText("Follow");
+          break;
+        case "follow requested":
+          setFollowBtnText("Requested");
+          break;
+        default:
+          setFollowBtnText("Follow");
+      }
+    } catch (err) {
+      handleCatchAxios(err);
+    }
+  };
+
+  const handleProfileClick = () => {
+    setErrorCode(0);
+    navigate(setChatUser ? `/inbox/${user.username}` : `/${user.username}`);
+    if (setChatUser) setChatUser(user);
+    if (visitUser) visitUser(user.username);
+  };
+
+  const renderNameAndIcon = () => (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
         <h3 style={{ marginRight: "5px" }}>{`${user.firstName} ${
           followBtn ? "" : user.lastName
         }`}</h3>
-        {user.isVerified && (
-          <img
-            style={{ height: "20px", width: "20px", marginRight: "3px" }}
-            src={verifiedIcon}
-            alt="verified"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
-        {user.isAdmin && (
-          <img
-            style={{ height: "15px", width: "15px" }}
-            src={adminIcon}
-            alt="admin"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
+        {user.isVerified && renderIcon(verifiedIcon, "20px")}
+        {user.isAdmin && renderIcon(adminIcon, "15px")}
       </div>
       <span>{`@${user.username}`}</span>
     </div>
   );
+
+  const renderIcon = (icon, size) => (
+    <img
+      style={{ height: size, width: size, marginRight: "3px" }}
+      src={icon}
+      alt="icon"
+      onContextMenu={(event) => event.preventDefault()}
+    />
+  );
+
   return (
     <div
       className="container-x"
@@ -95,17 +93,7 @@ const UserComponent = ({
     >
       <div
         className="container-x pointer"
-        onClick={() => {
-          if (setChatUser) {
-            setErrorCode(0);
-            navigate(`/inbox/${user.username}`);
-            setChatUser(user);
-          } else {
-            setErrorCode(0);
-            navigate(`/${user.username}`);
-            if (visitUser) visitUser(user.username);
-          }
-        }}
+        onClick={handleProfileClick}
         style={{ marginBottom: "5px" }}
       >
         <img
@@ -124,7 +112,7 @@ const UserComponent = ({
           onError={() => setPfpLoaded(false)}
           alt="Pfp"
         />
-        <div>{nameAndIcon}</div>
+        <div>{renderNameAndIcon()}</div>
       </div>
       {user.username !== Cookies.get("username") && followBtn && (
         <button

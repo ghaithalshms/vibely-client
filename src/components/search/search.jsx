@@ -5,19 +5,21 @@ import UserComponent from "../user/userComponent";
 import Navbar from "../navbar/navbar";
 
 const Search = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
-  const [username, setUsername] = useState();
+  const [username, setUsername] = useState("");
   const [userList, setUserList] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
   const handleGetSearchUser = async () => {
     setLoading(true);
     setUserList([]);
-    await axios
-      .get(getLink.getSearchUser, { params: { username } })
-      .then((res) => setUserList(res.data))
-      .catch((err) => {
-        handleCatchAxios(err);
+    try {
+      const res = await axios.get(getLink.getSearchUser, {
+        params: { username },
       });
+      setUserList(res.data);
+    } catch (err) {
+      handleCatchAxios(err);
+    }
     setLoading(false);
   };
 
@@ -27,36 +29,32 @@ const Search = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
     // eslint-disable-next-line
   }, [username]);
 
-  const searchUserElement = (
-    <textarea
-      id="search-txtarea"
-      placeholder="Search for a user"
-      onChange={(e) => setUsername(e.currentTarget.value)}
-      style={{ resize: "none", marginBottom: "1rem", width: "100%" }}
-      rows={"1"}
-    />
+  const renderLoader = () => (
+    <div
+      className="full-width"
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        padding: "1rem",
+        marginTop: "40%",
+      }}
+    >
+      <span className="loader" />
+    </div>
   );
 
-  const userListElement = (
+  const renderUserList = () => (
     <>
-      {isLoading && (
-        <div
-          className="full-width"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "1rem",
-            marginTop: "40%",
-          }}
-        >
-          <span className="loader" />
-        </div>
-      )}
-      {userList?.map((user, index) => (
+      {isLoading && renderLoader()}
+      {userList.map((user, index) => (
         <UserComponent key={index} user={user} setErrorCode={setErrorCode} />
       ))}
     </>
   );
+
+  const handleInputChange = (e) => {
+    setUsername(e.currentTarget.value);
+  };
 
   return (
     <div className="main-container">
@@ -65,9 +63,16 @@ const Search = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
         handleCatchAxios={handleCatchAxios}
         setErrorCode={setErrorCode}
       />
-      {searchUserElement}
-      {userListElement}
+      <textarea
+        id="search-txtarea"
+        placeholder="Search for a user"
+        onChange={handleInputChange}
+        style={{ resize: "none", marginBottom: "1rem", width: "100%" }}
+        rows={"1"}
+      />
+      {renderUserList()}
     </div>
   );
 };
+
 export default Search;

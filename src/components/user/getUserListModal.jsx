@@ -24,43 +24,36 @@ const GetUserListModal = ({
   const [userList, setUserList] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-  const handleGetUserList = async () => {
-    let reqLink;
+  const getUserListLink = () => {
     switch (type) {
       case "Followers":
-        reqLink = getLink.getUserFollowers;
-        break;
+        return getLink.getUserFollowers;
       case "Following":
       case "Inbox":
-        reqLink = getLink.getUserFollowing;
-        break;
+        return getLink.getUserFollowing;
       case "Liked Users":
-        reqLink = getLink.getPostLikedUsers;
-        break;
+        return getLink.getPostLikedUsers;
       default:
-        return;
+        return null;
     }
+  };
 
-    const data = {
-      params:
-        type === "Liked Users"
-          ? {
-              postID,
-              token: Cookies.get("token"),
-            }
-          : {
-              username,
-              token: Cookies.get("token"),
-            },
-    };
-    await axios
-      .get(reqLink, data)
-      .then((res) => {
-        setUserList(res?.data);
-      })
-      .catch((err) => {
-        handleCatchAxios(err);
-      });
+  const getDataParams = () => {
+    return type === "Liked Users"
+      ? { postID, token: Cookies.get("token") }
+      : { username, token: Cookies.get("token") };
+  };
+
+  const handleGetUserList = async () => {
+    const reqLink = getUserListLink();
+    if (!reqLink) return;
+
+    try {
+      const res = await axios.get(reqLink, { params: getDataParams() });
+      setUserList(res?.data);
+    } catch (err) {
+      handleCatchAxios(err);
+    }
     setLoading(false);
   };
 
@@ -68,6 +61,19 @@ const GetUserListModal = ({
     handleGetUserList();
     // eslint-disable-next-line
   }, [type]);
+
+  const renderLoader = () => (
+    <div
+      className="full-width"
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        padding: "1rem",
+      }}
+    >
+      <span className="loader" />
+    </div>
+  );
 
   return (
     <Modal
@@ -104,18 +110,7 @@ const GetUserListModal = ({
     >
       <h2 style={{ marginBottom: "1rem" }}>{header}</h2>
       <div>
-        {isLoading && (
-          <div
-            className="full-width"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              padding: "1rem",
-            }}
-          >
-            <span className="loader" />
-          </div>
-        )}
+        {isLoading && renderLoader()}
         {userList?.map((user, index) => (
           <UserComponent
             key={index}

@@ -14,29 +14,29 @@ const SuggestionsList = ({
   const [suggestionUserArray, setSuggestionUserArray] = useState([]);
 
   useEffect(() => {
-    getSuggestionUsers();
-    // eslint-disable-next-line
+    getSuggestionUsers(); // eslint-disable-next-line
   }, []);
 
   const getSuggestionUsers = async () => {
-    await axios
-      .get(getLink.getSuggestions, {
+    try {
+      const res = await axios.get(getLink.getSuggestions, {
         params: {
           token: Cookies.get("token"),
         },
-      })
-      .then((res) => {
-        setSuggestionUserArray(res.data);
-        if (res.data?.length > 0) setHomeContainerMargin(true);
-      })
-      .catch((err) => handleCatchAxios(err));
+      });
+      setSuggestionUserArray(res.data);
+      if (res.data?.length > 0) setHomeContainerMargin(true);
+    } catch (err) {
+      handleCatchAxios(err);
+    }
   };
-  return (
-    <>
-      {suggestionUserArray?.length > 0 && (
+
+  const renderSuggestions = () => {
+    return (
+      suggestionUserArray?.length > 0 && (
         <div className="suggestions-container">
           <h3 className="suggestions-h3">Suggestions for you</h3>
-          {suggestionUserArray?.map((user, index) => (
+          {suggestionUserArray.map((user, index) => (
             <SuggestionUserComponent
               user={user}
               handleCatchAxios={handleCatchAxios}
@@ -45,9 +45,11 @@ const SuggestionsList = ({
             />
           ))}
         </div>
-      )}
-    </>
-  );
+      )
+    );
+  };
+
+  return <>{renderSuggestions()}</>;
 };
 
 export default SuggestionsList;
