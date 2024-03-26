@@ -216,6 +216,14 @@ const PostComponent = ({
     </div>
   );
 
+  const renderLikeCount = post.likeCount !== 0 && (
+    <span
+      className="pointer"
+      style={{ marginTop: ".5rem", marginLeft: "10px" }}
+      onClick={() => setUserListModalOpen(true)}
+    >{`${post.likeCount} like`}</span>
+  );
+
   const renderPostBody = () => (
     <div className="post-content container-y">
       <pre>{post.description}</pre>
@@ -249,7 +257,9 @@ const PostComponent = ({
           onContextMenu={(event) => event.preventDefault()}
         />
       )}
+
       {renderPostIcons()}
+      {renderLikeCount}
     </div>
   );
 
