@@ -1,100 +1,101 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import { postLink } from "../../API";
-
+import Cookies from "js-cookie";
 import galeryIconLight from "../icon/light-mode/create post/galery.png";
 import galeryIconDark from "../icon/dark-mode/create post/galery.png";
-import Cookies from "js-cookie";
 
 const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
-  const [fileType, setFileType] = useState(null);
+  const [fileType, setFileType] = useState("text/plain");
   const [warning, setWarning] = useState("");
   const pictureRef = useRef();
   const [videoSrc, setVideoSrc] = useState(null);
-
   const [shareButtonDisabled, setShareButtonDisabled] = useState(false);
 
   const handleOnChangeDescription = (value) => {
     setDescription(value);
   };
 
-  //UPLOAD POST PICTURE
   const handleFileLoad = (e) => {
     setWarning("");
-    if (e.target.files[0]) {
-      const file = e.target.files[0];
+    const selectedFile = e.target.files[0];
 
-      if (file.size > 30 * 1024 * 1024) {
-        setWarning("Sorry, max file size is 30 MB");
-        pictureRef.current.src = null;
-        setVideoSrc(null);
-        setFile(null);
+    if (!selectedFile) return;
+
+    if (selectedFile.size > 30 * 1024 * 1024) {
+      setWarning("Sorry, max file size is 30 MB");
+      resetFileState();
+    } else {
+      setFile(selectedFile);
+      setFileType(selectedFile.type);
+
+      if (selectedFile.type?.startsWith("image/")) {
+        showImagePreview(selectedFile);
+      } else if (selectedFile.type?.startsWith("video/")) {
+        showVideoPreview(selectedFile);
       } else {
-        setFile(file);
-        setFileType(file.type);
-        if (file.type?.startsWith("image/"))
-          pictureRef.current.src = URL.createObjectURL(file);
-        else if (file.type?.startsWith("video/")) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64Data = reader.result;
-            setVideoSrc(base64Data);
-          };
-          reader.readAsDataURL(file);
-        } else {
-          setWarning("Invalid file type, please upload an image or video");
-          setFile(null);
-          setVideoSrc(null);
-          pictureRef.current.src = null;
-        }
+        setWarning("Invalid file type, please upload an image or video");
+        resetFileState();
       }
     }
+  };
+
+  const resetFileState = () => {
+    setFile(null);
+    setVideoSrc(null);
+    pictureRef.current.src = null;
+  };
+
+  const showImagePreview = (file) => {
+    pictureRef.current.src = URL.createObjectURL(file);
+  };
+
+  const showVideoPreview = (file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setVideoSrc(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleCreatePost = async (e) => {
-    if (!shareButtonDisabled) {
-      if (file || file || description) {
-        e.preventDefault();
-        if (file?.size > 30 * 1024 * 1024) {
-          alert("File size exceeds the maximum allowed size (30 MB).");
-          setFile(null);
-        } else {
-          setShareButtonDisabled(true);
-          const btnShare = document.getElementById("btn-share");
-          btnShare.setAttribute("disabled", "");
+    if (shareButtonDisabled || (!file && !description)) return;
 
-          axios.defaults.maxBodyLength = 30 * 1024 * 1024;
-          const formData = new FormData();
-          formData.append("token", Cookies.get("token"));
-          formData.append("description", description);
-          formData.append("fileType", fileType);
-          formData.append("file", file);
+    e.preventDefault();
 
-          axios
-            .post(postLink.createPost, formData)
-            .then((res) => {
-              btnShare.removeAttribute("disabled");
-              if (res.status === 200)
-                window.location.href = `/${Cookies.get("username")}`;
-            })
-            .catch((err) => {
-              handleCatchAxios(err);
-            });
-        }
+    if (file && file.size > 30 * 1024 * 1024) {
+      alert("File size exceeds the maximum allowed size (30 MB).");
+      resetFileState();
+      return;
+    }
+
+    setShareButtonDisabled(true);
+    const formData = new FormData();
+    formData.append("token", Cookies.get("token"));
+    formData.append("description", description);
+    formData.append("fileType", fileType);
+    formData.append("file", file);
+
+    try {
+      axios.defaults.maxBodyLength = 30 * 1024 * 1024;
+      const res = await axios.post(postLink.createPost, formData);
+      if (res.status === 200) {
+        window.location.href = `/${Cookies.get("username")}`;
       }
+    } catch (err) {
+      handleCatchAxios(err);
+    } finally {
+      setShareButtonDisabled(false);
     }
   };
 
-  // a reference to the hidden file input element
-  const hiddenFileInput = useRef(null);
-
-  // Programatically click the hidden file input element
-  // when the Button component is clicked
   const handleUploadPictureClick = () => {
     hiddenFileInput.current.click();
   };
+
+  const hiddenFileInput = useRef(null);
 
   const profilePicture = (
     <img
@@ -139,23 +140,17 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
         top: "5px",
         right: "5px",
         cursor: "pointer",
-        display: fileType?.startsWith("image/")
-          ? pictureRef.current && file
-            ? pictureRef.current.src.split("/").some((element) => {
-                return element === "null";
-              })
-              ? "none"
-              : "flex"
-            : "none"
-          : videoSrc && file
-          ? "flex"
-          : "none",
+        display:
+          (fileType?.startsWith("image/") && pictureRef.current && file) ||
+          (fileType?.startsWith("video/") && videoSrc && file)
+            ? "flex"
+            : "none",
       }}
       onClick={() => {
         setFile(null);
         pictureRef.current.src = null;
-        setFile(null);
         setVideoSrc(null);
+        setFileType("text/plain");
       }}
     >
       <span style={{ color: "white" }}>X</span>
@@ -170,11 +165,7 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
       style={{
         display:
           fileType?.startsWith("image/") && pictureRef.current && file
-            ? pictureRef.current.src.split("/").some((element) => {
-                return element === "null";
-              })
-              ? "none"
-              : "block"
+            ? "block"
             : "none",
       }}
     />

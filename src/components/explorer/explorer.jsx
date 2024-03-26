@@ -8,19 +8,27 @@ const Explorer = ({
   handleCatchAxios,
   setErrorCode,
 }) => {
+  const renderNavbar = () => (
+    <Navbar
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      setErrorCode={setErrorCode}
+    />
+  );
+
+  const renderExplorerPostFlow = () => (
+    <ExplorerPostFlow
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      scrollingPercentage={scrollingPercentage}
+      setErrorCode={setErrorCode}
+    />
+  );
+
   return (
     <div className="container-y  main-container">
-      <Navbar
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        setErrorCode={setErrorCode}
-      />
-      <ExplorerPostFlow
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        scrollingPercentage={scrollingPercentage}
-        setErrorCode={setErrorCode}
-      />
+      {renderNavbar()}
+      {renderExplorerPostFlow()}
     </div>
   );
 };

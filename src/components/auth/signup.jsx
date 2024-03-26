@@ -18,6 +18,7 @@ const Signup = ({ isDarkMode }) => {
   const [passwordError, setPasswordError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [usernameErrorText, setUsernameErrorText] = useState();
+  const [isNextButtonDisabled, setNextButtonDisabled] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -41,10 +42,12 @@ const Signup = ({ isDarkMode }) => {
         .then((res) => {
           if (res.data === "This username is available.") {
             setUsernameError(false);
+            setNextButtonDisabled(false);
             return true;
           } else {
             setUsernameError(true);
             setUsernameErrorText(res.data);
+            setNextButtonDisabled(true);
             return false;
           }
         })
@@ -74,6 +77,7 @@ const Signup = ({ isDarkMode }) => {
         setDialogOpen(true);
         Cookies.set("token", response.data.token, { expires: 1000 });
         Cookies.set("username", response.data.username, { expires: 1000 });
+        Cookies.set("browser-id", response.data.browserID, { expires: 1000 });
         setTimeout(function () {
           window.location.href = "/";
         }, 3000);
@@ -193,6 +197,7 @@ const Signup = ({ isDarkMode }) => {
                 Previous
               </button>
               <button
+                disabled={isNextButtonDisabled}
                 className="half-width "
                 onClick={async () => {
                   const condition = await handleCheckUsername(username);

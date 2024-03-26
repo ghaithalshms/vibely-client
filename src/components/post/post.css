@@ -1,3 +1,8 @@
+:root {
+  --background-color: black;
+  --background-color-dark-mode: white;
+}
+
 .post-file {
   border-radius: 10px;
   margin-top: 10px;
@@ -19,11 +24,11 @@ video::-webkit-media-controls {
 .line hr {
   height: 1px;
   border: 0;
-  background: black;
+  background: var(--background-color);
   margin-top: 10px;
 }
 
 /* DARK MODE */
 .dark-mode .line hr {
-  background: white;
+  background: var(--background-color-dark-mode);
 }

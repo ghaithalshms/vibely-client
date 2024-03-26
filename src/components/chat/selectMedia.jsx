@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
-
+import React, { useState, useRef } from "react";
 import galeryIconLight from "../icon/light-mode/create post/galery.png";
 import galeryIconDark from "../icon/dark-mode/create post/galery.png";
 
@@ -9,66 +8,58 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
   const [warning, setWarning] = useState("");
   const pictureRef = useRef();
   const [videoSrc, setVideoSrc] = useState(null);
-
   const [sendButtonDisabled, setSendButtonDisabled] = useState(false);
-
-  useEffect(() => handleUploadPictureClick(), []);
+  const hiddenFileInput = useRef(null);
 
   const handleSend = async () => {
     setSendButtonDisabled(true);
-
     const btnSend = document.getElementById("btn-send");
     btnSend.setAttribute("disabled", "");
-
     handleSendMessage(file, fileType);
+    clearInputs();
+    onRequestClose();
+    btnSend.removeAttribute("disabled");
+  };
 
+  const clearInputs = () => {
     pictureRef.current.src = null;
     setVideoSrc(null);
     setFile(null);
     setFileType(null);
-    onRequestClose();
-
-    btnSend.removeAttribute("disabled");
   };
 
   const handleFileLoad = (e) => {
     setWarning("");
-    if (e.target.files[0]) {
-      const file = e.target.files[0];
-
-      if (file.size > 30 * 1024 * 1024) {
+    const loadedFile = e.target.files[0];
+    if (loadedFile) {
+      if (loadedFile.size > 30 * 1024 * 1024) {
         setWarning("Sorry, max file size is 30 mb");
-        pictureRef.current.src = null;
-        setVideoSrc(null);
-        setFile(null);
+        clearInputs();
       } else {
-        setFile(file);
-        setFileType(file.type);
-        if (file.type?.startsWith("image"))
-          pictureRef.current.src = URL.createObjectURL(file);
-        else if (file.type?.startsWith("video")) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64Data = reader.result;
-            setVideoSrc(base64Data);
-          };
-          reader.readAsDataURL(file);
-        } else {
+        setFile(loadedFile);
+        setFileType(loadedFile.type);
+        if (loadedFile.type?.startsWith("image")) displayImage(loadedFile);
+        else if (loadedFile.type?.startsWith("video")) displayVideo(loadedFile);
+        else {
           setWarning("Invalid file type, please upload an image or video");
-          setFile(null);
-          setFileType(null);
-          setVideoSrc(null);
-          pictureRef.current.src = null;
+          clearInputs();
         }
       }
     }
   };
 
-  // a reference to the hidden file input element
-  const hiddenFileInput = useRef(null);
+  const displayImage = (file) => {
+    pictureRef.current.src = URL.createObjectURL(file);
+  };
 
-  // Programatically click the hidden file input element
-  // when the Button component is clicked
+  const displayVideo = (file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setVideoSrc(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleUploadPictureClick = () => {
     hiddenFileInput.current.click();
   };
@@ -100,11 +91,7 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
           ? "flex"
           : "none",
       }}
-      onClick={() => {
-        setFile(null);
-        pictureRef.current.src = null;
-        setVideoSrc(null);
-      }}
+      onClick={clearInputs}
     >
       <span style={{ color: "white" }}>X</span>
     </div>
@@ -145,7 +132,6 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
   const addedFileDisplay = (
     <>
       {warning && <div>{warning}</div>}
-      {/* ADDED PICTURE DISPLAY */}
       <div style={{ position: "relative", marginBottom: "0.5rem" }}>
         {pictureDisplay}
         {videoDisplay}
@@ -156,7 +142,6 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
 
   const addPictureIcon = (
     <>
-      {/* ADD PICTURE/VIDEO */}
       <input
         type="file"
         accept="image/*, video/*"
@@ -164,7 +149,6 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
         ref={hiddenFileInput}
         style={{ display: "none" }}
       />
-
       <div
         className="container-y pointer"
         style={{ alignItems: "center", display: file ? "none" : "flex" }}
@@ -177,11 +161,9 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
             width: "80px",
             height: "80px",
             marginLeft: ".5rem",
-
             marginBottom: "1rem",
           }}
         />
-
         <p style={{ fontSize: "1rem" }}>Click here to choose media to send</p>
       </div>
     </>

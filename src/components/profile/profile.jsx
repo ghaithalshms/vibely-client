@@ -16,38 +16,35 @@ const Profile = ({
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  let isUserDataGot = false;
+  const getUsernameFromUrl = () => {
+    const urlParts = window.location.href.split("/");
+    return urlParts[urlParts.length - 1].split("?")[0];
+  };
 
   const handleGetUserData = async (username) => {
     setIsLoading(true);
-    await axios
-      .get(getLink.getUserData, {
+    try {
+      const response = await axios.get(getLink.getUserData, {
         params: {
           username,
           token: Cookies.get("token"),
         },
-      })
-      .then((res) => {
-        setUserData(res?.data);
-      })
-      .catch((err) => handleCatchAxios(err));
-    setIsLoading(false);
-    isUserDataGot = true;
+      });
+      setUserData(response.data);
+    } catch (error) {
+      handleCatchAxios(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    // GET USER DATA ON LOAD
-    if (!isUserDataGot)
-      handleGetUserData(
-        window.location.href
-          .split("/")
-          [window.location.href.split("/").length - 1].split("?")[0]
-      );
-    // eslint-disable-next-line
-  }, []);
+    const username = getUsernameFromUrl();
+    handleGetUserData(username);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="container-y  main-container">
+    <div className="container-y main-container">
       <Navbar
         isDarkMode={isDarkMode}
         visitUser={handleGetUserData}

@@ -12,7 +12,18 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
   const navigate = useNavigate();
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
-  const backIconElement = (
+  const handleBackButtonClick = () => {
+    setErrorCode(0);
+    navigate(`/inbox`);
+    setChatUser(null);
+  };
+
+  const handleProfileClick = () => {
+    setErrorCode(0);
+    navigate(`/${chatUser?.username}`);
+  };
+
+  const renderBackIcon = () => (
     <img
       style={{
         width: "20px",
@@ -20,76 +31,63 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
         marginRight: "1rem",
       }}
       src={isDarkMode ? backDark : backLight}
-      onClick={() => {
-        setErrorCode(0);
-        navigate(`/inbox`);
-        setChatUser(null);
-      }}
+      onClick={handleBackButtonClick}
       alt="back"
       className="pointer"
-      // block right click
       onContextMenu={(event) => {
         event.preventDefault();
       }}
     />
   );
 
-  const nameAndIcon = (
-    <>
-      <div
-        className="container-x pointer"
-        style={{ alignItems: "center" }}
-        onClick={() => {
-          setErrorCode(0);
-          navigate(`/${chatUser?.username}`);
-        }}
-      >
-        <h3 style={{ marginRight: "5px" }}>{`${chatUser?.firstName} `}</h3>
-        {chatUser?.isVerified && (
-          <img
-            style={{ height: "20px", width: "20px", marginRight: "3px" }}
-            src={verifiedIcon}
-            alt="verified"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
-        {chatUser?.isAdmin && (
-          <img
-            style={{ height: "15px", width: "15px" }}
-            src={adminIcon}
-            alt="admin"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
-        {/* SPOTIFY ICON */}
+  const renderNameAndIcon = () => (
+    <div
+      className="container-x pointer"
+      style={{ alignItems: "center" }}
+      onClick={handleProfileClick}
+    >
+      <h3 style={{ marginRight: "5px" }}>{`${chatUser?.firstName} `}</h3>
+      {chatUser?.isVerified && (
         <img
-          style={{
-            display: "none",
-            width: "35px",
-            height: "35px",
-            position: "absolute",
-            right: "20px",
-            top: "20px",
-          }}
-          // block right click
+          style={{ height: "20px", width: "20px", marginRight: "3px" }}
+          src={verifiedIcon}
+          alt="verified"
           onContextMenu={(event) => {
             event.preventDefault();
           }}
-          src={spotifyIcon}
-          alt="spotify"
         />
-      </div>
-    </>
+      )}
+      {chatUser?.isAdmin && (
+        <img
+          style={{ height: "15px", width: "15px" }}
+          src={adminIcon}
+          alt="admin"
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
+        />
+      )}
+      <img
+        style={{
+          display: "none",
+          width: "35px",
+          height: "35px",
+          position: "absolute",
+          right: "20px",
+          top: "20px",
+        }}
+        src={spotifyIcon}
+        alt="spotify"
+        onContextMenu={(event) => {
+          event.preventDefault();
+        }}
+      />
+    </div>
   );
+
   return (
     <div className="chat-header-container">
-      <div className="only-mobile">{backIconElement}</div>
+      <div className="only-mobile">{renderBackIcon()}</div>
       {chatUser && (
         <>
           <img
@@ -100,10 +98,7 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
               marginRight: "0.8rem",
               marginBottom: "0.5rem",
             }}
-            onClick={() => {
-              setErrorCode(0);
-              navigate(`/${chatUser?.username}`);
-            }}
+            onClick={handleProfileClick}
             src={
               pfpLoaded
                 ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`
@@ -114,7 +109,7 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
             alt="Pfp"
           />
           <div className="chat-header-user-container">
-            <div>{nameAndIcon}</div>
+            <div>{renderNameAndIcon()}</div>
             <span className="last-seen-span">
               {chatUser.lastSeen === "online"
                 ? "Online"

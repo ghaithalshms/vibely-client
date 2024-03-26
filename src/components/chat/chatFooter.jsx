@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ReactMic } from "react-mic";
 import { postLink } from "../../API";
 import Cookies from "js-cookie";
-import { ReactMic } from "react-mic";
 
 import galleryLight from "../icon/light-mode/chat/galery.png";
 import micLight from "../icon/light-mode/chat/mic.png";
@@ -43,16 +43,12 @@ const ChatFooter = ({
     formData.append("fileType", fileType);
     formData.append("file", file);
 
-    let id = 0;
-
-    await axios
-      .post(postLink.sendMessageToDB, formData)
-      .then((res) => {
-        id = res?.data?.id;
-      })
-      .catch((err) => handleCatchAxios(err));
-
-    return id;
+    try {
+      const res = await axios.post(postLink.sendMessageToDB, formData);
+      return res?.data?.id;
+    } catch (err) {
+      handleCatchAxios(err);
+    }
   };
 
   const handleSendMessageToSocket = (messageData) => {
@@ -66,7 +62,6 @@ const ChatFooter = ({
     document.getElementById("send-message-textarea")?.focus();
   };
 
-  // FIXME: TIME
   const handleSendMessage = async (file, fileType) => {
     const id = await handleSendMessageToDB(file, fileType || "text/plain");
     const messageData = {
@@ -74,7 +69,6 @@ const ChatFooter = ({
       message,
       from: Cookies.get("username"),
       to: chatUser.username,
-      // sentDate: messageData.sent_date, FIXXX
       fileType: fileType || "text/plain",
       seen: false,
     };
@@ -84,27 +78,19 @@ const ChatFooter = ({
     handleClearTextArea();
   };
 
-  const micIcon = (
+  const renderMicIcon = () => (
     <img
-      onClick={
-        isRecording ? () => setRecording(false) : () => setRecording(true)
-      }
-      // block right click
-      onContextMenu={(event) => {
-        event.preventDefault();
-      }}
+      onClick={() => setRecording(!isRecording)}
+      onContextMenu={(event) => event.preventDefault()}
       className="chat-icon pointer"
       src={isDarkMode ? micDark : micLight}
       alt="mic"
     />
   );
 
-  const galleryIcon = (
+  const renderGalleryIcon = () => (
     <img
-      // block right click
-      onContextMenu={(event) => {
-        event.preventDefault();
-      }}
+      onContextMenu={(event) => event.preventDefault()}
       className="chat-icon pointer"
       src={isDarkMode ? galleryDark : galleryLight}
       alt="gallery"
@@ -112,20 +98,20 @@ const ChatFooter = ({
     />
   );
 
-  const chatIconsContainer = (
+  const renderChatIcons = () => (
     <div className="chat-icons-container">
-      {micIcon}
-      {galleryIcon}
+      {renderMicIcon()}
+      {renderGalleryIcon()}
     </div>
   );
 
-  const sendMessageButton = (
+  const renderSendMessageButton = () => (
     <button className="send-message-button" onClick={handleSendMessage}>
       Send
     </button>
   );
 
-  const messageTextArea = (
+  const renderMessageTextArea = () => (
     <textarea
       id="send-message-textarea"
       value={message}
@@ -137,15 +123,13 @@ const ChatFooter = ({
     />
   );
 
-  const reactMicBgColor = isDarkMode ? "#2b2b2b" : "#eee";
-
-  const reactMicElement = (
+  const renderReactMicElement = () => (
     <ReactMic
       className={isRecording ? "react-mic-comp" : "react-mic-comp display-none"}
       record={isRecording}
       onStop={handleOnEndRecording}
       strokeColor={isDarkMode ? "#eee" : "##2b2b2b"}
-      backgroundColor={reactMicBgColor}
+      backgroundColor={isDarkMode ? "#2b2b2b" : "#eee"}
       mimeType="audio/mp3"
     />
   );
@@ -154,10 +138,10 @@ const ChatFooter = ({
     <div className="container-x">
       {chatUser && (
         <>
-          {!message && chatIconsContainer}
-          {message && sendMessageButton}
-          {messageTextArea}
-          {reactMicElement}
+          {!message && renderChatIcons()}
+          {message && renderSendMessageButton()}
+          {renderMessageTextArea()}
+          {renderReactMicElement()}
         </>
       )}
       {isMediaModalOpen && (

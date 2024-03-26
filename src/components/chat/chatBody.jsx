@@ -15,46 +15,20 @@ const ChatBody = ({
   handleUpdateChatArray,
 }) => {
   const [isLoading, setLoading] = useState(false);
-  // GET OLD CHAT FROM DATABASE
-  const handleGetChat = async () => {
-    await axios
-      .get(getLink.getChat, {
-        params: {
-          token: Cookies.get("token"),
-          username: chatUser.username,
-        },
-      })
-      .then((res) => setChatArray(res?.data))
-      .catch((err) => handleCatchAxios(err));
-    setLoading(false);
-  };
 
-  // RUN GET CHAT FROM DB
   useEffect(() => {
     if (chatUser) {
       setLoading(true);
       handleGetChat();
-    } else setChatArray(null);
-    // eslint-disable-next-line
+    } else {
+      setChatArray(null);
+    } // eslint-disable-next-line
   }, [chatUser]);
 
-  // SCROLL TO THE END AFTER GETTING CHAT
-  const handleScrollChatBodyToEnd = () => {
-    const chatBody = document.querySelector(".chat-body-container");
-    if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
-  };
-
-  // RUN SCROLL TO THE END
-  useEffect(() => handleScrollChatBodyToEnd(), [chatArray]);
-
-  // SOCKET'S RECEIVE MESSAGE
-  const handleReceiveMessage = () => {
-    clientSocket.on("receive_message", (messageData) => {
-      if (chatUser.username === messageData.from)
-        handleUpdateChatArray(messageData);
-      handleUpdateInboxUsers(messageData);
-    });
-  };
+  useEffect(() => {
+    handleScrollChatBodyToEnd();
+    // eslint-disable-next-line
+  }, [chatArray]);
 
   useEffect(() => {
     handleReceiveMessage();
@@ -62,24 +36,59 @@ const ChatBody = ({
     // eslint-disable-next-line
   }, []);
 
-  // SET MESSAGES SEEN
-  const handleSetMessagesSeen = () => {
-    axios.post(updateLink.setMessagesSeen, {
-      token: Cookies.get("token"),
-      username: chatUser.username,
+  useEffect(() => {
+    handleSetMessagesSeen();
+    // eslint-disable-next-line
+  }, []);
+
+  const handleGetChat = async () => {
+    try {
+      const res = await axios.get(getLink.getChat, {
+        params: {
+          token: Cookies.get("token"),
+          username: chatUser.username,
+        },
+      });
+      setChatArray(res?.data);
+      setLoading(false);
+    } catch (err) {
+      handleCatchAxios(err);
+      setLoading(false);
+    }
+  };
+
+  const handleScrollChatBodyToEnd = () => {
+    const chatBody = document.querySelector(".chat-body-container");
+    if (chatBody) {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  };
+
+  const handleReceiveMessage = () => {
+    clientSocket.on("receive_message", (messageData) => {
+      if (chatUser.username === messageData.from) {
+        handleUpdateChatArray(messageData);
+      }
+      handleUpdateInboxUsers(messageData);
     });
   };
 
-  useEffect(() => handleSetMessagesSeen());
+  const handleSetMessagesSeen = () => {
+    if (chatArray && chatArray.length > 0) {
+      const lastMessage = chatArray[chatArray.length - 1];
+      if (lastMessage.from === Cookies.get("username") && !lastMessage.seen) {
+        axios.post(updateLink.setMessagesSeen, {
+          token: Cookies.get("token"),
+          username: chatUser.username,
+        });
+      }
+    }
+  };
 
   const loadingElement = (
     <div
       className="full-width"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        marginTop: "35svh",
-      }}
+      style={{ display: "flex", justifyContent: "center", marginTop: "35px" }}
     >
       <span className="loader" />
     </div>
@@ -109,7 +118,6 @@ const ChatBody = ({
             handleScrollChatBodyToEnd={handleScrollChatBodyToEnd}
           />
         ))}
-      {/* MESSAGE SEEN */}
       {seenElement}
     </div>
   );

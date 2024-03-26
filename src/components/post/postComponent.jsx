@@ -40,62 +40,56 @@ const PostComponent = ({
 }) => {
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [isUserListModalOpen, setUserListModalOpen] = useState(false);
-
   const [pfpLoaded, setPfpLoaded] = useState(false);
-  const [fileLoaded, setFileLoaded] = useState(
-    post.fileType === "text/plain" ? true : false
-  );
+  const [fileLoaded, setFileLoaded] = useState(post.fileType === "text/plain");
 
   const [isPostMoreModalOpen, setPostMoreModalOpen] = useState(false);
   const [isPostDeleted, setPostDeleted] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleLikePost = async () => {
-    handleUpdatePost(post.postID, "like", postFlow, setPostFlow);
-    await axios
-      .post(postLink.likePost, {
-        postID: post.postID,
-        token: Cookies.get("token"),
-      })
-      .then()
-      .catch((err) => handleCatchAxios(err));
+    handleUpdate("like", postLink.likePost);
   };
 
   const handleSavePost = async () => {
-    handleUpdatePost(post.postID, "save", postFlow, setPostFlow);
-    await axios
-      .post(postLink.savePost, {
-        postID: post.postID,
-        token: Cookies.get("token"),
-      })
-      .then()
-      .catch((err) => handleCatchAxios(err));
+    handleUpdate("save", postLink.savePost);
   };
 
-  const navigate = useNavigate();
-  const nameIconDate = (
+  const handleUpdate = async (action, link) => {
+    handleUpdatePost(post.postID, action, postFlow, setPostFlow);
+    try {
+      await axios.post(link, {
+        postID: post.postID,
+        token: Cookies.get("token"),
+      });
+    } catch (err) {
+      handleCatchAxios(err);
+    }
+  };
+
+  const handleProfileClick = () => {
+    setErrorCode(0);
+    navigate(`/${user.username}`);
+    if (visitUser) visitUser(user.username);
+  };
+
+  const renderNameIconDate = () => (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
         <h3 style={{ marginRight: "5px" }}>{`${user.firstName} `}</h3>
         {user.isVerified && (
           <img
-            style={{ height: "20px", width: "20px", marginRight: "3px" }}
             src={verifiedIcon}
             alt="verified"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
+            style={{ height: "20px", width: "20px", marginRight: "3px" }}
           />
         )}
         {user.isAdmin && (
           <img
-            style={{ height: "15px", width: "15px" }}
             src={adminIcon}
             alt="admin"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
+            style={{ height: "15px", width: "15px" }}
           />
         )}
       </div>
@@ -103,8 +97,7 @@ const PostComponent = ({
     </div>
   );
 
-  const postMoreIcons = (
-    // MOUAZ KRAL ADAM
+  const renderPostMoreIcons = () => (
     <>
       {(post.username === Cookies.get("username") ||
         user.username === Cookies.get("username")) && (
@@ -113,31 +106,17 @@ const PostComponent = ({
           style={{ height: "20px", width: "20px" }}
           src={isDarkMode ? optionsDark : optionsLight}
           alt="options"
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
+          onContextMenu={(event) => event.preventDefault()}
           onClick={() => setPostMoreModalOpen(true)}
         />
       )}
     </>
   );
 
-  const postHeader = (
+  const renderPostHeader = () => (
     <div className="post-header">
-      <div
-        className="container-x pointer"
-        onClick={() => {
-          setErrorCode(0);
-          navigate(`/${user.username}`);
-          if (visitUser) visitUser(user.username);
-        }}
-      >
+      <div className="container-x pointer" onClick={handleProfileClick}>
         <img
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
           className="profile-picture"
           style={{
             width: "43px",
@@ -153,15 +132,15 @@ const PostComponent = ({
           onLoad={() => setPfpLoaded(true)}
           onError={() => setPfpLoaded(false)}
           alt="Pfp"
+          onContextMenu={(event) => event.preventDefault()}
         />
-        <div>{nameIconDate}</div>
+        <div>{renderNameIconDate()}</div>
       </div>
-      {/* POST MORE ICON */}
-      {postMoreIcons}
+      {renderPostMoreIcons()}
     </div>
   );
 
-  const postFileLoading = (
+  const renderPostFileLoading = () => (
     <div
       className="full-width"
       style={{
@@ -175,101 +154,72 @@ const PostComponent = ({
     </div>
   );
 
-  const postIcons = (
-    <>
-      <div
-        className="post-icons container-x"
-        style={{
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 10px",
-          marginTop: "1rem",
-        }}
-      >
-        <div
-          className="container-x"
-          style={{
-            alignItems: "center",
-          }}
-        >
-          {/* LIKE ICON */}
-          <img
-            className="pointer"
-            style={{ height: "24px", width: "24px", marginRight: "0.7rem" }}
-            src={
-              isDarkMode
-                ? post.isLiked
-                  ? like1Dark
-                  : like0Dark
-                : post.isLiked
-                ? like1Light
-                : like0Light
-            }
-            alt="like"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-            onClick={handleLikePost}
-          />
-          {/* COMMENT ICON */}
-          <div
-            className="container-x pointer"
-            onClick={() => setIsCommentsModalOpen(true)}
-            style={{ alignItems: "center", justifyContent: "center" }}
-          >
-            <img
-              style={{ height: "22px", width: "22px" }}
-              src={isDarkMode ? commentDark : commentLight}
-              alt="comment"
-              // block right click
-              onContextMenu={(event) => {
-                event.preventDefault();
-              }}
-            />
-            {post.commentCount > 0 && (
-              <span
-                style={{ marginLeft: "10px" }}
-              >{`${post.commentCount}`}</span>
-            )}
-          </div>
-        </div>
-        {/* SAVE ICON */}
+  const renderPostIcons = () => (
+    <div
+      className="post-icons container-x"
+      style={{
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 10px",
+        marginTop: "1rem",
+      }}
+    >
+      <div className="container-x" style={{ alignItems: "center" }}>
         <img
           className="pointer"
-          style={{ height: "22px", width: "22px" }}
+          style={{ height: "24px", width: "24px", marginRight: "0.7rem" }}
           src={
             isDarkMode
-              ? post.isSaved
-                ? save1Dark
-                : save0Dark
-              : post.isSaved
-              ? save1Light
-              : save0Light
+              ? post.isLiked
+                ? like1Dark
+                : like0Dark
+              : post.isLiked
+              ? like1Light
+              : like0Light
           }
-          alt="save"
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
-          onClick={handleSavePost}
+          alt="like"
+          onContextMenu={(event) => event.preventDefault()}
+          onClick={handleLikePost}
         />
+        <div
+          className="container-x pointer"
+          onClick={() => setIsCommentsModalOpen(true)}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        >
+          <img
+            style={{ height: "22px", width: "22px" }}
+            src={isDarkMode ? commentDark : commentLight}
+            alt="comment"
+            onContextMenu={(event) => event.preventDefault()}
+          />
+          {post.commentCount > 0 && (
+            <span style={{ marginLeft: "10px" }}>{`${post.commentCount}`}</span>
+          )}
+        </div>
       </div>
-      {/* LIKE COUNT SPAN */}
-      {post.likeCount !== 0 && (
-        <span
-          className="pointer"
-          style={{ marginTop: ".5rem", marginLeft: "10px" }}
-          onClick={() => setUserListModalOpen(true)}
-        >{`${post.likeCount} like`}</span>
-      )}
-    </>
+      <img
+        className="pointer"
+        style={{ height: "22px", width: "22px" }}
+        src={
+          isDarkMode
+            ? post.isSaved
+              ? save1Dark
+              : save0Dark
+            : post.isSaved
+            ? save1Light
+            : save0Light
+        }
+        alt="save"
+        onContextMenu={(event) => event.preventDefault()}
+        onClick={handleSavePost}
+      />
+    </div>
   );
 
-  const postBody = (
+  const renderPostBody = () => (
     <div className="post-content container-y">
       <pre>{post.description}</pre>
-      {!fileLoaded && postFileLoading}
+      {!fileLoaded && renderPostFileLoading()}
       {post.fileType?.startsWith("image") && (
         <img
           className="post-file"
@@ -280,10 +230,7 @@ const PostComponent = ({
           onLoad={() => setFileLoaded(true)}
           onError={() => setFileLoaded(false)}
           alt="Post pic"
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
+          onContextMenu={(event) => event.preventDefault()}
         />
       )}
       {post.fileType?.startsWith("video") && (
@@ -299,31 +246,22 @@ const PostComponent = ({
           type="video/mp4"
           controls
           controlsList="nodownload"
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
+          onContextMenu={(event) => event.preventDefault()}
         />
       )}
-
-      {/* POST ICONS */}
-      {postIcons}
+      {renderPostIcons()}
     </div>
   );
 
-  if (isPostDeleted) return <></>;
+  if (isPostDeleted) return null;
 
   return (
     <div className="container-y" style={{ padding: "10px", marginTop: "1rem" }}>
-      {/* user info */}
-      {postHeader}
-      {/* post desc, pic and icons */}
-      {postBody}
-      {/* bottom line */}
+      {renderPostHeader()}
+      {renderPostBody()}
       <div className="line">
         <hr />
       </div>
-      {/* COMMENTS MODAL DEF */}
       {isCommentsModalOpen && (
         <CommentsModal
           isDarkMode={isDarkMode}

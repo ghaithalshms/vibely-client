@@ -1,7 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
 import "../../modal.css";
-// import CheckboxStyled from "./checkboxStyled";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -27,11 +26,26 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose, setErrorCode }) => {
     });
   };
 
+  const handleNavigation = (path) => {
+    if (window.location.href.split("/").slice(-2, -1)[0] !== "activities") {
+      setErrorCode(0);
+      navigate(`/activities/${path}`);
+    } else {
+      window.location.href = `/activities/${path}`;
+    }
+  };
+
+  const handleSignOut = async () => {
+    await unsubscribeWebPush();
+    removeAllCookies();
+    window.location.href = "/login";
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Yes/No Dialog"
+      contentLabel="More Modal"
       className="modal-container"
       ariaHideApp={false}
       style={{
@@ -59,104 +73,21 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose, setErrorCode }) => {
         <h2 className="uppercase">{"More"}</h2>
         <br />
         <h3 className="uppercase">Activities</h3>
-        <button
-          onClick={() => {
-            if (
-              window.location.href.split("/")[
-                window.location.href.split("/").length - 2
-              ] !== "activities"
-            ) {
-              setErrorCode(0);
-              navigate("/activities/liked");
-            } else window.location.href = "/activities/liked";
-          }}
-        >
-          Liked posts
-        </button>
-        <button
-          onClick={() => {
-            if (
-              window.location.href.split("/")[
-                window.location.href.split("/").length - 2
-              ] !== "activities"
-            ) {
-              setErrorCode(0);
-              navigate("/activities/saved");
-            } else window.location.href = "/activities/saved";
-          }}
-        >
-          Saved posts
-        </button>
-        <button
-          onClick={() => {
-            if (
-              window.location.href.split("/")[
-                window.location.href.split("/").length - 2
-              ] !== "activities"
-            ) {
-              setErrorCode(0);
-              navigate("/activities/archived");
-            } else window.location.href = "/activities/archived";
-          }}
-        >
+        <button onClick={() => handleNavigation("liked")}>Liked posts</button>
+        <button onClick={() => handleNavigation("saved")}>Saved posts</button>
+        <button onClick={() => handleNavigation("archived")}>
           Archived posts
         </button>
         <br />
         <h3 className="uppercase">Account</h3>
-        <button
-          onClick={() => {
-            setErrorCode(0);
-            navigate("/account/edit-profile");
-          }}
-        >
+        <button onClick={() => navigate("/account/edit-profile")}>
           Edit your profile
         </button>
         <button> Change your password</button>
         <button>Change your e-mail</button>
         <br />
         <h3 className="uppercase">Settings</h3>
-        <button
-          onClick={async () => {
-            await unsubscribeWebPush();
-            removeAllCookies();
-            window.location.href = "/login";
-          }}
-        >
-          Sign out
-        </button>
-        {/* <button style={{ display: "flex", justifyContent: "center" }}>
-          Dark mode
-          <CheckboxStyled
-            isCheckedParam={isDarkMode}
-            isDarkMode={isDarkMode}
-            isCheckedClick={() => {
-              Cookies.remove("dark-mode");
-              document.body.classList.remove("dark-mode");
-
-              const metaThemeColor = document.querySelector(
-                'meta[name="theme-color"]'
-              );
-              if (metaThemeColor) metaThemeColor.content = "#f874bb";
-              const metaColorScheme = document.querySelector(
-                'meta[name="color-scheme"]'
-              );
-              if (metaColorScheme) metaColorScheme.content = "light";
-            }}
-            isNotCheckedClick={() => {
-              Cookies.set("dark-mode", true, { expires: 1000 });
-              document.body.classList.add("dark-mode");
-
-              const metaThemeColor = document.querySelector(
-                'meta[name="theme-color"]'
-              );
-              if (metaThemeColor) metaThemeColor.content = "#68053a";
-              const metaColorScheme = document.querySelector(
-                'meta[name="color-scheme"]'
-              );
-              if (metaColorScheme) metaColorScheme.content = "dark";
-            }}
-          /> 
-        </button> */}
+        <button onClick={handleSignOut}>Sign out</button>
       </div>
     </Modal>
   );

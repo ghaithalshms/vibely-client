@@ -7,6 +7,32 @@ import { useNavigate } from "react-router-dom";
 const Error500 = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const navigate = useNavigate();
 
+  const handleClick = () => {
+    setErrorCode(0);
+    navigate("/");
+  };
+
+  const renderNavbar = () => (
+    <Navbar
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      setErrorCode={setErrorCode}
+      error500={true}
+    />
+  );
+
+  const renderContent = () => (
+    <div className="container-y" style={{ alignItems: "center" }}>
+      <h1 style={{ fontSize: "4rem" }}>500</h1>
+      <h3>Sorry, the connection to the server has failed.</h3>
+      <img
+        style={{ maxWidth: "80svw", width: "500px" }}
+        src={isDarkMode ? error500iconDark : error500iconLight}
+        alt="error500"
+      />
+    </div>
+  );
+
   return (
     <div
       className="main-container pointer"
@@ -16,31 +42,10 @@ const Error500 = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
         alignItems: "center",
         justifyContent: "center",
       }}
-      onClick={() => {
-        setErrorCode(0);
-        navigate("/");
-      }}
+      onClick={handleClick}
     >
-      <Navbar
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        setErrorCode={setErrorCode}
-        error500={true}
-      />
-      <div
-        className="container-y"
-        style={{
-          alignItems: "center",
-        }}
-      >
-        <h1 style={{ fontSize: "4rem" }}>500</h1>
-        <h3>Sorry, the connection to the server has failed.</h3>
-        <img
-          style={{ maxWidth: "80svw", width: "500px" }}
-          src={isDarkMode ? error500iconDark : error500iconLight}
-          alt="error500"
-        />
-      </div>
+      {renderNavbar()}
+      {renderContent()}
     </div>
   );
 };

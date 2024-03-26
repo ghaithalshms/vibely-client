@@ -18,33 +18,50 @@ const PostMoreModal = ({
 }) => {
   const handleDeletePost = async () => {
     setPostDeleted();
-    await axios
-      .post(deleteLink.deletePost, {
-        token: Cookies.get("token"),
-        postID,
-      })
-      .then()
-      .catch((err) => handleCatchAxios(err));
+    await deletePost();
   };
+
   const handleArchivePost = async () => {
     setPostDeleted();
-    await axios
-      .post(updateLink.archivePost, {
-        token: Cookies.get("token"),
-        postID,
-      })
-      .then()
-      .catch((err) => handleCatchAxios(err));
+    await archivePost();
   };
+
   const handleUnarchivePost = async () => {
     setPostDeleted();
-    await axios
-      .post(updateLink.unarchivePost, {
+    await unarchivePost();
+  };
+
+  const deletePost = async () => {
+    try {
+      await axios.post(deleteLink.deletePost, {
         token: Cookies.get("token"),
         postID,
-      })
-      .then()
-      .catch((err) => handleCatchAxios(err));
+      });
+    } catch (err) {
+      handleCatchAxios(err);
+    }
+  };
+
+  const archivePost = async () => {
+    try {
+      await axios.post(updateLink.archivePost, {
+        token: Cookies.get("token"),
+        postID,
+      });
+    } catch (err) {
+      handleCatchAxios(err);
+    }
+  };
+
+  const unarchivePost = async () => {
+    try {
+      await axios.post(updateLink.unarchivePost, {
+        token: Cookies.get("token"),
+        postID,
+      });
+    } catch (err) {
+      handleCatchAxios(err);
+    }
   };
 
   return (

@@ -25,16 +25,16 @@ const GetInboxUsers = ({
   const navigate = useNavigate();
 
   const handleGetInboxUsers = async () => {
-    await axios
-      .get(getLink.getInbox, {
+    try {
+      const res = await axios.get(getLink.getInbox, {
         params: {
           token: Cookies.get("token"),
         },
-      })
-      .then((res) => {
-        setInboxUsers(res?.data);
-      })
-      .catch((err) => handleCatchAxios(err));
+      });
+      setInboxUsers(res?.data);
+    } catch (error) {
+      handleCatchAxios(error);
+    }
     setLoading(false);
     setDataGot(true);
   };
@@ -43,8 +43,27 @@ const GetInboxUsers = ({
     if (!isDataGot) {
       handleGetInboxUsers();
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const renderLoader = () => (
+    <div
+      className="full-width"
+      style={{ display: "flex", justifyContent: "center", marginTop: "30vh" }}
+    >
+      <span className="loader" />
+    </div>
+  );
+
+  const renderEmptyInboxMessage = () => (
+    <h3
+      className="pointer"
+      onClick={() => setUserListModalOpen(true)}
+      style={{ marginTop: "30vh", textAlign: "center" }}
+    >
+      Click here to send a message to your friends!
+    </h3>
+  );
 
   return (
     <div className={chatUser ? "only-pc" : ""}>
@@ -75,19 +94,7 @@ const GetInboxUsers = ({
             alt="send_msg"
           />
         </div>
-        {isLoading && (
-          <div
-            className="full-width"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "30svh",
-            }}
-          >
-            <span className="loader" />
-          </div>
-        )}
-
+        {isLoading && renderLoader()}
         {!isLoading &&
           inboxUsers &&
           inboxUsers?.map((inbox, index) => (
@@ -102,16 +109,7 @@ const GetInboxUsers = ({
               }}
             />
           ))}
-
-        {!isLoading && !inboxUsers?.length > 0 && (
-          <h3
-            className="pointer"
-            onClick={() => setUserListModalOpen(true)}
-            style={{ marginTop: "30vh", textAlign: "center" }}
-          >
-            Click here to send a message to your friends!
-          </h3>
-        )}
+        {!isLoading && !inboxUsers?.length > 0 && renderEmptyInboxMessage()}
       </div>
       {userListModalIsOpen && (
         <GetUserListModal

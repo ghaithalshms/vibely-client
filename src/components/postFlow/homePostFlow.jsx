@@ -21,41 +21,40 @@ const HomePostFlow = ({
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const handleGetHomePostFlow = async (isOnScrolling) => {
-    if (!isOnScrolling) setIsLoading(true);
-    if (lastGotPostID >= 0)
-      await axios
-        .get(getLink.getHomePostFlow, {
-          params: {
-            token: Cookies.get("token"),
-            lastGotPostID,
-          },
-        })
-        .then(async (res) => {
-          if (res.data !== "no post flow") {
-            setLastGotPostID(res.data?.lastGotPostID);
-            if (!isOnScrolling) setHomePostFlowArray(res.data?.postFlowArray);
-            // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
-            else
-              setHomePostFlowArray([
-                ...homePostFlowArray,
-                ...res.data?.postFlowArray,
-              ]);
-          }
-        })
-
-        .catch((err) => handleCatchAxios(err));
+    setIsLoading(true);
+    try {
+      const response = await axios.get(getLink.getHomePostFlow, {
+        params: {
+          token: Cookies.get("token"),
+          lastGotPostID,
+        },
+      });
+      if (response.data !== "no post flow") {
+        const { lastGotPostID: newLastGotPostID, postFlowArray } =
+          response.data;
+        setLastGotPostID(newLastGotPostID);
+        setHomePostFlowArray((prevPostFlowArray) =>
+          isOnScrolling
+            ? [...prevPostFlowArray, ...postFlowArray]
+            : postFlowArray
+        );
+      }
+    } catch (error) {
+      handleCatchAxios(error);
+    }
     setIsLoading(false);
     setIsPostFlowGot(true);
   };
 
   useEffect(() => {
-    // GET USER POST FLOW ON LOAD
-    if (!isPostFlowGot) handleGetHomePostFlow();
-    else setIsLoading(false);
+    if (!isPostFlowGot) {
+      handleGetHomePostFlow(false);
+    } else {
+      setIsLoading(false);
+    }
     // eslint-disable-next-line
-  }, []);
+  }, [isPostFlowGot]);
 
-  // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
     if (scrollingPercentage > 60) {
       handleGetHomePostFlow(true);
@@ -63,22 +62,16 @@ const HomePostFlow = ({
     // eslint-disable-next-line
   }, [scrollingPercentage]);
 
-  if (isLoading) {
-    return (
-      <div
-        className="full-width"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          paddingTop: "20vh",
-        }}
-      >
-        <span className="loader" />
-      </div>
-    );
-  }
+  const Loader = () => (
+    <div
+      className="full-width"
+      style={{ display: "flex", justifyContent: "center", paddingTop: "20vh" }}
+    >
+      <span className="loader" />
+    </div>
+  );
 
-  const noAnyPost = (
+  const NoAnyPost = () => (
     <div
       className="container-x"
       style={{
@@ -98,21 +91,21 @@ const HomePostFlow = ({
 
   return (
     <div className="container-y post-container">
-      {!isLoading && homePostFlowArray?.length === 0 && noAnyPost}
-      {Array.isArray(homePostFlowArray) &&
-        homePostFlowArray?.map((postData) => (
-          <PostComponent
-            isDarkMode={isDarkMode}
-            key={postData.post.postID}
-            user={postData.user}
-            post={postData.post}
-            postFlow={homePostFlowArray}
-            setPostFlow={setHomePostFlowArray}
-            handleUpdatePost={handleUpdatePost}
-            handleCatchAxios={handleCatchAxios}
-            setErrorCode={setErrorCode}
-          />
-        ))}
+      {isLoading && <Loader />}
+      {!isLoading && homePostFlowArray.length === 0 && <NoAnyPost />}
+      {homePostFlowArray.map((postData) => (
+        <PostComponent
+          isDarkMode={isDarkMode}
+          key={postData.post.postID}
+          user={postData.user}
+          post={postData.post}
+          postFlow={homePostFlowArray}
+          setPostFlow={setHomePostFlowArray}
+          handleUpdatePost={handleUpdatePost}
+          handleCatchAxios={handleCatchAxios}
+          setErrorCode={setErrorCode}
+        />
+      ))}
     </div>
   );
 };

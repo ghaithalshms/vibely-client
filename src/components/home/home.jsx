@@ -11,37 +11,53 @@ const Home = ({
   setErrorCode,
 }) => {
   const [homeContainerMargin, setHomeContainerMargin] = useState(false);
+
+  const toggleHomeContainerMargin = () => {
+    setHomeContainerMargin(!homeContainerMargin);
+  };
+
+  const renderNavbar = () => (
+    <Navbar
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      setErrorCode={setErrorCode}
+    />
+  );
+
+  const renderCreatePost = () => (
+    <div className="only-pc">
+      <CreatePost isDarkMode={isDarkMode} handleCatchAxios={handleCatchAxios} />
+    </div>
+  );
+
+  const renderSuggestionsList = () => (
+    <SuggestionsList
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      setHomeContainerMargin={toggleHomeContainerMargin}
+      setErrorCode={setErrorCode}
+    />
+  );
+
+  const renderHomePostFlow = () => (
+    <HomePostFlow
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      scrollingPercentage={scrollingPercentage}
+      setErrorCode={setErrorCode}
+    />
+  );
+
   return (
     <div
-      className={
-        homeContainerMargin
-          ? "container-y  main-container home-container"
-          : "container-y  main-container"
-      }
+      className={`container-y main-container ${
+        homeContainerMargin ? "home-container" : ""
+      }`}
     >
-      <Navbar
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        setErrorCode={setErrorCode}
-      />
-      <div className="only-pc">
-        <CreatePost
-          isDarkMode={isDarkMode}
-          handleCatchAxios={handleCatchAxios}
-        />
-      </div>
-      <SuggestionsList
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        setHomeContainerMargin={setHomeContainerMargin}
-        setErrorCode={setErrorCode}
-      />
-      <HomePostFlow
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        scrollingPercentage={scrollingPercentage}
-        setErrorCode={setErrorCode}
-      />
+      {renderNavbar()}
+      {renderCreatePost()}
+      {renderSuggestionsList()}
+      {renderHomePostFlow()}
     </div>
   );
 };

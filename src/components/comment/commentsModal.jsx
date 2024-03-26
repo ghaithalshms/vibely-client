@@ -20,119 +20,90 @@ const CommentsModal = ({
 }) => {
   const [commentsArray, setCommentsArray] = useState([]);
   const [isLoading, setLoading] = useState(true);
-
   const [publishButtonDisabled, setPublishButtonDisabled] = useState(false);
-
   const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    handleGetComments(); // eslint-disable-next-line
+  }, []);
 
   const handleGetComments = async () => {
     setLoading(true);
-    await axios
-      .get(getLink.getPostComments, {
-        params: {
-          postID,
-          token: Cookies.get("token"),
-        },
-      })
-      .then((res) => setCommentsArray(res.data))
-      .catch((err) => handleCatchAxios(err));
-    setLoading(false);
+    try {
+      const response = await axios.get(getLink.getPostComments, {
+        params: { postID, token: Cookies.get("token") },
+      });
+      setCommentsArray(response.data);
+    } catch (error) {
+      handleCatchAxios(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleUpdateComments = (commentID) => {
-    let updatedPosts = [];
-    commentsArray.forEach((comment) => {
-      updatedPosts.push(
-        comment.commentID === commentID
+    setCommentsArray((prevComments) =>
+      prevComments.map((prevComment) =>
+        prevComment.commentID === commentID
           ? {
-              ...comment,
-              isLiked: !comment.isLiked,
-              likeCount: comment.isLiked
-                ? comment.likeCount - 1
-                : comment.likeCount + 1,
+              ...prevComment,
+              isLiked: !prevComment.isLiked,
+              likeCount: prevComment.isLiked
+                ? prevComment.likeCount - 1
+                : prevComment.likeCount + 1,
             }
-          : comment
-      );
-    });
-
-    setCommentsArray(updatedPosts);
+          : prevComment
+      )
+    );
   };
 
   const handleCreateComment = async () => {
     setPublishButtonDisabled(true);
-    const btnPublish = document.getElementById("btn-publish");
-    btnPublish.setAttribute("disabled", "");
-    axios
-      .post(postLink.createComment, {
+    try {
+      await axios.post(postLink.createComment, {
         token: Cookies.get("token"),
         postID,
         comment,
-      })
-      .then(() => {
-        setComment("");
-        handleGetComments();
-        btnPublish.removeAttribute("disabled");
-      })
-      .catch((err) => handleCatchAxios(err));
+      });
+      setComment("");
+      handleGetComments();
+    } catch (error) {
+      handleCatchAxios(error);
+    } finally {
+      setPublishButtonDisabled(false);
+    }
   };
 
-  useEffect(() => {
-    handleGetComments();
-    // eslint-disable-next-line
-  }, []);
-
-  const loadingIconElement = (
-    <div
-      className="full-width"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        padding: "1rem",
-      }}
-    >
-      <span className="loader" />
-    </div>
-  );
-
-  const commentsElement =
-    commentsArray.length > 0 ? (
-      commentsArray?.map((comment) => (
-        <CommentComponent
-          key={comment.commentID}
-          isDarkMode={isDarkMode}
-          comment={comment}
-          visitUser={visitUser}
-          handleCatchAxios={handleCatchAxios}
-          handleUpdateComments={handleUpdateComments}
-          setErrorCode={setErrorCode}
-        />
-      ))
-    ) : (
-      <h3 style={{ textAlign: "center" }}>No comments yet</h3>
-    );
-
-  const addCommentElement = (
-    <div className="container-x" style={{ marginTop: "10px" }}>
-      <input
-        type="textarea"
-        placeholder={`Comment as @${Cookies.get("username")}`}
-        value={comment}
-        onChange={(e) => setComment(e.currentTarget.value)}
-      />
-      {comment && (
-        <button
-          id="btn-publish"
-          style={{ padding: "10px 15px", margin: "5px 0", marginLeft: "5px" }}
-          onClick={handleCreateComment}
+  const renderComments = () => {
+    if (isLoading) {
+      return (
+        <div
+          className="full-width"
+          style={{ display: "flex", justifyContent: "center", padding: "1rem" }}
         >
-          {publishButtonDisabled && (
-            <span style={{ marginBottom: "5px" }} className="mini-loader" />
-          )}
-          {!publishButtonDisabled && "Publish"}
-        </button>
-      )}
-    </div>
-  );
+          <span className="loader" />
+        </div>
+      );
+    } else if (commentsArray.length > 0) {
+      return (
+        <div style={{ maxHeight: "270px", overflowY: "auto" }}>
+          {commentsArray.map((comment) => (
+            <CommentComponent
+              key={comment.commentID}
+              isDarkMode={isDarkMode}
+              comment={comment}
+              visitUser={visitUser}
+              handleCatchAxios={handleCatchAxios}
+              handleUpdateComments={handleUpdateComments}
+              setErrorCode={setErrorCode}
+            />
+          ))}
+        </div>
+      );
+    } else {
+      return <h3 style={{ textAlign: "center" }}>No comments yet</h3>;
+    }
+  };
 
   return (
     <Modal
@@ -170,16 +141,33 @@ const CommentsModal = ({
     >
       <h2 style={{ marginBottom: "1rem" }}>{header}</h2>
       <div>
-        {/* LOADING ICON */}
-        {isLoading && loadingIconElement}
-        {/* COMMENTS  */}
-        {!isLoading && (
-          <div style={{ maxHeight: "270px", overflowY: "auto" }}>
-            {commentsElement}
-          </div>
-        )}
-        {/* ADD COMMENT */}
-        {addCommentElement}
+        {renderComments()}
+        <div className="container-x" style={{ marginTop: "10px" }}>
+          <input
+            type="textarea"
+            placeholder={`Comment as @${Cookies.get("username")}`}
+            value={comment}
+            onChange={(e) => setComment(e.currentTarget.value)}
+          />
+          {comment && (
+            <button
+              id="btn-publish"
+              style={{
+                padding: "10px 15px",
+                margin: "5px 0",
+                marginLeft: "5px",
+              }}
+              onClick={handleCreateComment}
+              disabled={publishButtonDisabled}
+            >
+              {publishButtonDisabled ? (
+                <span style={{ marginBottom: "5px" }} className="mini-loader" />
+              ) : (
+                "Publish"
+              )}
+            </button>
+          )}
+        </div>
       </div>
     </Modal>
   );

@@ -10,151 +10,131 @@ const MessageComponent = ({
   const [fileLoaded, setFileLoaded] = useState(false);
   const userSigned = Cookies.get("username");
 
-  const messageElement = (
-    <div
-      className="message"
-      style={{
-        flexDirection: message.from === userSigned ? "row-reverse" : "row",
-        backgroundColor:
-          message.from === userSigned
-            ? isDarkMode
-              ? "#68053a"
-              : "#f874bb"
-            : isDarkMode
-            ? "#292929"
-            : "#e6e5e5",
-        color:
-          message.from === userSigned
-            ? "white"
-            : isDarkMode
-            ? "white"
-            : "black",
-        borderTopRightRadius: message.from === userSigned ? "0" : "22px",
-        borderTopLeftRadius: message.from !== userSigned ? "0" : "22px",
-        marginLeft: message.from === userSigned ? "auto" : "0",
-        marginRight: message.from === userSigned ? "5px" : "0",
-      }}
-    >
-      <pre
+  const getMessageStyle = () => {
+    const baseStyle = {
+      flexDirection: message.from === userSigned ? "row-reverse" : "row",
+      borderTopRightRadius: message.from === userSigned ? "0" : "22px",
+      borderTopLeftRadius: message.from !== userSigned ? "0" : "22px",
+      marginLeft: message.from === userSigned ? "auto" : "0",
+      marginRight: message.from === userSigned ? "5px" : "0",
+    };
+
+    if (
+      message.fileType?.startsWith("image") ||
+      message.fileType?.startsWith("video")
+    ) {
+      return {
+        ...baseStyle,
+        backgroundColor: "",
+      };
+    }
+
+    return {
+      ...baseStyle,
+      backgroundColor:
+        message.from === userSigned
+          ? isDarkMode
+            ? "#68053a"
+            : "#f874bb"
+          : isDarkMode
+          ? "#292929"
+          : "#e6e5e5",
+      color: message.from === userSigned || isDarkMode ? "white" : "black",
+      maxWidth: "100%",
+      wordWrap: "break-word",
+      overflowWrap: "break-word",
+    };
+  };
+
+  const handleFileLoad = () => {
+    setFileLoaded(true);
+    handleScrollChatBodyToEnd();
+  };
+
+  const handleFileError = () => {
+    setFileLoaded(false);
+  };
+
+  const renderMediaElement = () => {
+    if (message.fileType?.startsWith("image")) {
+      return (
+        <>
+          {!fileLoaded && renderFileLoading()}
+          <img
+            className="message-picture"
+            loading="lazy"
+            src={`${
+              process.env.REACT_APP_API_URL
+            }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+              message.id
+            }`}
+            onLoad={handleFileLoad}
+            onError={handleFileError}
+            alt="Chat pic"
+            onContextMenu={(event) => {
+              event.preventDefault();
+            }}
+          />
+        </>
+      );
+    } else if (message.fileType?.startsWith("video")) {
+      return (
+        <video
+          style={{ display: fileLoaded ? "inline" : "none" }}
+          className="message-video"
+          loading="lazy"
+          src={`${
+            process.env.REACT_APP_API_URL
+          }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+            message.id
+          }`}
+          onLoadedData={handleFileLoad}
+          onError={handleFileError}
+          type="video/mp4"
+          controls
+          controlsList="nodownload"
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
+        />
+      );
+    } else if (message.fileType?.startsWith("audio")) {
+      return (
+        <AudioPlayer
+          isDarkMode={isDarkMode}
+          audioUrl={`${
+            process.env.REACT_APP_API_URL
+          }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+            message.id
+          }`}
+          sentByTheUser={message.from === userSigned}
+        />
+      );
+    }
+  };
+
+  const renderFileLoading = () => {
+    return (
+      <div
+        className="full-width"
         style={{
-          maxWidth: "100%",
-          wordWrap: "break-word",
-          overflowWrap: "break-word",
+          display: "flex",
+          justifyContent: "center",
+          paddingTop: "2rem",
+          paddingBottom: "2rem",
         }}
       >
-        {message.message}
-      </pre>
-    </div>
-  );
-
-  const fileLoading = (
-    <div
-      className="full-width"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        paddingTop: "2rem",
-        paddingBottom: "2rem",
-      }}
-    >
-      <span className="loader" />
-    </div>
-  );
-
-  const pictureElement = (
-    <>
-      {!fileLoaded && fileLoading}
-      <img
-        className="message-picture"
-        loading="lazy"
-        src={`${
-          process.env.REACT_APP_API_URL
-        }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-          message.id
-        }`}
-        onLoad={() => {
-          setFileLoaded(true);
-          handleScrollChatBodyToEnd();
-        }}
-        onError={() => setFileLoaded(false)}
-        alt="Chat pic"
-        // block right click
-        onContextMenu={(event) => {
-          event.preventDefault();
-        }}
-      />
-    </>
-  );
-
-  const videoElement = (
-    <video
-      style={{ display: fileLoaded ? "inline" : "none" }}
-      className="message-video"
-      loading="lazy"
-      src={`${
-        process.env.REACT_APP_API_URL
-      }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-        message.id
-      }`}
-      onLoadedData={() => {
-        setFileLoaded(true);
-        handleScrollChatBodyToEnd();
-      }}
-      onError={() => setFileLoaded(false)}
-      type="video/mp4"
-      controls
-      controlsList="nodownload"
-      // block right click
-      onContextMenu={(event) => {
-        event.preventDefault();
-      }}
-    />
-  );
-
-  const audioElement = (
-    <AudioPlayer
-      isDarkMode={isDarkMode}
-      audioUrl={`${
-        process.env.REACT_APP_API_URL
-      }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-        message.id
-      }`}
-      sentByTheUser={message.from === userSigned}
-    />
-  );
-
-  const messageFileElement = (
-    <div
-      className="message"
-      style={{
-        flexDirection: message.from === userSigned ? "row-reverse" : "row",
-        borderTopRightRadius: message.from === userSigned ? "0" : "22px",
-        borderTopLeftRadius: message.from !== userSigned ? "0" : "22px",
-        marginLeft: message.from === userSigned ? "auto" : "0",
-        marginRight: message.from === userSigned ? "5px" : "0",
-        backgroundColor:
-          !message.fileType?.startsWith("image") &&
-          !message.fileType?.startsWith("video")
-            ? message.from === userSigned
-              ? isDarkMode
-                ? "#68053a"
-                : "#f874bb"
-              : isDarkMode
-              ? "#292929"
-              : "#e6e5e5"
-            : "",
-      }}
-    >
-      {message.fileType?.startsWith("image") && pictureElement}
-      {message.fileType?.startsWith("video") && videoElement}
-      {message.fileType?.startsWith("audio") && audioElement}
-    </div>
-  );
+        <span className="loader" />
+      </div>
+    );
+  };
 
   return (
-    <div>
-      {message.fileType === "text/plain" && message.message && messageElement}
-      {message.fileType !== "text/plain" && messageFileElement}
+    <div className="message" style={getMessageStyle()}>
+      {message.fileType === "text/plain" && message.message && (
+        <pre>{message.message}</pre>
+      )}
+      {message.fileType !== "text/plain" && renderMediaElement()}
     </div>
   );
 };

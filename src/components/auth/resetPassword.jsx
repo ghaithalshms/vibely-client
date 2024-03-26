@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { updateLink } from "../../API";
 import axios from "axios";
+import md5 from "md5";
 
 // ICONS
 import IconLight from "../icon/light-mode/vibely-text-light.png";
 import IconDark from "../icon/dark-mode/vibely-text-dark.png";
-import md5 from "md5";
 
 const ResetPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const [token, setToken] = useState(null);
@@ -14,7 +14,6 @@ const ResetPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
-
   const [isReset, setIsReset] = useState(false);
   const [isTokenWrong, setIsTokenWrong] = useState(false);
 
@@ -22,36 +21,42 @@ const ResetPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const getQueryParam = (name) => {
-      const params = new URLSearchParams(location.search);
-      return params.get(name);
-    };
-
-    setUsername(getQueryParam("username"));
-    setToken(getQueryParam("token"));
+    const { username, token } = getQueryParams(location.search);
+    setUsername(username);
+    setToken(token);
   }, [location.search]);
 
+  const getQueryParams = (search) => {
+    const params = new URLSearchParams(search);
+    return {
+      username: params.get("username"),
+      token: params.get("token"),
+    };
+  };
+
   const handleResetPassword = async () => {
-    await axios
-      .post(updateLink.resetPassword, {
+    try {
+      const res = await axios.post(updateLink.resetPassword, {
         token,
         password: md5(password),
-      })
-      .then((res) => {
-        setIsReset(true);
-        if (res.data === "wrong token") setIsTokenWrong(true);
-      })
-      .catch((err) => handleCatchAxios(err));
+      });
+      setIsReset(true);
+      if (res.data === "wrong token") setIsTokenWrong(true);
+    } catch (err) {
+      handleCatchAxios(err);
+    }
   };
 
   const handleCheckPassword = () => {
-    if (password?.length > 0 && password === repeatPassword) {
+    if (password && password === repeatPassword) {
       setPasswordError(false);
       return true;
-    } else return false;
+    }
+    setPasswordError(true);
+    return false;
   };
 
-  const returnElement = !isReset ? (
+  const renderResetForm = () => (
     <>
       <span
         style={{ fontSize: "1.2rem", margin: "7px 0" }}
@@ -75,26 +80,19 @@ const ResetPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
       {passwordError && (
         <span className="error-span">Please check your password</span>
       )}
-      <button
-        className="full-width"
-        onClick={() => {
-          if (handleCheckPassword()) handleResetPassword();
-          else setPasswordError(true);
-        }}
-      >
+      <button className="full-width" onClick={handleReset}>
         Reset my password
       </button>
       <Link to="/login" style={{ marginLeft: "auto", marginRight: "auto" }}>
         Go back to login page
       </Link>
     </>
-  ) : (
+  );
+
+  const renderResetConfirmation = () => (
     <>
       <span
-        onClick={() => {
-          setErrorCode(0);
-          navigate(isTokenWrong ? "/forgot-password" : "/login");
-        }}
+        onClick={handleRedirect}
         className="pointer"
         style={{ fontSize: "1.1rem", margin: "7px 0" }}
       >
@@ -105,8 +103,19 @@ const ResetPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
     </>
   );
 
+  const handleReset = () => {
+    if (handleCheckPassword()) {
+      handleResetPassword();
+    }
+  };
+
+  const handleRedirect = () => {
+    setErrorCode(0);
+    navigate(isTokenWrong ? "/forgot-password" : "/login");
+  };
+
   return (
-    <div style={{ display: "flex", alignItems: "center", height: "100svh" }}>
+    <div style={{ display: "flex", alignItems: "center", height: "100vh" }}>
       <div
         className="forgot-password-container"
         id="forgot-password-container"
@@ -117,14 +126,14 @@ const ResetPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
           className="login-icon"
           src={isDarkMode ? IconDark : IconLight}
           alt=""
-          // block right click
           onContextMenu={(event) => {
             event.preventDefault();
           }}
         />
-        {returnElement}
+        {!isReset ? renderResetForm() : renderResetConfirmation()}
       </div>
     </div>
   );
 };
+
 export default ResetPassword;

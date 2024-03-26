@@ -1,6 +1,8 @@
 :root {
   --toggle-bg-light: linear-gradient(to right, #ef00e1, #fcafa7);
   --toggle-bg-dark: linear-gradient(to right, #94645f, #68053a);
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-dark: rgba(255, 255, 255, 0.1);
 }
 
 @keyframes move {

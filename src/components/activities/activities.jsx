@@ -8,20 +8,28 @@ const Activities = ({
   handleCatchAxios,
   setErrorCode,
 }) => {
+  const renderNavbar = () => (
+    <Navbar
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      setErrorCode={setErrorCode}
+    />
+  );
+
+  const renderActivitiesPostFlow = () => (
+    <ActivitiesPostFlow
+      isDarkMode={isDarkMode}
+      handleCatchAxios={handleCatchAxios}
+      scrollingPercentage={scrollingPercentage}
+      setErrorCode={setErrorCode}
+    />
+  );
+
   return (
     <div className="container-y  main-container">
-      <Navbar
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        setErrorCode={setErrorCode}
-      />
+      {renderNavbar()}
       <br />
-      <ActivitiesPostFlow
-        isDarkMode={isDarkMode}
-        handleCatchAxios={handleCatchAxios}
-        scrollingPercentage={scrollingPercentage}
-        setErrorCode={setErrorCode}
-      />
+      {renderActivitiesPostFlow()}
     </div>
   );
 };

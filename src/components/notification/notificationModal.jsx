@@ -20,32 +20,50 @@ const NotificationModal = ({
   const [notificationArray, setNotificationArray] = useState([]);
 
   const handleGetNotification = async () => {
-    await axios
-      .get(getLink.getNotification, {
+    try {
+      const res = await axios.get(getLink.getNotification, {
         params: {
           token: Cookies.get("token"),
         },
-      })
-      .then((res) => {
-        setNotificationArray(res?.data);
-      })
-      .catch((err) => handleCatchAxios(err));
-    setLoading(false);
+      });
+      setNotificationArray(res?.data);
+    } catch (error) {
+      handleCatchAxios(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSetNotificationSeen = () => {
-    axios
-      .post(updateLink.setNotificationSeen, {
+  const handleSetNotificationSeen = async () => {
+    try {
+      await axios.post(updateLink.setNotificationSeen, {
         token: Cookies.get("token"),
-      })
-      .catch((err) => handleCatchAxios(err));
+      });
+    } catch (error) {
+      handleCatchAxios(error);
+    }
   };
 
   useEffect(() => {
     handleGetNotification();
     handleSetNotificationSeen();
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const renderLoadingIndicator = () => {
+    return (
+      <div
+        className="full-width"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <span className="loader" />
+      </div>
+    );
+  };
+
+  const renderNoNotificationMessage = () => {
+    return <div>There's nothing new</div>;
+  };
 
   return (
     <Modal
@@ -80,17 +98,10 @@ const NotificationModal = ({
     >
       <h2 style={{ marginBottom: "1rem" }}>Notifications</h2>
       <div>
-        {isLoading && (
-          <div
-            className="full-width"
-            style={{ display: "flex", justifyContent: "center" }}
-          >
-            <span className="loader" />
-          </div>
-        )}
-        {!isLoading && notificationArray?.length === 0 && (
-          <div>There's nothing new</div>
-        )}
+        {isLoading && renderLoadingIndicator()}
+        {!isLoading &&
+          notificationArray?.length === 0 &&
+          renderNoNotificationMessage()}
         {!isLoading && notificationArray.length > 0 && (
           <div>
             {notificationArray.map((noti, index) => (

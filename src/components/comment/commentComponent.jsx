@@ -1,101 +1,96 @@
-import React, { useState } from "react";
-import adminIcon from "../icon/admin.png";
-import verifiedIcon from "../icon/verified.png";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { deleteLink, postLink } from "../../API";
-// LIGHT MODE ICONS
+import adminIcon from "../icon/admin.png";
+import verifiedIcon from "../icon/verified.png";
+import defaultPfp from "../icon/default profile picture.jpg";
 import like0Light from "../icon/light-mode/post/like 0.png";
 import like1Light from "../icon/light-mode/post/like 1.png";
 import deleteLight from "../icon/light-mode/post/delete.png";
-// DARK MODE ICONS
 import like0Dark from "../icon/dark-mode/post/like 0.png";
 import like1Dark from "../icon/dark-mode/post/like 1.png";
 import deleteDark from "../icon/dark-mode/post/delete.png";
-import defaultPfp from "../icon/default profile picture.jpg";
 
 const CommentComponent = ({
   isDarkMode,
   comment,
   visitUser,
-  handleCatchAxios,
   handleUpdateComments,
+  handleCatchAxios,
   setErrorCode,
 }) => {
   const [isCommentDeleted, setIsCommentDeleted] = useState(false);
   const [pfpLoaded, setPfpLoaded] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadProfilePicture = async () => {
+      try {
+        await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}`
+        );
+        setPfpLoaded(true);
+      } catch (error) {
+        setPfpLoaded(false);
+      }
+    };
+
+    loadProfilePicture();
+  }, [comment.username]);
 
   const handleLikeComment = async () => {
-    handleUpdateComments(comment.commentID);
-    await axios
-      .post(postLink.likeComment, {
+    try {
+      await axios.post(postLink.likeComment, {
         commentID: comment.commentID,
         token: Cookies.get("token"),
-      })
-      .then()
-      .catch((err) => handleCatchAxios(err));
+      });
+      handleUpdateComments(comment.commentID);
+    } catch (error) {
+      handleCatchAxios(error);
+    }
   };
 
   const handleDeleteComment = async () => {
     setIsCommentDeleted(true);
-    await axios
-      .post(deleteLink.deleteComment, {
+    try {
+      await axios.post(deleteLink.deleteComment, {
         token: Cookies.get("token"),
         commentID: comment.commentID,
-      })
-      .then()
-      .catch((err) => {
-        handleCatchAxios(err);
       });
+    } catch (error) {
+      handleCatchAxios(error);
+    }
   };
 
-  const navigate = useNavigate();
-
-  const nameAndIcon = (
+  const renderNameAndIcon = () => (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
         <h3 style={{ marginRight: "5px" }}>{`${comment.firstName} `}</h3>
-        {comment.isVerified && (
-          <img
-            style={{ height: "20px", width: "20px", marginRight: "3px" }}
-            src={verifiedIcon}
-            alt="verified"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
-        {comment.isAdmin && (
-          <img
-            style={{ height: "15px", width: "15px" }}
-            src={adminIcon}
-            alt="admin"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
+        {comment.isVerified && renderIcon(verifiedIcon)}
+        {comment.isAdmin && renderIcon(adminIcon)}
       </div>
-      {/* <span>{`@${comment.username}`}</span> */}
     </div>
   );
 
-  const likeIconCount = (
+  const renderIcon = (icon) => (
+    <img
+      style={{ height: "20px", width: "20px", marginRight: "3px" }}
+      src={icon}
+      alt="icon"
+      onContextMenu={(event) => event.preventDefault()}
+    />
+  );
+
+  const renderLikeIconAndCount = () => (
     <div
       className="container-x"
       style={{ marginLeft: "auto", marginTop: "10px" }}
     >
-      {/* LIKE ICON */}
       <img
         className="pointer"
-        style={{
-          height: "17px",
-          width: "17px",
-          marginRight: "0.5rem",
-        }}
+        style={{ height: "17px", width: "17px", marginRight: "0.5rem" }}
         src={
           isDarkMode
             ? comment.isLiked
@@ -106,37 +101,29 @@ const CommentComponent = ({
             : like0Light
         }
         alt="like"
-        // block right click
-        onContextMenu={(event) => {
-          event.preventDefault();
-        }}
+        onContextMenu={(event) => event.preventDefault()}
         onClick={handleLikeComment}
       />
-      {/* LIKE COUNT */}
       {comment.likeCount > 0 && (
         <span style={{ marginRight: "5px" }}>{comment.likeCount}</span>
       )}
-      {/* COMMENT DELETE ICON */}
-      {comment.username === Cookies.get("username") && (
-        <img
-          className="pointer"
-          style={{
-            height: "17px",
-            width: "17px",
-          }}
-          src={isDarkMode ? deleteDark : deleteLight}
-          alt="like"
-          // block right click
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
-          onClick={handleDeleteComment}
-        />
-      )}
+      {comment.username === Cookies.get("username") && renderDeleteIcon()}
     </div>
   );
 
-  if (isCommentDeleted) return <></>;
+  const renderDeleteIcon = () => (
+    <img
+      className="pointer"
+      style={{ height: "17px", width: "17px" }}
+      src={isDarkMode ? deleteDark : deleteLight}
+      alt="delete"
+      onContextMenu={(event) => event.preventDefault()}
+      onClick={handleDeleteComment}
+    />
+  );
+
+  if (isCommentDeleted) return null;
+
   return (
     <div className="container-x">
       <img
@@ -164,18 +151,13 @@ const CommentComponent = ({
       <div className="container-y">
         <div
           className="pointer"
-          onClick={() => {
-            setErrorCode(0);
-            navigate(`/${comment.username}`);
-            if (visitUser) visitUser(comment.username);
-          }}
+          onClick={() => navigate(`/${comment.username}`)}
         >
-          {nameAndIcon}
+          {renderNameAndIcon()}
         </div>
         <p>{comment.comment}</p>
       </div>
-      {/* LIKE ICON AND LIKE COUNT*/}
-      {likeIconCount}
+      {renderLikeIconAndCount()}
     </div>
   );
 };

@@ -1,3 +1,8 @@
+:root {
+  --light-border-color: rgb(183, 183, 183);
+  --dark-border-color: rgb(74, 74, 74);
+}
+
 .inbox-container {
   overflow: hidden;
 }
@@ -37,13 +42,13 @@
   .inbox-users-container {
     width: 30svw;
     max-width: 30svw;
-    border-right: solid rgb(183, 183, 183) 1px;
+    border-right: solid var(--light-border-color) 1px;
     padding: 0 15px;
   }
   .dark-mode .inbox-users-container {
     width: 30svw;
     max-width: 30svw;
-    border-right: solid rgb(74, 74, 74) 1px;
+    border-right: solid var(--dark-border-color) 1px;
     padding: 0 15px;
   }
 }

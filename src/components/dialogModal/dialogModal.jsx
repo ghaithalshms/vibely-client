@@ -14,44 +14,48 @@ const DialogModal = ({
   onYes,
   onNo,
 }) => {
+  const modalStyles = {
+    overlay: {
+      zIndex: 100,
+      backgroundColor: isDarkMode
+        ? "rgba(255, 255, 255, 0.25)"
+        : "rgba(0, 0, 0, 0.25)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      animation: "fadeIn 0.3s",
+    },
+    content: {
+      position: "static",
+      width: "300px",
+      height: "auto",
+      maxHeight: "60svh",
+      borderRadius: "8px",
+      backgroundColor: isDarkMode ? "black" : "white",
+      borderColor: isDarkMode ? "black" : "white",
+      animation: "fadeIn 0.3s",
+    },
+  };
+
+  const renderButtons = (
+    <div className="modal-buttons">
+      {msgYes && <button onClick={onYes}>Yes</button>}
+      {msgNo && <button onClick={onNo}>No</button>}
+    </div>
+  );
+
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onNo}
-      contentLabel="Yes/No Dialog"
+      contentLabel="Dialog Modal"
       className="modal-container"
       ariaHideApp={false}
-      style={{
-        overlay: {
-          zIndex: 100,
-          backgroundColor: isDarkMode
-            ? "rgba(255, 255, 255, 0.25)"
-            : "rgba(0, 0, 0, 0.25)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          animation: "fadeIn 0.3s",
-        },
-        content: {
-          position: "static",
-          width: "300px",
-          height: "auto",
-          maxHeight: "60svh",
-          borderRadius: "8px",
-          backgroundColor: isDarkMode ? "black" : "white",
-          borderColor: isDarkMode ? "black" : "white",
-          animation: "fadeIn 0.3s",
-        },
-      }}
+      style={modalStyles}
     >
-      {/* <div className="modal-content"> */}
       <h2>{header}</h2>
       <p>{body}</p>
-      <div className="modal-buttons">
-        {msgYes && <button onClick={onYes}>Yes</button>}
-        {msgNo && <button onClick={onNo}>No</button>}
-      </div>
-      {/* </div> */}
+      {renderButtons}
     </Modal>
   );
 };

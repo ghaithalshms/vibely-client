@@ -16,20 +16,18 @@ const ForgotPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const handleForgotPassword = async () => {
     const usernameOrEmail = document.getElementById("username").value;
 
-    await axios
-      .post(updateLink.forgotPassword, {
+    try {
+      const res = await axios.post(updateLink.forgotPassword, {
         usernameOrEmail,
-      })
-      .then((res) => {
-        setEmailAddress(res.data.email);
-        setEmailSent(true);
-      })
-      .catch((err) => {
-        handleCatchAxios(err);
       });
+      setEmailAddress(res.data.email);
+      setEmailSent(true);
+    } catch (err) {
+      handleCatchAxios(err);
+    }
   };
 
-  const returnElement = !emailSent ? (
+  const renderForgotPasswordForm = () => (
     <>
       <span style={{ margin: "10px 0" }}>
         Enter your email or username and we'll send you a link to get back into
@@ -41,15 +39,17 @@ const ForgotPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
         autoComplete="email username"
         placeholder="Username or Email"
       />
-      <button onClick={() => handleForgotPassword()} className="full-width">
+      <button onClick={handleForgotPassword} className="full-width">
         Next
       </button>
       <Link to="/login">Go back to login page</Link>
     </>
-  ) : (
+  );
+
+  const renderEmailSentMessage = () => (
     <>
       <span style={{ margin: "10px 0" }}>
-        {`An email has been sent to ${emailAddress}. if you don't see it, please
+        {`An email has been sent to ${emailAddress}. If you don't see it, please
         check your spam folder.`}
       </span>
       <button
@@ -64,8 +64,12 @@ const ForgotPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
     </>
   );
 
+  const renderContent = emailSent
+    ? renderEmailSentMessage()
+    : renderForgotPasswordForm();
+
   return (
-    <div style={{ display: "flex", alignItems: "center", height: "100svh" }}>
+    <div style={{ display: "flex", alignItems: "center", height: "100vh" }}>
       <div className="forgot-password-container" id="forgot-password-container">
         <img
           className="login-icon"
@@ -76,9 +80,10 @@ const ForgotPassword = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
             event.preventDefault();
           }}
         />
-        {returnElement}
+        {renderContent}
       </div>
     </div>
   );
 };
+
 export default ForgotPassword;

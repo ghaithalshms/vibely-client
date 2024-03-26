@@ -15,7 +15,7 @@ const ActivitiesPostFlow = ({
   scrollingPercentage,
   setErrorCode,
 }) => {
-  const [postFlowArray, setPostFlowArray] = useState();
+  const [postFlowArray, setPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
@@ -32,7 +32,7 @@ const ActivitiesPostFlow = ({
       case "archived":
         return getLink.getArchivedPostFlow;
       default:
-        break;
+        return null;
     }
   };
 
@@ -40,59 +40,50 @@ const ActivitiesPostFlow = ({
     const axiosLink = getAxiosLink();
     if (!axiosLink) return;
     if (!isOnScrolling) setIsLoading(true);
-    if (lastGotPostID >= 0)
-      await axios
-        .get(axiosLink, {
-          params: {
-            token: Cookies.get("token"),
-            lastGotPostID,
-          },
-        })
-        .then((res) => {
-          if (res.data !== "no post flow") {
-            setLastGotPostID(res.data?.lastGotPostID);
-            if (!isOnScrolling) setPostFlowArray(res.data?.postFlowArray);
-            // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
-            else
-              setPostFlowArray([...postFlowArray, ...res.data?.postFlowArray]);
-          }
-        })
-        .catch((err) => handleCatchAxios(err));
+    try {
+      const response = await axios.get(axiosLink, {
+        params: {
+          token: Cookies.get("token"),
+          lastGotPostID,
+        },
+      });
+      if (response.data !== "no post flow") {
+        setLastGotPostID(response.data?.lastGotPostID);
+        if (!isOnScrolling) setPostFlowArray(response.data?.postFlowArray);
+        else
+          setPostFlowArray([...postFlowArray, ...response.data?.postFlowArray]);
+      }
+    } catch (error) {
+      handleCatchAxios(error);
+    }
     setIsLoading(false);
     setIsPostFlowGot(true);
   };
 
   useEffect(() => {
-    // GET USER POST FLOW ON LOAD
-    if (!isPostFlowGot) handleGetPostFlow();
-    else setIsLoading(false);
-    // eslint-disable-next-line
-  }, []);
+    if (!isPostFlowGot) {
+      handleGetPostFlow();
+    } else {
+      setIsLoading(false);
+    } // eslint-disable-next-line
+  }, [isPostFlowGot]);
 
-  // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
     if (scrollingPercentage > 60) {
       handleGetPostFlow(true);
-    }
-    // eslint-disable-next-line
+    } // eslint-disable-next-line
   }, [scrollingPercentage]);
 
-  if (isLoading) {
-    return (
-      <div
-        className="full-width"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          paddingTop: "40svh",
-        }}
-      >
-        <span className="loader" />
-      </div>
-    );
-  }
+  const Loader = () => (
+    <div
+      className="full-width"
+      style={{ display: "flex", justifyContent: "center", paddingTop: "40vh" }}
+    >
+      <span className="loader" />
+    </div>
+  );
 
-  const noAnyPost = (
+  const NoAnyPost = () => (
     <div
       className="container-x"
       style={{
@@ -112,21 +103,21 @@ const ActivitiesPostFlow = ({
 
   return (
     <div className="container-y post-container">
-      {!isLoading && postFlowArray?.length === 0 && noAnyPost}
-      {Array.isArray(postFlowArray) &&
-        postFlowArray?.map((postData) => (
-          <PostComponent
-            isDarkMode={isDarkMode}
-            key={postData.post.postID}
-            user={postData.user}
-            post={postData.post}
-            postFlow={postFlowArray}
-            setPostFlow={setPostFlowArray}
-            handleUpdatePost={handleUpdatePost}
-            handleCatchAxios={handleCatchAxios}
-            setErrorCode={setErrorCode}
-          />
-        ))}
+      {isLoading && <Loader />}
+      {!isLoading && postFlowArray.length === 0 && <NoAnyPost />}
+      {postFlowArray.map((postData) => (
+        <PostComponent
+          isDarkMode={isDarkMode}
+          key={postData.post.postID}
+          user={postData.user}
+          post={postData.post}
+          postFlow={postFlowArray}
+          setPostFlow={setPostFlowArray}
+          handleUpdatePost={handleUpdatePost}
+          handleCatchAxios={handleCatchAxios}
+          setErrorCode={setErrorCode}
+        />
+      ))}
     </div>
   );
 };

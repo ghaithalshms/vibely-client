@@ -22,14 +22,10 @@ const ChatComponent = ({
   const startChatElement = (
     <div
       className="container-y"
-      style={{ alignItems: "center", marginTop: "35svh" }}
+      style={{ alignItems: "center", marginTop: "35px" }}
     >
       <img
-        style={{
-          width: "80px",
-          height: "80px",
-          marginBottom: "1rem",
-        }}
+        style={{ width: "80px", height: "80px", marginBottom: "1rem" }}
         src={appIcon}
         alt="vibely"
         className="pointer"
@@ -42,10 +38,11 @@ const ChatComponent = ({
     </div>
   );
 
-  return (
-    <div className="chat-container">
-      <div className="only-pc">{!chatUser && startChatElement}</div>
-      {chatUser && (
+  const renderChatElements = () => {
+    if (!chatUser) {
+      return <div className="only-pc">{startChatElement}</div>;
+    } else {
+      return (
         <>
           <ChatHeader
             isDarkMode={isDarkMode}
@@ -74,9 +71,11 @@ const ChatComponent = ({
             handleUpdateInboxUsers={handleUpdateInboxUsers}
           />
         </>
-      )}
-    </div>
-  );
+      );
+    }
+  };
+
+  return <div className="chat-container">{renderChatElements()}</div>;
 };
 
 export default ChatComponent;

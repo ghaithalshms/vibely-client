@@ -30,14 +30,18 @@ const AudioPlayer = ({ isDarkMode, audioUrl, sentByTheUser }) => {
     responsive: true,
   });
 
-  useEffect(() => {
+  const initializeWaveSurfer = () => {
     const options = formWaveOptions(waveformRef.current);
     wavesurfer.current = WaveSurfer.create(options);
     wavesurfer.current.load(audioUrl);
     wavesurfer.current.on("ready", () => setLoading(false));
     wavesurfer.current.on("finish", () => setPlaying(false));
+  };
+
+  useEffect(() => {
+    initializeWaveSurfer();
     return () => wavesurfer.current.destroy();
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePlayPause = () => {
@@ -45,22 +49,26 @@ const AudioPlayer = ({ isDarkMode, audioUrl, sentByTheUser }) => {
     wavesurfer.current.playPause();
   };
 
-  const loadingElement = (
+  const renderLoadingElement = () => (
     <div
       className="full-width"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        margin: "15px 0",
-      }}
+      style={{ display: "flex", justifyContent: "center", margin: "15px 0" }}
     >
       <span className="loader" />
     </div>
   );
 
+  const playPauseIcon = playing
+    ? sentByTheUser || isDarkMode
+      ? pauseIcon
+      : pauseIconBlack
+    : sentByTheUser || isDarkMode
+    ? playIcon
+    : playIconBlack;
+
   return (
     <>
-      {loading && loadingElement}
+      {loading && renderLoadingElement()}
       <div
         style={{
           width: "250px",
@@ -71,15 +79,7 @@ const AudioPlayer = ({ isDarkMode, audioUrl, sentByTheUser }) => {
         <img
           className="pointer"
           onClick={handlePlayPause}
-          src={
-            playing
-              ? !sentByTheUser && !isDarkMode
-                ? pauseIconBlack
-                : pauseIcon
-              : !sentByTheUser && !isDarkMode
-              ? playIconBlack
-              : playIcon
-          }
+          src={playPauseIcon}
           alt="play-pause"
           style={{
             height: "30px",

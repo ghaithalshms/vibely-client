@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-// import adminIcon from "../icon/admin.png";
-// import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
 import { postLink } from "../../API";
 import Cookies from "js-cookie";
@@ -12,7 +10,7 @@ const NotificationComponent = ({
   notification,
   visitUser,
   handleCatchAxios,
-  refreshNoitfication,
+  refreshNotification,
   setLoading,
   setErrorCode,
 }) => {
@@ -32,23 +30,41 @@ const NotificationComponent = ({
       case "request":
         return "wants to follow you";
       default:
-        return;
+        return "";
     }
+  };
+
+  const handleImageLoad = () => {
+    setPfpLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setPfpLoaded(false);
+  };
+
+  const handleProfileClick = () => {
+    setErrorCode(0);
+    navigate(`/${user.username}`);
+    if (visitUser) visitUser(user.username);
   };
 
   const handleAcceptFollowRequest = async () => {
     setLoading(true);
-    axios
-      .post(postLink.acceptFollowRequest, {
+    try {
+      await axios.post(postLink.acceptFollowRequest, {
         username: user.username,
         token: Cookies.get("token"),
-      })
-      .then(() => refreshNoitfication())
-      .catch((err) => handleCatchAxios(err));
+      });
+      refreshNotification();
+    } catch (error) {
+      handleCatchAxios(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="container-x " style={{ marginBottom: "5px" }}>
+    <div className="container-x" style={{ marginBottom: "5px" }}>
       <img
         className="profile-picture pointer"
         style={{
@@ -62,14 +78,10 @@ const NotificationComponent = ({
             ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
             : defaultPfp
         }
-        onLoad={() => setPfpLoaded(true)}
-        onError={() => setPfpLoaded(false)}
+        onLoad={handleImageLoad}
+        onError={handleImageError}
         alt="Pfp"
-        onClick={() => {
-          setErrorCode(0);
-          navigate(`/${user.username}`);
-          if (visitUser) visitUser(user.username);
-        }}
+        onClick={handleProfileClick}
       />
       <div
         className="container-x"
@@ -78,11 +90,7 @@ const NotificationComponent = ({
         <pre>
           <span
             className="pointer"
-            onClick={() => {
-              setErrorCode(0);
-              navigate(`/${user.username}`);
-              if (visitUser) visitUser(user.username);
-            }}
+            onClick={handleProfileClick}
             style={{ fontSize: "16px", marginRight: "5px", fontWeight: "600" }}
           >
             {user.firstName}

@@ -7,49 +7,67 @@ import defaultPfp from "../icon/default profile picture.jpg";
 const InboxUserComponent = ({ user, message, setChatUser }) => {
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
+  const renderVerifiedIcon = (user) => {
+    if (user.isVerified) {
+      return (
+        <img
+          style={{ height: "20px", width: "20px", marginRight: "3px" }}
+          src={verifiedIcon}
+          alt="verified"
+          onContextMenu={(event) => event.preventDefault()}
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderAdminIcon = (user) => {
+    if (user.isAdmin) {
+      return (
+        <img
+          style={{ height: "15px", width: "15px" }}
+          src={adminIcon}
+          alt="admin"
+          onContextMenu={(event) => event.preventDefault()}
+        />
+      );
+    }
+    return null;
+  };
+
+  const getMessageFontWeight = (message) => {
+    return message.to === Cookies.get("username") && !message.seen
+      ? "bold"
+      : "normal";
+  };
+
+  const getMessageContent = (message) => {
+    return message.fileType.startsWith("text")
+      ? message.message
+      : capitalizeFirstLetter(message.fileType.split("/")[0]);
+  };
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const nameAndIcon = (
     <div className="container-y">
       <div className="container-x" style={{ alignItems: "center" }}>
         <h3 style={{ marginRight: "5px" }}>{`${user.firstName} `}</h3>
-        {user.isVerified && (
-          <img
-            style={{ height: "20px", width: "20px", marginRight: "3px" }}
-            src={verifiedIcon}
-            alt="verified"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
-        {user.isAdmin && (
-          <img
-            style={{ height: "15px", width: "15px" }}
-            src={adminIcon}
-            alt="admin"
-            // block right click
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
-        )}
+        {renderVerifiedIcon(user)}
+        {renderAdminIcon(user)}
       </div>
-      {/* <span>{`@${user.username}`}</span> */}
       <span
         style={{
-          fontWeight:
-            message.to === Cookies.get("username") && !message.seen
-              ? "bold"
-              : "normal",
+          fontWeight: getMessageFontWeight(message),
         }}
-      >{`${
-        message.fileType.startsWith("text")
-          ? message.message
-          : message.fileType.split("/")[0].charAt(0).toUpperCase() +
-            message.fileType.split("/")[0].slice(1)
-      }`}</span>
+      >
+        {getMessageContent(message)}
+      </span>
     </div>
   );
+
   return (
     <div
       className="container-x pointer"

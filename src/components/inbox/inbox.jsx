@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import "./inbox.css";
-import GetInboxUsers from "./getInboxUsers";
-import ChatComponent from "../chat/chatComponent";
 import axios from "axios";
+import "./inbox.css";
 import { getLink } from "../../API";
 import Cookies from "js-cookie";
+import GetInboxUsers from "./getInboxUsers";
+import ChatComponent from "../chat/chatComponent";
 
 const Inbox = ({
   isDarkMode,
@@ -18,38 +18,37 @@ const Inbox = ({
 
   const handleUpdateInboxUsers = (messageData) => {
     setInboxUsers((prevUserInboxUsers) => {
-      let newInboxUsers = [];
-      prevUserInboxUsers.forEach((inboxUser) => {
+      const newInboxUsers = prevUserInboxUsers.map((inboxUser) => {
         if (
           inboxUser.user.username === messageData.from ||
           inboxUser.user.username === messageData.to
         ) {
-          newInboxUsers.unshift({
+          return {
             user: inboxUser.user,
             message: messageData,
-          });
-        } else newInboxUsers.push(inboxUser);
+          };
+        }
+        return inboxUser;
       });
       return newInboxUsers;
     });
   };
 
   const setChatUserFromLink = async () => {
-    const username = window.location.href
-      .split("/")
-      [window.location.href.split("/").length - 1].split("?")[0];
-    if (username && username !== "inbox")
-      await axios
-        .get(getLink.getUserData, {
+    const username = window.location.href.split("/").pop().split("?")[0];
+    if (username && username !== "inbox") {
+      try {
+        const res = await axios.get(getLink.getUserData, {
           params: {
             username,
             token: Cookies.get("token"),
           },
-        })
-        .then((res) => {
-          setChatUser(res?.data);
-        })
-        .catch((err) => handleCatchAxios(err));
+        });
+        setChatUser(res?.data);
+      } catch (error) {
+        handleCatchAxios(error);
+      }
+    }
   };
 
   useEffect(() => {

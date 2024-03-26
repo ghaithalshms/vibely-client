@@ -19,73 +19,70 @@ const UserPostFlow = ({
   scrollingPercentage,
   setErrorCode,
 }) => {
-  const [userPostFlowArray, setUserPostFlowArray] = useState();
+  const [userPostFlowArray, setUserPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const handleGetUserPostFlow = async (isOnScrolling) => {
+    const axiosLink = getLink.getUserPostFlow;
+    if (!axiosLink) return;
+
     if (!isOnScrolling) setIsLoading(true);
-    await axios
-      .get(getLink.getUserPostFlow, {
+
+    try {
+      const response = await axios.get(axiosLink, {
         params: {
           username: userData.username,
           token: Cookies.get("token"),
           lastGotPostID,
         },
-      })
-      .then((res) => {
-        if (res?.data !== "private account") {
-          setLastGotPostID(res.data?.lastGotPostID);
-          if (!isOnScrolling) setUserPostFlowArray(res.data?.postFlowArray);
-          // ADD THE NEW POST FLOW ARRAY TO THE OLD ONE
-          else
-            setUserPostFlowArray([
-              ...userPostFlowArray,
-              ...res.data?.postFlowArray,
-            ]);
-        }
-      })
-      .catch((err) => handleCatchAxios(err));
+      });
+
+      if (response?.data !== "private account") {
+        setLastGotPostID(response.data?.lastGotPostID);
+        if (!isOnScrolling) setUserPostFlowArray(response.data?.postFlowArray);
+        else
+          setUserPostFlowArray([
+            ...userPostFlowArray,
+            ...response.data?.postFlowArray,
+          ]);
+      }
+    } catch (error) {
+      handleCatchAxios(error);
+    }
+
     setIsLoading(false);
     setIsPostFlowGot(true);
   };
 
   useEffect(() => {
-    // GET USER POST FLOW ON LOAD
     if (
       !isPostFlowGot &&
       (userData.username === Cookies.get("username") ||
         userData.isFollowing ||
         !userData.privacity)
-    )
+    ) {
       handleGetUserPostFlow();
-    else {
+    } else {
       setIsLoading(false);
-    }
-    // eslint-disable-next-line
+    } // eslint-disable-next-line
   }, []);
 
-  // GET USER POST FLOW ON SCROLL EVENT
   useEffect(() => {
     if (
       scrollingPercentage > 60 &&
       userData?.postCount > userPostFlowArray?.length
     ) {
       handleGetUserPostFlow(true);
-    }
-    // eslint-disable-next-line
+    } // eslint-disable-next-line
   }, [scrollingPercentage]);
 
   if (isLoading) {
     return (
       <div
         className="full-width"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          paddingTop: "30%",
-        }}
+        style={{ display: "flex", justifyContent: "center", paddingTop: "30%" }}
       >
         <span className="loader" />
       </div>
