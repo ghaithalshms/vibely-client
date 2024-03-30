@@ -21,6 +21,7 @@ const ChatFooter = ({
   const [message, setMessage] = useState("");
   const [isMediaModalOpen, setMediaModalOpen] = useState(false);
   const [isRecording, setRecording] = useState(false);
+  const [isMessageSending, setMessageSending] = useState(false);
 
   useEffect(() => {
     document.getElementById("send-message-textarea")?.focus();
@@ -63,6 +64,7 @@ const ChatFooter = ({
   };
 
   const handleSendMessage = async (file, fileType) => {
+    setMessageSending(true);
     const id = await handleSendMessageToDB(file, fileType || "text/plain");
     const messageData = {
       id,
@@ -76,6 +78,7 @@ const ChatFooter = ({
     handleSendMessageToSocket(messageData);
     handleUpdateInboxUsers(messageData);
     handleClearTextArea();
+    setMessageSending(false);
   };
 
   const renderMicIcon = () => (
@@ -106,7 +109,11 @@ const ChatFooter = ({
   );
 
   const renderSendMessageButton = () => (
-    <button className="send-message-button" onClick={handleSendMessage}>
+    <button
+      disabled={isMessageSending}
+      className="send-message-button"
+      onClick={handleSendMessage}
+    >
       Send
     </button>
   );
