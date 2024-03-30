@@ -22,7 +22,7 @@ const ChatComponent = ({
   const startChatElement = (
     <div
       className="container-y"
-      style={{ alignItems: "center", marginTop: "35px" }}
+      style={{ alignItems: "center", marginTop: "35vh" }}
     >
       <img
         style={{ width: "80px", height: "80px", marginBottom: "1rem" }}

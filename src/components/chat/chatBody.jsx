@@ -88,7 +88,7 @@ const ChatBody = ({
   const loadingElement = (
     <div
       className="full-width"
-      style={{ display: "flex", justifyContent: "center", marginTop: "35px" }}
+      style={{ display: "flex", justifyContent: "center", marginTop: "35vh" }}
     >
       <span className="loader" />
     </div>
