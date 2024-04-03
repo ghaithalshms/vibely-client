@@ -32,36 +32,30 @@ const PostMoreModal = ({
   };
 
   const deletePost = async () => {
-    try {
-      await axios.post(deleteLink.deletePost, {
+    await axios
+      .post(deleteLink.deletePost, {
         token: Cookies.get("token"),
         postID,
-      });
-    } catch (err) {
-      handleCatchAxios(err);
-    }
+      })
+      .catch((err) => handleCatchAxios(err));
   };
 
   const archivePost = async () => {
-    try {
-      await axios.post(updateLink.archivePost, {
+    await axios
+      .post(updateLink.archivePost, {
         token: Cookies.get("token"),
         postID,
-      });
-    } catch (err) {
-      handleCatchAxios(err);
-    }
+      })
+      .catch((err) => handleCatchAxios(err));
   };
 
   const unarchivePost = async () => {
-    try {
-      await axios.post(updateLink.unarchivePost, {
+    await axios
+      .post(updateLink.unarchivePost, {
         token: Cookies.get("token"),
         postID,
-      });
-    } catch (err) {
-      handleCatchAxios(err);
-    }
+      })
+      .catch((err) => handleCatchAxios(err));
   };
 
   return (
