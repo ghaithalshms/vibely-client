@@ -42,6 +42,10 @@
   .last-seen-span {
     margin-left: 1rem;
   }
+  .chat-container {
+    width: calc(100vw - 30vw - 72px);
+    max-width: calc(100vw - 30vw - 72px);
+  }
 }
 
 .message {
