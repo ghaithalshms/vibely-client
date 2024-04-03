@@ -4,8 +4,14 @@ import { postLink } from "../../API";
 import Cookies from "js-cookie";
 import galeryIconLight from "../icon/light-mode/create post/galery.png";
 import galeryIconDark from "../icon/dark-mode/create post/galery.png";
+import { useNavigate } from "react-router-dom";
 
-const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
+const CreatePost = ({
+  isDarkMode,
+  handleCatchAxios,
+  updateUserPostFlow,
+  onRequestClose,
+}) => {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
   const [fileType, setFileType] = useState("text/plain");
@@ -13,6 +19,8 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
   const pictureRef = useRef();
   const [videoSrc, setVideoSrc] = useState(null);
   const [shareButtonDisabled, setShareButtonDisabled] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleOnChangeDescription = (value) => {
     setDescription(value);
@@ -82,12 +90,12 @@ const CreatePost = ({ isDarkMode, handleCatchAxios }) => {
       axios.defaults.maxBodyLength = 30 * 1024 * 1024;
       const res = await axios.post(postLink.createPost, formData);
       if (res.status === 200) {
-        window.location.href = `/${Cookies.get("username")}`;
+        if (updateUserPostFlow) updateUserPostFlow();
+        navigate(`/${Cookies.get("username")}`);
+        onRequestClose();
       }
     } catch (err) {
       handleCatchAxios(err);
-    } finally {
-      setShareButtonDisabled(false);
     }
   };
 

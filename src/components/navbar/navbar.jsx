@@ -48,6 +48,7 @@ const Navbar = ({
   handleCatchAxios,
   setErrorCode,
   error500,
+  updateUserPostFlow,
 }) => {
   const [actualPage, setActualPage] = useState("home");
   const [isCreatePostModalOpen, setCreatePostModalOpen] = useState(false);
@@ -523,6 +524,7 @@ const Navbar = ({
           onRequestClose={() => setCreatePostModalOpen(false)}
           isDarkMode={isDarkMode}
           handleCatchAxios={handleCatchAxios}
+          updateUserPostFlow={updateUserPostFlow}
         />
       )}
       {isNotificationModalOpen && (

@@ -15,6 +15,9 @@ const Profile = ({
 }) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userPostFlowArray, setUserPostFlowArray] = useState([]);
+  const [lastGotPostID, setLastGotPostID] = useState(0);
+  const [isPostFlowLoading, setIsPostFlowLoading] = useState(true);
 
   const getUsernameFromUrl = () => {
     const urlParts = window.location.href.split("/");
@@ -31,6 +34,7 @@ const Profile = ({
         },
       });
       setUserData(response.data);
+      return response.data;
     } catch (error) {
       handleCatchAxios(error);
     } finally {
@@ -38,9 +42,52 @@ const Profile = ({
     }
   };
 
+  const handleGetUserPostFlow = async (
+    isOnScrolling,
+    username,
+    _lastGotPostID
+  ) => {
+    try {
+      if (!isOnScrolling) setIsPostFlowLoading(true);
+      const response = await axios.get(getLink.getUserPostFlow, {
+        params: {
+          username,
+          token: Cookies.get("token"),
+          lastGotPostID: _lastGotPostID ?? lastGotPostID,
+        },
+      });
+
+      if (response?.data !== "private account") {
+        setLastGotPostID(response.data?.lastGotPostID);
+        if (!isOnScrolling) setUserPostFlowArray(response.data?.postFlowArray);
+        else
+          setUserPostFlowArray([
+            ...userPostFlowArray,
+            ...response.data?.postFlowArray,
+          ]);
+      }
+    } catch (error) {
+      handleCatchAxios(error);
+    }
+
+    setIsPostFlowLoading(false);
+    isPostFlowGot = true;
+  };
+  let isPostFlowGot = false;
   useEffect(() => {
     const username = getUsernameFromUrl();
-    handleGetUserData(username);
+    handleGetUserData(username).then((userData) => {
+      if (
+        !isPostFlowGot &&
+        (userData.username === Cookies.get("username") ||
+          userData.isFollowing ||
+          !userData.privacity)
+      ) {
+        handleGetUserPostFlow(false, username);
+      } else {
+        setIsPostFlowLoading(false);
+      }
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -50,6 +97,9 @@ const Profile = ({
         visitUser={handleGetUserData}
         handleCatchAxios={handleCatchAxios}
         setErrorCode={setErrorCode}
+        updateUserPostFlow={() =>
+          handleGetUserPostFlow(false, userData.username, 0)
+        }
       />
       {isLoading && (
         <div className="loader-container">
@@ -73,6 +123,8 @@ const Profile = ({
             handleCatchAxios={handleCatchAxios}
             scrollingPercentage={scrollingPercentage}
             setErrorCode={setErrorCode}
+            isPostFlowLoading={isPostFlowLoading}
+            userPostFlowArray={userPostFlowArray}
           />
         </>
       )}

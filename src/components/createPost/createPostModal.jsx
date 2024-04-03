@@ -10,6 +10,7 @@ const CreatePostModal = ({
   isOpen,
   onRequestClose,
   handleCatchAxios,
+  updateUserPostFlow,
 }) => {
   const modalStyles = {
     overlay: {
@@ -48,6 +49,8 @@ const CreatePostModal = ({
           <CreatePost
             isDarkMode={isDarkMode}
             handleCatchAxios={handleCatchAxios}
+            updateUserPostFlow={updateUserPostFlow}
+            onRequestClose={onRequestClose}
           />
         </div>
       </Modal>

@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import Cookies from "js-cookie";
-import { getLink } from "../../API";
 import PostComponent from "../post/postComponent";
 import { handleUpdateProfilePost } from "../postFlow/updatePost";
 
@@ -18,56 +16,10 @@ const UserPostFlow = ({
   handleCatchAxios,
   scrollingPercentage,
   setErrorCode,
+  isPostFlowLoading,
+  userPostFlowArray,
+  handleGetUserPostFlow,
 }) => {
-  const [userPostFlowArray, setUserPostFlowArray] = useState([]);
-  const [lastGotPostID, setLastGotPostID] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const handleGetUserPostFlow = async (isOnScrolling) => {
-    const axiosLink = getLink.getUserPostFlow;
-    if (!axiosLink) return;
-
-    if (!isOnScrolling) setIsLoading(true);
-
-    try {
-      const response = await axios.get(axiosLink, {
-        params: {
-          username: userData.username,
-          token: Cookies.get("token"),
-          lastGotPostID,
-        },
-      });
-
-      if (response?.data !== "private account") {
-        setLastGotPostID(response.data?.lastGotPostID);
-        if (!isOnScrolling) setUserPostFlowArray(response.data?.postFlowArray);
-        else
-          setUserPostFlowArray([
-            ...userPostFlowArray,
-            ...response.data?.postFlowArray,
-          ]);
-      }
-    } catch (error) {
-      handleCatchAxios(error);
-    }
-
-    setIsLoading(false);
-    isPostFlowGot = true;
-  };
-  let isPostFlowGot = false;
-  useEffect(() => {
-    if (
-      !isPostFlowGot &&
-      (userData.username === Cookies.get("username") ||
-        userData.isFollowing ||
-        !userData.privacity)
-    ) {
-      handleGetUserPostFlow();
-    } else {
-      setIsLoading(false);
-    } // eslint-disable-next-line
-  }, []);
-
   useEffect(() => {
     if (
       scrollingPercentage > 60 &&
@@ -77,7 +29,7 @@ const UserPostFlow = ({
     } // eslint-disable-next-line
   }, [scrollingPercentage]);
 
-  if (isLoading) {
+  if (isPostFlowLoading) {
     return (
       <div
         className="full-width"
@@ -130,7 +82,7 @@ const UserPostFlow = ({
         !userData.isFollowing &&
         userData.privacity &&
         privateAccount}
-      {!isLoading &&
+      {!isPostFlowLoading &&
         userPostFlowArray?.length === 0 &&
         (!userData.privacity ||
           userData.username === Cookies.get("username")) &&
@@ -143,7 +95,6 @@ const UserPostFlow = ({
             user={userData}
             post={post}
             postFlow={userPostFlowArray}
-            setPostFlow={setUserPostFlowArray}
             visitUser={visitUser}
             handleUpdatePost={handleUpdateProfilePost}
             handleCatchAxios={handleCatchAxios}
