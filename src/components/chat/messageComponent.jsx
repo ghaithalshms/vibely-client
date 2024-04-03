@@ -40,7 +40,7 @@ const MessageComponent = ({
           ? "#292929"
           : "#e6e5e5",
       color: message.from === userSigned || isDarkMode ? "white" : "black",
-      maxWidth: "100%",
+      maxWidth: "85%",
       wordWrap: "break-word",
       overflowWrap: "break-word",
     };
