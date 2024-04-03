@@ -100,8 +100,7 @@ const App = () => {
       // setDialogModalHeader("Ooups");
       // setDialogModalBody(`Sorry, this page does not exist`);
     }
-    console.error(err?.code);
-    console.error(errorCode);
+    console.error(err);
 
     // setDialogModalBody(`Sorry, an error happened: ${err?.response?.status}`);
   };
