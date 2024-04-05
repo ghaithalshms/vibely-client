@@ -60,15 +60,6 @@ const DataContainer = ({
   };
 
   const handleFollow = async () => {
-    const buttonText =
-      userData.isFollowing || userData.isFollowRequested
-        ? "follow"
-        : userData.privacity
-        ? "requested"
-        : "unfollow";
-
-    setFollowButtonText(buttonText);
-
     try {
       const res = await axios.post(postLink.follow, {
         username: userData.username,
@@ -76,27 +67,31 @@ const DataContainer = ({
       });
 
       switch (res.data) {
-        case "followed":
+        case "Followed":
+          setFollowButtonText("Unfollow");
           setUserData((prevState) => ({
             ...prevState,
             isFollowing: true,
             followerCount: userData.followerCount + 1,
           }));
           break;
-        case "follow requested":
+        case "Follow request sent":
+          setFollowButtonText("Requested");
           setUserData((prevState) => ({
             ...prevState,
             isFollowRequested: true,
           }));
           break;
-        case "unfollowed":
+        case "Unfollowed":
+          setFollowButtonText("Follow");
           setUserData((prevState) => ({
             ...prevState,
             isFollowing: false,
             followerCount: userData.followerCount - 1,
           }));
           break;
-        case "follow request deleted":
+        case "Follow request deleted":
+          setFollowButtonText("Follow");
           setUserData((prevState) => ({
             ...prevState,
             isFollowRequested: false,

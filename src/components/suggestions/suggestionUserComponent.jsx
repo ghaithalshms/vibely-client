@@ -19,14 +19,14 @@ const SuggestionUserComponent = ({
 
   const handleSetFollowBtnText = (resData) => {
     switch (resData) {
-      case "followed":
+      case "Followed":
         setFollowBtnText("Unfollow");
         break;
-      case "follow requested":
+      case "Follow request sent":
         setFollowBtnText("Requested");
         break;
-      case "unfollowed":
-      case "follow request deleted":
+      case "Unfollowed":
+      case "Follow request deleted":
         setFollowBtnText("Follow");
         break;
       default:
