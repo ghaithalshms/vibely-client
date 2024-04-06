@@ -18,6 +18,7 @@ const UserPostFlow = ({
   setErrorCode,
   isPostFlowLoading,
   userPostFlowArray,
+  setUserPostFlowArray,
   handleGetUserPostFlow,
 }) => {
   useEffect(() => {
@@ -99,6 +100,7 @@ const UserPostFlow = ({
             handleUpdatePost={handleUpdateProfilePost}
             handleCatchAxios={handleCatchAxios}
             setErrorCode={setErrorCode}
+            setPostFlow={setUserPostFlowArray}
           />
         ))}
     </div>

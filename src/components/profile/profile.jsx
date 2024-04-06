@@ -125,6 +125,7 @@ const Profile = ({
             setErrorCode={setErrorCode}
             isPostFlowLoading={isPostFlowLoading}
             userPostFlowArray={userPostFlowArray}
+            setUserPostFlowArray={setUserPostFlowArray}
           />
         </>
       )}
