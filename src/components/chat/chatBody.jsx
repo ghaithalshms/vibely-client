@@ -80,7 +80,6 @@ const ChatBody = ({
 
   const handleGetMessageSeenSocket = () => {
     clientSocket.on("get_message_seen", (msgID) => {
-      console.log(msgID);
       handleUpdateSetMessageSeenArray(msgID);
     });
   };
@@ -119,7 +118,6 @@ const ChatBody = ({
 
   const handleSetMessageSeenSocket = (messageData) => {
     if (clientSocket && Cookies.get("username")) {
-      console.log("set msg seen", messageData.to);
       clientSocket.emit("set_message_seen", messageData);
     }
   };
