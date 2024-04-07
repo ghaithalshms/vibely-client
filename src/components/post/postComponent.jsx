@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
@@ -26,6 +26,7 @@ import save1Dark from "../icon/dark-mode/post/save 1.png";
 import commentDark from "../icon/dark-mode/post/comment.png";
 import optionsDark from "../icon/dark-mode/post/options.png";
 import { postLink } from "../../API";
+import handleCache from "../../cache/cacheMedia";
 
 const PostComponent = ({
   isDarkMode,
@@ -40,7 +41,11 @@ const PostComponent = ({
 }) => {
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [isUserListModalOpen, setUserListModalOpen] = useState(false);
+
+  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
+
+  const [file, setFile] = useState(null);
   const [fileLoaded, setFileLoaded] = useState(post.fileType === "text/plain");
 
   const [isPostMoreModalOpen, setPostMoreModalOpen] = useState(false);
@@ -124,12 +129,16 @@ const PostComponent = ({
             marginRight: "0.8rem",
             marginBottom: "0.5rem",
           }}
-          src={
-            pfpLoaded
-              ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
-              : defaultPfp
+          src={pfpLoaded ? pfp : defaultPfp}
+          onLoad={() =>
+            handleCache(
+              "pfp",
+              `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`,
+              user.username,
+              setPfp,
+              setPfpLoaded
+            )
           }
-          onLoad={() => setPfpLoaded(true)}
           onError={() => setPfpLoaded(false)}
           alt="Pfp"
           onContextMenu={(event) => event.preventDefault()}
@@ -224,6 +233,20 @@ const PostComponent = ({
     >{`${post.likeCount} like`}</span>
   );
 
+  useEffect(() => {
+    if (!post.fileType.startsWith("text"))
+      handleCache(
+        "post",
+        `${process.env.REACT_APP_API_URL}/api/post/file?token=${Cookies.get(
+          "token"
+        )}&postID=${post.postID}`,
+        post.postID,
+        setFile,
+        setFileLoaded
+      );
+    // eslint-disable-next-line
+  }, []);
+
   const renderPostBody = () => (
     <div className="post-content container-y">
       <pre>{post.description}</pre>
@@ -232,10 +255,7 @@ const PostComponent = ({
         <img
           className="post-file"
           loading="lazy"
-          src={`${
-            process.env.REACT_APP_API_URL
-          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
-          onLoad={() => setFileLoaded(true)}
+          src={file}
           onError={() => setFileLoaded(false)}
           alt="Post pic"
           onContextMenu={(event) => event.preventDefault()}
@@ -246,10 +266,7 @@ const PostComponent = ({
           style={{ display: fileLoaded ? "inline" : "none" }}
           className="post-file"
           loading="lazy"
-          src={`${
-            process.env.REACT_APP_API_URL
-          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
-          onLoadedData={() => setFileLoaded(true)}
+          src={file}
           onError={() => setFileLoaded(false)}
           type="video/mp4"
           controls

@@ -7,9 +7,12 @@ import backDark from "../icon/dark-mode/chat/back.png";
 import { timeDifference } from "../func/timeDifference";
 import spotifyIcon from "../icon/spotify.png";
 import defaultPfp from "../icon/default profile picture.jpg";
+import handleCache from "../../cache/cacheMedia";
 
 const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
   const navigate = useNavigate();
+
+  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const handleBackButtonClick = () => {
@@ -99,12 +102,16 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
               marginBottom: "0.5rem",
             }}
             onClick={handleProfileClick}
-            src={
-              pfpLoaded
-                ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`
-                : defaultPfp
+            src={pfpLoaded ? pfp : defaultPfp}
+            onLoad={() =>
+              handleCache(
+                "pfp",
+                `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`,
+                chatUser.username,
+                setPfp,
+                setPfpLoaded
+              )
             }
-            onLoad={() => setPfpLoaded(true)}
             onError={() => setPfpLoaded(false)}
             alt="Pfp"
           />

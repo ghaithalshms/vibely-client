@@ -1,13 +1,16 @@
 import Cookies from "js-cookie";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AudioPlayer from "../audioPlayer/audioPlayer";
+import handleCache from "../../cache/cacheMedia";
 
 const MessageComponent = ({
   isDarkMode,
   message,
   handleScrollChatBodyToEnd,
 }) => {
+  const [file, setFile] = useState(null);
   const [fileLoaded, setFileLoaded] = useState(false);
+
   const userSigned = Cookies.get("username");
 
   const getMessageStyle = () => {
@@ -46,35 +49,43 @@ const MessageComponent = ({
     };
   };
 
-  const handleFileLoad = () => {
-    setFileLoaded(true);
-    handleScrollChatBodyToEnd();
-  };
-
-  const handleFileError = () => {
-    setFileLoaded(false);
-  };
+  useEffect(() => {
+    if (
+      !message.fileType.startsWith("text") &&
+      !message.fileType.startsWith("audio")
+    )
+      handleCache(
+        "chat",
+        `${
+          process.env.REACT_APP_API_URL
+        }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+          message.id
+        }`,
+        message.id,
+        setFile,
+        setFileLoaded
+      );
+    // eslint-disable-next-line
+  }, []);
 
   const renderMediaElement = () => {
     if (message.fileType?.startsWith("image")) {
       return (
         <>
           {!fileLoaded && renderFileLoading()}
-          <img
-            className="message-picture"
-            loading="lazy"
-            src={`${
-              process.env.REACT_APP_API_URL
-            }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-              message.id
-            }`}
-            onLoad={handleFileLoad}
-            onError={handleFileError}
-            alt="Chat pic"
-            onContextMenu={(event) => {
-              event.preventDefault();
-            }}
-          />
+          {fileLoaded && (
+            <img
+              className="message-picture"
+              loading="lazy"
+              src={file}
+              onLoad={handleScrollChatBodyToEnd}
+              onError={() => setFileLoaded(false)}
+              alt="Chat pic"
+              onContextMenu={(event) => {
+                event.preventDefault();
+              }}
+            />
+          )}
         </>
       );
     } else if (message.fileType?.startsWith("video")) {
@@ -83,13 +94,9 @@ const MessageComponent = ({
           style={{ display: fileLoaded ? "inline" : "none" }}
           className="message-video"
           loading="lazy"
-          src={`${
-            process.env.REACT_APP_API_URL
-          }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-            message.id
-          }`}
-          onLoadedData={handleFileLoad}
-          onError={handleFileError}
+          src={file}
+          onLoad={handleScrollChatBodyToEnd}
+          onError={() => setFileLoaded(false)}
           type="video/mp4"
           controls
           controlsList="nodownload"

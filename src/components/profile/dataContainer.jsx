@@ -16,6 +16,7 @@ import optionsIconDark from "../icon/dark-mode/navbar/options.png";
 import GetUserListModal from "../user/getUserListModal";
 import MoreModal from "../navbar/moreModal";
 import { useNavigate } from "react-router-dom";
+import handleCache from "../../cache/cacheMedia";
 
 const DataContainer = ({
   isDarkMode,
@@ -29,6 +30,8 @@ const DataContainer = ({
   const token = Cookies.get("token");
   const linkIconRef = useRef();
   const optionsIconRef = useRef();
+
+  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const [followButtonText, setFollowButtonText] = useState(
@@ -240,12 +243,16 @@ const DataContainer = ({
         <div className="container-x" style={{ width: "100%" }}>
           <img
             className="profile-picture-page"
-            src={
-              pfpLoaded
-                ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`
-                : defaultPfp
+            src={pfpLoaded ? pfp : defaultPfp}
+            onLoad={() =>
+              handleCache(
+                "pfp",
+                `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`,
+                userData.username,
+                setPfp,
+                setPfpLoaded
+              )
             }
-            onLoad={() => setPfpLoaded(true)}
             onError={() => setPfpLoaded(false)}
             alt="Pfp"
             onContextMenu={(event) => event.preventDefault()}
