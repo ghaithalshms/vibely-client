@@ -31,15 +31,19 @@ const ChatBody = ({
   }, [chatArray]);
 
   useEffect(() => {
-    handleReceiveMessage();
-    return () => clientSocket.off("receive_message");
+    handleReceiveMessageSocket();
+    handleGetMessageSeenSocket();
+    return () => {
+      clientSocket.off("receive_message");
+      clientSocket.off("get_message_seen");
+    };
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    handleSetMessagesSeen();
+    handleSetMessageSeen();
     // eslint-disable-next-line
-  }, []);
+  });
 
   const handleGetChat = async () => {
     try {
@@ -64,24 +68,59 @@ const ChatBody = ({
     }
   };
 
-  const handleReceiveMessage = () => {
+  const handleReceiveMessageSocket = () => {
     clientSocket.on("receive_message", (messageData) => {
       if (chatUser.username === messageData.from) {
         handleUpdateChatArray(messageData);
       }
       handleUpdateInboxUsers(messageData);
+      // handleSetMessageSeenSocket(messageData);
     });
   };
 
-  const handleSetMessagesSeen = () => {
-    if (chatArray && chatArray.length > 0) {
+  const handleGetMessageSeenSocket = () => {
+    clientSocket.on("get_message_seen", (msgID) => {
+      console.log(msgID);
+      handleUpdateSetMessageSeenArray(msgID);
+    });
+  };
+
+  const handleUpdateSetMessageSeenArray = (msgID) => {
+    setChatArray((prevChatArray) => {
+      const newChatArray = prevChatArray.map((chat) => {
+        if (chat.id === msgID) {
+          return {
+            ...chat,
+            seen: true,
+          };
+        }
+        return chat;
+      });
+      return newChatArray;
+    });
+  };
+
+  const handleSetMessageSeen = () => {
+    if (chatArray?.length > 0) {
       const lastMessage = chatArray[chatArray.length - 1];
-      if (lastMessage.from === Cookies.get("username") && !lastMessage.seen) {
-        axios.post(updateLink.setMessagesSeen, {
-          token: Cookies.get("token"),
-          username: chatUser.username,
-        });
+      if (lastMessage.from === chatUser.username && !lastMessage.seen) {
+        handleSetMessageSeenDB();
+        handleSetMessageSeenSocket(lastMessage);
       }
+    }
+  };
+
+  const handleSetMessageSeenDB = () => {
+    axios.post(updateLink.setMessagesSeen, {
+      token: Cookies.get("token"),
+      username: chatUser.username,
+    });
+  };
+
+  const handleSetMessageSeenSocket = (messageData) => {
+    if (clientSocket && Cookies.get("username")) {
+      console.log("set msg seen", messageData.to);
+      clientSocket.emit("set_message_seen", messageData);
     }
   };
 
