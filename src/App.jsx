@@ -13,7 +13,7 @@ import axios from "axios";
 import { getLink } from "./API";
 import IsLoadingComponent from "./components/isLoadingComponent/isLoadingComponent";
 import ForgotPassword from "./components/auth/forgotPassword";
-// import DialogModal from "./components/dialogModal/dialogModal";
+import DialogModal from "./components/dialogModal/dialogModal";
 import { handleAddScrollListener } from "./components/func/scrollPercentage";
 import Home from "./components/home/home";
 import Explorer from "./components/explorer/explorer";
@@ -27,15 +27,19 @@ import io from "socket.io-client";
 import ResetPassword from "./components/auth/resetPassword";
 import Error404 from "./components/error/error404";
 import Error500 from "./components/error/error500";
+import packageJson from "../package.json";
+
+const version = packageJson.version;
+
 const socket = io.connect(process.env.REACT_APP_API_URL);
 
 const App = () => {
   // FOR ERROR MODAL
   const [errorCode, setErrorCode] = useState(0);
 
-  // const [isDialogOpen, setDialogOpen] = useState(false);
-  // const [dialogModalHeader, setDialogModalHeader] = useState("");
-  // const [dialogModalBody, setDialogModalBody] = useState("");
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [dialogModalHeader, setDialogModalHeader] = useState("");
+  const [dialogModalBody, setDialogModalBody] = useState("");
 
   const [scrollingPercentage, setScrollingPercentage] = useState(0);
   // const [profilePicture, setProfilePicture] = useState(null);
@@ -115,10 +119,23 @@ const App = () => {
     setIsLoading(false);
   };
 
+  const handleIsAppUpdated = () => {
+    axios.get(getLink.appVersion).then((res) => {
+      if (res?.data > version) {
+        setDialogOpen(true);
+        setDialogModalHeader("Update Available!");
+        setDialogModalBody(
+          `A new version of Vibely is available! Click on update please.`
+        );
+      }
+    });
+  };
+
   useEffect(() => {
     handleAddScrollListener(setScrollingPercentage);
     handleTheme();
     handleIsServerWorking();
+    handleIsAppUpdated();
     // eslint-disable-next-line
   }, []);
 
@@ -148,6 +165,23 @@ const App = () => {
   //       onNo={() => (window.location.href = "/")}
   //     />
   //   );
+
+  if (isDialogOpen)
+    return (
+      <DialogModal
+        isDarkMode={isDarkMode}
+        isOpen={isDialogOpen}
+        header={dialogModalHeader}
+        body={dialogModalBody}
+        msgYes={"Update"}
+        onYes={() => {
+          window.location.reload(true);
+        }}
+        onNo={() => {
+          setDialogOpen(false);
+        }}
+      />
+    );
 
   const errorCodeElement =
     errorCode === 404 ? (

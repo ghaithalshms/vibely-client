@@ -38,9 +38,12 @@ const DialogModal = ({
   };
 
   const renderButtons = (
-    <div className="modal-buttons">
-      {msgYes && <button onClick={onYes}>Yes</button>}
-      {msgNo && <button onClick={onNo}>No</button>}
+    <div
+      style={{ display: "flex", justifyContent: "center" }}
+      className="modal-buttons"
+    >
+      {msgYes && <button onClick={onYes}>{msgYes}</button>}
+      {msgNo && <button onClick={onNo}>{msgNo}</button>}
     </div>
   );
 
