@@ -1,9 +1,13 @@
 const handleCache = (type, url, id, setFile, setLoaded) => {
   const cachedFile = localStorage.getItem(`${type}_${id}`);
-  if (cachedFile && cachedFile !== "defaultPfp") {
-    setFile(cachedFile);
-    setLoaded(true);
+  console.log("---fetching from local storage...", id);
+  if (cachedFile) {
+    if (cachedFile !== "defaultPfp") {
+      setFile(cachedFile);
+      setLoaded(true);
+    }
   } else {
+    console.log("***fetching from firebase...", id);
     fetch(url)
       .then((response) => {
         if (!response.ok) {
