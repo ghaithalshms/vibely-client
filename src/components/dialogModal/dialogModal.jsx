@@ -17,9 +17,7 @@ const DialogModal = ({
   const modalStyles = {
     overlay: {
       zIndex: 100,
-      backgroundColor: isDarkMode
-        ? "rgba(255, 255, 255, 0.25)"
-        : "rgba(0, 0, 0, 0.25)",
+      backgroundColor: "rgba(0, 0, 0, 0.55)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -31,7 +29,7 @@ const DialogModal = ({
       height: "auto",
       maxHeight: "60svh",
       borderRadius: "8px",
-      backgroundColor: isDarkMode ? "black" : "white",
+      backgroundColor: isDarkMode ? "#202020" : "white",
       borderColor: isDarkMode ? "black" : "white",
       animation: "fadeIn 0.3s",
     },
