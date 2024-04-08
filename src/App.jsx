@@ -166,23 +166,6 @@ const App = () => {
   //     />
   //   );
 
-  if (isDialogOpen)
-    return (
-      <DialogModal
-        isDarkMode={isDarkMode}
-        isOpen={isDialogOpen}
-        header={dialogModalHeader}
-        body={dialogModalBody}
-        msgYes={"Update"}
-        onYes={() => {
-          window.location.reload(true);
-        }}
-        onNo={() => {
-          setDialogOpen(false);
-        }}
-      />
-    );
-
   const errorCodeElement =
     errorCode === 404 ? (
       <Error404
@@ -358,6 +341,21 @@ const App = () => {
           }
         />
       </Routes>
+      {isDialogOpen && (
+        <DialogModal
+          isDarkMode={isDarkMode}
+          isOpen={isDialogOpen}
+          header={dialogModalHeader}
+          body={dialogModalBody}
+          msgYes={"Update"}
+          onYes={() => {
+            window.location.reload(true);
+          }}
+          onNo={() => {
+            setDialogOpen(false);
+          }}
+        />
+      )}
     </Router>
   );
 };
