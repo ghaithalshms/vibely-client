@@ -67,7 +67,8 @@ const Profile = ({
           ]);
       }
     } catch (error) {
-      handleCatchAxios(error);
+      // handleCatchAxios(error);
+      console.error(error);
     }
 
     setIsPostFlowLoading(false);
@@ -89,6 +90,15 @@ const Profile = ({
       }
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (
+      scrollingPercentage > 60 &&
+      userData?.postCount > userPostFlowArray?.length
+    ) {
+      handleGetUserPostFlow(true, userData.username, lastGotPostID);
+    } // eslint-disable-next-line
+  }, [scrollingPercentage]);
 
   return (
     <div className="container-y main-container">

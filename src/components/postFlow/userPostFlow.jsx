@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Cookies from "js-cookie";
 import PostComponent from "../post/postComponent";
 import { handleUpdateProfilePost } from "../postFlow/updatePost";
@@ -19,17 +19,7 @@ const UserPostFlow = ({
   isPostFlowLoading,
   userPostFlowArray,
   setUserPostFlowArray,
-  handleGetUserPostFlow,
 }) => {
-  useEffect(() => {
-    if (
-      scrollingPercentage > 60 &&
-      userData?.postCount > userPostFlowArray?.length
-    ) {
-      handleGetUserPostFlow(true);
-    } // eslint-disable-next-line
-  }, [scrollingPercentage]);
-
   if (isPostFlowLoading) {
     return (
       <div
