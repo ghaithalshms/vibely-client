@@ -41,6 +41,7 @@ import notification1Dark from "../icon/dark-mode/navbar/notifications 1.png";
 import optionsDark from "../icon/dark-mode/navbar/options.png";
 import axios from "axios";
 import { getLink } from "../../API";
+import handleCache from "../../cache/cacheMedia";
 
 const Navbar = ({
   isDarkMode,
@@ -54,6 +55,9 @@ const Navbar = ({
   const [isCreatePostModalOpen, setCreatePostModalOpen] = useState(false);
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false);
+
+  const [pfp, setPfp] = useState(null);
+  const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const [notiCount, setNotiCount] = useState(0);
   const [msgCount, setMsgCount] = useState(0);
@@ -95,9 +99,7 @@ const Navbar = ({
       return;
     }
 
-    const urlPage = window.location.href
-      .split("/")
-      [window.location.href.split("/").length - 1].split("?")[0];
+    const urlPage = window.location.href.split("/")[3].split("?")[0];
     switch (urlPage.split("/")[0]) {
       case "":
         setActualPage("home");
@@ -201,7 +203,7 @@ const Navbar = ({
           height: "22px",
         }}
         src={
-          actualPage === "inbox"
+          actualPage.split("/")[0] === "inbox"
             ? isDarkMode
               ? inbox1Dark
               : inbox1Light
@@ -335,17 +337,31 @@ const Navbar = ({
   const profileIcon = (
     <img
       style={{
-        width: "24px",
-        height: "24px",
+        width: pfpLoaded ? "28px" : "24px",
+        height: pfpLoaded ? "28px" : "24px",
+        borderRadius: pfpLoaded ? "100%" : "0",
       }}
       src={
-        actualPage === "profile"
+        pfpLoaded
+          ? pfp
+          : actualPage === "profile"
           ? isDarkMode
             ? profile1Dark
             : profile1Light
           : isDarkMode
           ? profile0Dark
           : profile0Light
+      }
+      onLoad={() =>
+        handleCache(
+          "pfp",
+          `${
+            process.env.REACT_APP_API_URL
+          }/api/user/data/picture?username=${Cookies.get("username")}`,
+          Cookies.get("username"),
+          setPfp,
+          setPfpLoaded
+        )
       }
       alt="profile"
       className="pointer"
