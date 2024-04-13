@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,16 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
     setErrorCode(0);
     navigate(`/${chatUser?.username}`);
   };
+
+  useEffect(() => {
+    handleCache(
+      "pfp",
+      `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`,
+      chatUser.username,
+      setPfp,
+      setPfpLoaded
+    );
+  }, [chatUser]);
 
   const renderBackIcon = () => (
     <img
