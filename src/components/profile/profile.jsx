@@ -67,8 +67,7 @@ const Profile = ({
           ]);
       }
     } catch (error) {
-      // handleCatchAxios(error);
-      console.error(error);
+      handleCatchAxios(error);
     }
 
     setIsPostFlowLoading(false);
