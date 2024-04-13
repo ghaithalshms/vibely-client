@@ -27,6 +27,8 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
   };
 
   useEffect(() => {
+    setPfp(null);
+    setPfpLoaded(null);
     handleCache(
       "pfp",
       `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`,
