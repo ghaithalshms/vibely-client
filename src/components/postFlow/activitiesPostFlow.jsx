@@ -36,6 +36,7 @@ const ActivitiesPostFlow = ({
   };
 
   const handleGetPostFlow = async (isOnScrolling) => {
+    isPostFlowFetching = true;
     const axiosLink = getAxiosLink();
     if (!axiosLink) return;
     if (!isOnScrolling) setIsLoading(true);
@@ -57,6 +58,7 @@ const ActivitiesPostFlow = ({
     }
     setIsLoading(false);
     isPostFlowGot = true;
+    isPostFlowFetching = false;
   };
 
   let isPostFlowGot = false;
@@ -69,10 +71,13 @@ const ActivitiesPostFlow = ({
     } // eslint-disable-next-line
   }, []);
 
+  let isPostFlowFetching = false;
+
   useEffect(() => {
-    if (scrollingPercentage > 60) {
-      handleGetPostFlow(true);
-    } // eslint-disable-next-line
+    if (!isPostFlowFetching)
+      if (scrollingPercentage > 70) {
+        handleGetPostFlow(true);
+      } // eslint-disable-next-line
   }, [scrollingPercentage]);
 
   const Loader = () => (

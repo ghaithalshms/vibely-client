@@ -21,6 +21,8 @@ const ExplorerPostFlow = ({
   // const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const handleGetUserPostFlow = async (isOnScrolling) => {
+    isPostFlowFetching = true;
+
     setIsLoading(!isOnScrolling);
     try {
       const response = await axios.get(getLink.getExplorerPostFlow, {
@@ -42,6 +44,7 @@ const ExplorerPostFlow = ({
     }
     setIsLoading(false);
     isPostFlowGot = true;
+    isPostFlowFetching = false;
   };
 
   let isPostFlowGot = false;
@@ -55,10 +58,13 @@ const ExplorerPostFlow = ({
     // eslint-disable-next-line
   }, []);
 
+  let isPostFlowFetching = false;
+
   useEffect(() => {
-    if (scrollingPercentage > 60) {
-      handleGetUserPostFlow(true);
-    }
+    if (!isPostFlowFetching)
+      if (scrollingPercentage > 70) {
+        handleGetUserPostFlow(true);
+      }
     // eslint-disable-next-line
   }, [scrollingPercentage]);
 

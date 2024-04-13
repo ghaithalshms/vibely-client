@@ -47,6 +47,8 @@ const Profile = ({
     username,
     _lastGotPostID
   ) => {
+    isPostFlowFetching = true;
+
     try {
       if (!isOnScrolling) setIsPostFlowLoading(true);
       const response = await axios.get(getLink.getUserPostFlow, {
@@ -72,6 +74,7 @@ const Profile = ({
 
     setIsPostFlowLoading(false);
     isPostFlowGot = true;
+    isPostFlowFetching = false;
   };
   let isPostFlowGot = false;
   useEffect(() => {
@@ -90,13 +93,16 @@ const Profile = ({
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  let isPostFlowFetching = false;
+
   useEffect(() => {
-    if (
-      scrollingPercentage > 60 &&
-      userData?.postCount > userPostFlowArray?.length
-    ) {
-      handleGetUserPostFlow(true, userData.username, lastGotPostID);
-    } // eslint-disable-next-line
+    if (!isPostFlowFetching)
+      if (
+        scrollingPercentage > 70 &&
+        userData?.postCount > userPostFlowArray?.length
+      ) {
+        handleGetUserPostFlow(true, userData.username, lastGotPostID);
+      } // eslint-disable-next-line
   }, [scrollingPercentage]);
 
   return (

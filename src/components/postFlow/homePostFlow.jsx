@@ -20,6 +20,8 @@ const HomePostFlow = ({
   const [isLoading, setIsLoading] = useState(true);
 
   const handleGetHomePostFlow = async (isOnScrolling) => {
+    isPostFlowFetching = true;
+
     setIsLoading(true);
     try {
       const response = await axios.get(getLink.getHomePostFlow, {
@@ -42,6 +44,7 @@ const HomePostFlow = ({
     }
     setIsLoading(false);
     isPostFlowGot = true;
+    isPostFlowFetching = false;
   };
   let isPostFlowGot = false;
   useEffect(() => {
@@ -53,10 +56,13 @@ const HomePostFlow = ({
     // eslint-disable-next-line
   }, []);
 
+  let isPostFlowFetching = false;
+
   useEffect(() => {
-    if (scrollingPercentage > 60) {
-      handleGetHomePostFlow(true);
-    }
+    if (!isPostFlowFetching)
+      if (scrollingPercentage > 70) {
+        handleGetHomePostFlow(true);
+      }
     // eslint-disable-next-line
   }, [scrollingPercentage]);
 
