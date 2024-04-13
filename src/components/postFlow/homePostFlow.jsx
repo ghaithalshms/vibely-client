@@ -32,11 +32,10 @@ const HomePostFlow = ({
         const { lastGotPostID: newLastGotPostID, postFlowArray } =
           response.data;
         setLastGotPostID(newLastGotPostID);
-        setHomePostFlowArray((prevPostFlowArray) =>
-          isOnScrolling
-            ? [...prevPostFlowArray, ...postFlowArray]
-            : postFlowArray
-        );
+        setHomePostFlowArray((prevPostFlowArray) => [
+          ...prevPostFlowArray,
+          ...postFlowArray,
+        ]);
       }
     } catch (error) {
       handleCatchAxios(error);
@@ -52,7 +51,7 @@ const HomePostFlow = ({
       setIsLoading(false);
     }
     // eslint-disable-next-line
-  }, [isPostFlowGot]);
+  }, []);
 
   useEffect(() => {
     if (scrollingPercentage > 60) {

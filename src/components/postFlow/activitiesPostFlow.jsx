@@ -67,7 +67,7 @@ const ActivitiesPostFlow = ({
     } else {
       setIsLoading(false);
     } // eslint-disable-next-line
-  }, [isPostFlowGot]);
+  }, []);
 
   useEffect(() => {
     if (scrollingPercentage > 60) {

@@ -53,7 +53,7 @@ const ExplorerPostFlow = ({
       setIsLoading(false);
     }
     // eslint-disable-next-line
-  }, [isPostFlowGot]);
+  }, []);
 
   useEffect(() => {
     if (scrollingPercentage > 60) {
