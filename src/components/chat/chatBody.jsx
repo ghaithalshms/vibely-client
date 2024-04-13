@@ -19,12 +19,18 @@ const ChatBody = ({
 
   const [scrollPosition, setScrollPosition] = useState(0);
 
+  const handleResetChat = () => {
+    setChatArray([]);
+    setOldestMessageGot(0);
+    setLoading(true);
+  };
+
   useEffect(() => {
     if (chatUser) {
-      setLoading(true);
-      handleGetChat();
+      handleResetChat();
+      handleGetChat(0);
     } else {
-      setChatArray(null);
+      handleResetChat();
     } // eslint-disable-next-line
   }, [chatUser]);
 
@@ -50,35 +56,37 @@ const ChatBody = ({
 
   let isChatFetching = false;
 
-  const handleGetChat = async () => {
-    const oldestMessageID = oldestMessageGot;
-    try {
-      isChatFetching = true;
-      const res = await axios.get(getLink.getChat, {
+  const handleGetChat = async (_oldestMessageGot) => {
+    const oldestMessageID = _oldestMessageGot || oldestMessageGot;
+    isChatFetching = true;
+    axios
+      .get(getLink.getChat, {
         params: {
           token: Cookies.get("token"),
           username: chatUser.username,
-          oldestMessageGot,
+          oldestMessageGot: _oldestMessageGot || oldestMessageGot,
         },
-      });
-      setChatArray((prevChatArray) => [
-        ...res?.data.chatArray,
-        ...prevChatArray,
-      ]);
+      })
+      .then((res) => {
+        setChatArray((prevChatArray) => [
+          ...res?.data.chatArray,
+          ...prevChatArray,
+        ]);
 
-      setOldestMessageGot(res?.data.oldestMessageGot);
-      setLoading(false);
-    } catch (err) {
-      handleCatchAxios(err);
-      setLoading(false);
-    } finally {
-      isChatFetching = false;
-      const chatBody = document.querySelector(".chat-body-container");
-      if (oldestMessageID === 0) {
-        setScrollPosition(chatBody.scrollHeight);
-      } else {
-        setScrollPosition(chatBody.scrollTop);
-      }
+        setOldestMessageGot(res?.data.oldestMessageGot);
+        setLoading(false);
+      })
+      .catch((err) => {
+        handleCatchAxios(err);
+        setLoading(false);
+      });
+
+    isChatFetching = false;
+    const chatBody = document.querySelector(".chat-body-container");
+    if (oldestMessageID === 0) {
+      setScrollPosition(chatBody.scrollHeight);
+    } else {
+      // setScrollPosition(chatBody.scrollTop);
     }
   };
 
