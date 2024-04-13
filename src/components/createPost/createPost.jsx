@@ -5,6 +5,8 @@ import Cookies from "js-cookie";
 import galeryIconLight from "../icon/light-mode/create post/galery.png";
 import galeryIconDark from "../icon/dark-mode/create post/galery.png";
 import { useNavigate } from "react-router-dom";
+import handleCache from "../../cache/cacheMedia";
+import defaultPfp from "../icon/default profile picture.jpg";
 
 const CreatePost = ({
   isDarkMode,
@@ -19,6 +21,9 @@ const CreatePost = ({
   const pictureRef = useRef();
   const [videoSrc, setVideoSrc] = useState(null);
   const [shareButtonDisabled, setShareButtonDisabled] = useState(false);
+
+  const [pfp, setPfp] = useState(null);
+  const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -115,9 +120,18 @@ const CreatePost = ({
         marginRight: "0.5rem",
       }}
       alt="pfp"
-      src={`${
-        process.env.REACT_APP_API_URL
-      }/api/user/data/picture?username=${Cookies.get("username")}`}
+      src={pfpLoaded ? pfp : defaultPfp}
+      onLoad={() =>
+        handleCache(
+          "pfp",
+          `${
+            process.env.REACT_APP_API_URL
+          }/api/user/data/picture?username=${Cookies.get("username")}`,
+          Cookies.get("username"),
+          setPfp,
+          setPfpLoaded
+        )
+      }
     />
   );
 
