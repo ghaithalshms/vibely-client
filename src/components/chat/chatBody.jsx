@@ -15,6 +15,9 @@ const ChatBody = ({
   handleUpdateChatArray,
 }) => {
   const [isLoading, setLoading] = useState(false);
+  const [oldestMessageGot, setOldestMessageGot] = useState(0);
+
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
     if (chatUser) {
@@ -28,7 +31,7 @@ const ChatBody = ({
   useEffect(() => {
     handleScrollChatBodyToEnd();
     // eslint-disable-next-line
-  }, [chatArray]);
+  }, [chatArray, scrollPosition]);
 
   useEffect(() => {
     handleReceiveMessageSocket();
@@ -45,26 +48,45 @@ const ChatBody = ({
     // eslint-disable-next-line
   });
 
+  let isChatFetching = false;
+
   const handleGetChat = async () => {
+    const oldestMessageID = oldestMessageGot;
     try {
+      isChatFetching = true;
       const res = await axios.get(getLink.getChat, {
         params: {
           token: Cookies.get("token"),
           username: chatUser.username,
+          oldestMessageGot,
         },
       });
-      setChatArray(res?.data);
+      setChatArray((prevChatArray) => [
+        ...res?.data.chatArray,
+        ...prevChatArray,
+      ]);
+
+      setOldestMessageGot(res?.data.oldestMessageGot);
       setLoading(false);
     } catch (err) {
       handleCatchAxios(err);
       setLoading(false);
+    } finally {
+      isChatFetching = false;
+      const chatBody = document.querySelector(".chat-body-container");
+      if (oldestMessageID === 0) {
+        setScrollPosition(chatBody.scrollHeight);
+      } else {
+        setScrollPosition(chatBody.scrollTop);
+      }
     }
   };
 
   const handleScrollChatBodyToEnd = () => {
     const chatBody = document.querySelector(".chat-body-container");
     if (chatBody) {
-      chatBody.scrollTop = chatBody.scrollHeight;
+      // chatBody.scrollTop = chatBody.scrollHeight;
+      chatBody.scrollTop = scrollPosition;
     }
   };
 
@@ -122,6 +144,16 @@ const ChatBody = ({
     }
   };
 
+  const handleChatBodyOnScroll = (e) => {
+    if (isChatFetching) return;
+
+    const scrollingPercentage =
+      (e.target.scrollTop / e.target.scrollHeight) * 100;
+    if (scrollingPercentage < 10) {
+      handleGetChat();
+    }
+  };
+
   const loadingElement = (
     <div
       className="full-width"
@@ -143,8 +175,24 @@ const ChatBody = ({
       </div>
     );
 
+  let timeoutId;
+
   return (
-    <div className="chat-body-container">
+    <div
+      className="chat-body-container"
+      onWheel={(e) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          handleChatBodyOnScroll(e);
+        }, 300);
+      }}
+      onTouchMove={(e) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          handleChatBodyOnScroll(e);
+        }, 300);
+      }}
+    >
       {isLoading && loadingElement}
       {!isLoading &&
         chatArray?.map((message) => (
@@ -152,7 +200,7 @@ const ChatBody = ({
             key={message.id}
             isDarkMode={isDarkMode}
             message={message}
-            handleScrollChatBodyToEnd={handleScrollChatBodyToEnd}
+            handleScrollChatBodyToEnd={() => {}}
           />
         ))}
       {seenElement}
