@@ -18,17 +18,17 @@ const Inbox = ({
 
   const handleUpdateInboxUsers = (messageData) => {
     setInboxUsers((prevUserInboxUsers) => {
-      const newInboxUsers = prevUserInboxUsers.map((inboxUser) => {
+      let newInboxUsers = [];
+      prevUserInboxUsers.forEach((inboxUser) => {
         if (
           inboxUser.user.username === messageData.from ||
           inboxUser.user.username === messageData.to
         ) {
-          return {
+          newInboxUsers.unshift({
             user: inboxUser.user,
             message: messageData,
-          };
-        }
-        return inboxUser;
+          });
+        } else newInboxUsers.push(inboxUser);
       });
       return newInboxUsers;
     });
