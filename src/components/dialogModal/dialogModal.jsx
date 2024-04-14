@@ -26,6 +26,7 @@ const DialogModal = ({
     content: {
       position: "static",
       width: "300px",
+      maxWidth: "99svw",
       height: "auto",
       maxHeight: "60svh",
       borderRadius: "8px",
