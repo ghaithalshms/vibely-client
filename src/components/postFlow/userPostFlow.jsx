@@ -73,11 +73,13 @@ const UserPostFlow = ({
         !userData.isFollowing &&
         userData.privacity &&
         privateAccount}
+
       {!isPostFlowLoading &&
         userPostFlowArray?.length === 0 &&
         (!userData.privacity ||
           userData.username === Cookies.get("username")) &&
         noAnyPost}
+
       {Array.isArray(userPostFlowArray) &&
         userPostFlowArray?.map((post) => (
           <PostComponent
