@@ -23,6 +23,7 @@ const ChatBody = ({
     setChatArray([]);
     setOldestMessageGot(0);
     setLoading(true);
+    setChatBodyScrollPosition(0);
   };
 
   useEffect(() => {
@@ -60,13 +61,13 @@ const ChatBody = ({
     if (isChatFetching) return;
 
     isChatFetching = true;
-    const oldestMessageBeforeUpdate = _oldestMessageGot || oldestMessageGot;
+    const oldestMessageBeforeUpdate = _oldestMessageGot ?? oldestMessageGot;
     axios
       .get(getLink.getChat, {
         params: {
           token: Cookies.get("token"),
           username: chatUser.username,
-          oldestMessageGot: _oldestMessageGot || oldestMessageGot,
+          oldestMessageGot: _oldestMessageGot ?? oldestMessageGot,
         },
       })
 
@@ -218,7 +219,7 @@ const ChatBody = ({
             key={message.id}
             isDarkMode={isDarkMode}
             message={message}
-            handleScrollChatBodyToEnd={() => {}}
+            handleScrollChatBodyToEnd={handleScrollChatBodyToEnd}
           />
         ))}
       {seenElement}
