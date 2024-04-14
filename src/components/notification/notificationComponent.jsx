@@ -45,17 +45,15 @@ const NotificationComponent = ({
 
   const handleAcceptFollowRequest = async () => {
     setLoading(true);
-    try {
-      await axios.post(postLink.acceptFollowRequest, {
+    axios
+      .post(postLink.acceptFollowRequest, {
         username: user.username,
         token: Cookies.get("token"),
-      });
-      refreshNotification();
-    } catch (error) {
-      handleCatchAxios(error);
-    } finally {
-      setLoading(false);
-    }
+      })
+      .then(() => refreshNotification())
+      .catch((err) => handleCatchAxios(err));
+
+    setLoading(false);
   };
 
   return (
