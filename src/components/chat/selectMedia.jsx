@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import galeryIconLight from "../icon/light-mode/create post/galery.png";
 import galeryIconDark from "../icon/dark-mode/create post/galery.png";
+import CheckboxStyled from "../navbar/checkboxStyled";
 
 const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
   const [file, setFile] = useState(null);
@@ -11,14 +12,16 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
   const [sendButtonDisabled, setSendButtonDisabled] = useState(false);
   const hiddenFileInput = useRef(null);
 
+  const [oneTimeView, setOneTimeView] = useState(false);
+
   const handleSend = async () => {
     setSendButtonDisabled(true);
     const btnSend = document.getElementById("btn-send");
     btnSend.setAttribute("disabled", "");
-    handleSendMessage(file, fileType);
+    handleSendMessage(file, fileType, oneTimeView);
     clearInputs();
-    onRequestClose();
     btnSend.removeAttribute("disabled");
+    onRequestClose();
   };
 
   const clearInputs = () => {
@@ -169,8 +172,24 @@ const SelectMedia = ({ isDarkMode, onRequestClose, handleSendMessage }) => {
     </>
   );
 
+  const oneTimeViewElement = (
+    <div
+      className="container-x"
+      style={{ alignItems: "center", marginTop: "5px" }}
+    >
+      <span style={{ marginRight: "1rem" }}>One Time View:</span>
+      <CheckboxStyled
+        isDarkMode={isDarkMode}
+        isCheckedParam={oneTimeView}
+        isCheckedClick={() => setOneTimeView(!oneTimeView)}
+        isNotCheckedClick={() => setOneTimeView(!oneTimeView)}
+      />
+    </div>
+  );
+
   return (
     <div className="container-y full-width">
+      {file && oneTimeViewElement}
       {addedFileDisplay}
       <div
         className="container-x"

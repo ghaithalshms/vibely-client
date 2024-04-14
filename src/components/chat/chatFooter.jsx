@@ -36,7 +36,7 @@ const ChatFooter = ({
     handleSendMessage(audioFile, "audio/mp3");
   };
 
-  const handleSendMessageToDB = async (file, fileType) => {
+  const handleSendMessageToDB = async (file, fileType, oneTime) => {
     axios.defaults.maxBodyLength = 30 * 1024 * 1024;
     const formData = new FormData();
     formData.append("token", Cookies.get("token"));
@@ -44,6 +44,7 @@ const ChatFooter = ({
     formData.append("message", message);
     formData.append("fileType", fileType);
     formData.append("file", file);
+    formData.append("oneTime", oneTime || false);
 
     try {
       const res = await axios.post(postLink.sendMessageToDB, formData);
@@ -71,9 +72,13 @@ const ChatFooter = ({
     }
   };
 
-  const handleSendMessage = async (file, fileType) => {
+  const handleSendMessage = async (file, fileType, oneTime) => {
     setMessageSending(true);
-    const id = await handleSendMessageToDB(file, fileType || "text/plain");
+    const id = await handleSendMessageToDB(
+      file,
+      fileType || "text/plain",
+      oneTime
+    );
     const messageData = {
       id,
       message,
@@ -81,6 +86,7 @@ const ChatFooter = ({
       to: chatUser.username,
       fileType: fileType || "text/plain",
       seen: false,
+      oneTime: oneTime || false,
     };
     handleUpdateChatArray(messageData);
     handleSendMessageToSocket(messageData);

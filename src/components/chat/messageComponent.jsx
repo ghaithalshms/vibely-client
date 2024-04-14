@@ -2,6 +2,8 @@ import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import AudioPlayer from "../audioPlayer/audioPlayer";
 import handleCache from "../../cache/cacheMedia";
+import playIcon from "../icon/light-mode/chat/play.png";
+import OneTimeFileModal from "./oneTimeFileModal";
 
 const MessageComponent = ({
   isDarkMode,
@@ -10,6 +12,9 @@ const MessageComponent = ({
 }) => {
   const [file, setFile] = useState(null);
   const [fileLoaded, setFileLoaded] = useState(false);
+
+  const [isOneTimeModalOpen, setOneTimeModalOpen] = useState(false);
+  const [isOneTimeOpened, setOneTimeOpened] = useState(message.oneTimeOpened);
 
   const userSigned = Cookies.get("username");
 
@@ -23,8 +28,9 @@ const MessageComponent = ({
     };
 
     if (
-      message.fileType?.startsWith("image") ||
-      message.fileType?.startsWith("video")
+      (message.fileType?.startsWith("image") ||
+        message.fileType?.startsWith("video")) &&
+      !message.oneTime
     ) {
       return {
         ...baseStyle,
@@ -52,8 +58,9 @@ const MessageComponent = ({
   useEffect(() => {
     if (
       !message.fileType.startsWith("text") &&
-      !message.fileType.startsWith("audio")
-    )
+      !message.fileType.startsWith("audio") &&
+      !message.oneTime
+    ) {
       handleCache(
         "chat",
         `${
@@ -65,58 +72,112 @@ const MessageComponent = ({
         setFile,
         setFileLoaded
       );
+    }
     // eslint-disable-next-line
   }, []);
 
+  const oneTimeMediaSpanText = () => {
+    if (isOneTimeOpened) {
+      if (message.from === Cookies.get("username")) {
+        return `${
+          message.fileType.startsWith("image") ? "Image" : "Video"
+        } opened`;
+      } else {
+        return message.fileType.startsWith("image") ? "Image" : "Video";
+      }
+    } else {
+      if (message.from === Cookies.get("username")) {
+        return `${
+          message.fileType.startsWith("image") ? "Image" : "Video"
+        } sent`;
+      } else {
+        return `Click to open the ${
+          message.fileType.startsWith("image") ? "Image" : "Video"
+        }`;
+      }
+    }
+  };
+
+  const oneTimeMediaElement = (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        cursor:
+          !isOneTimeOpened && message.to === Cookies.get("username")
+            ? "pointer"
+            : "default",
+        padding: "2px",
+      }}
+      onClick={() => {
+        if (!isOneTimeOpened && message.to === Cookies.get("username")) {
+          setOneTimeOpened(true);
+          setOneTimeModalOpen(true);
+        }
+      }}
+    >
+      <img
+        style={{ width: "18px", height: "18px", marginRight: "8px" }}
+        src={playIcon}
+        alt="open media"
+      />
+      <span>{oneTimeMediaSpanText()}</span>
+    </div>
+  );
+
   const renderMediaElement = () => {
-    if (message.fileType?.startsWith("image")) {
-      return (
-        <>
-          {!fileLoaded && renderFileLoading()}
-          {fileLoaded && (
-            <img
-              className="message-picture"
-              loading="lazy"
-              src={file}
-              onLoad={handleScrollChatBodyToEnd}
-              onError={() => setFileLoaded(false)}
-              alt="Chat pic"
-              onContextMenu={(event) => {
-                event.preventDefault();
-              }}
-            />
-          )}
-        </>
-      );
-    } else if (message.fileType?.startsWith("video")) {
-      return (
-        <video
-          style={{ display: fileLoaded ? "inline" : "none" }}
-          className="message-video"
-          loading="lazy"
-          src={file}
-          onLoad={handleScrollChatBodyToEnd}
-          onError={() => setFileLoaded(false)}
-          type="video/mp4"
-          controls
-          controlsList="nodownload"
-          onContextMenu={(event) => {
-            event.preventDefault();
-          }}
-        />
-      );
-    } else if (message.fileType?.startsWith("audio")) {
-      return (
-        <AudioPlayer
-          isDarkMode={isDarkMode}
-          audioUrl={`${
-            process.env.REACT_APP_API_URL
-          }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-            message.id
-          }`}
-          sentByTheUser={message.from === userSigned}
-        />
-      );
+    if (!message.oneTime) {
+      if (message.fileType?.startsWith("image")) {
+        return (
+          <>
+            {!fileLoaded && renderFileLoading()}
+            {fileLoaded && (
+              <img
+                className="message-picture"
+                loading="lazy"
+                src={file}
+                onLoad={handleScrollChatBodyToEnd}
+                onError={() => setFileLoaded(false)}
+                alt="Chat pic"
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                }}
+              />
+            )}
+          </>
+        );
+      } else if (message.fileType?.startsWith("video")) {
+        return (
+          <video
+            style={{ display: fileLoaded ? "inline" : "none" }}
+            className="message-video"
+            loading="lazy"
+            src={file}
+            onLoad={handleScrollChatBodyToEnd}
+            onError={() => setFileLoaded(false)}
+            type="video/mp4"
+            controls
+            controlsList="nodownload"
+            onContextMenu={(event) => {
+              event.preventDefault();
+            }}
+          />
+        );
+      } else if (message.fileType?.startsWith("audio")) {
+        return (
+          <AudioPlayer
+            isDarkMode={isDarkMode}
+            audioUrl={`${
+              process.env.REACT_APP_API_URL
+            }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+              message.id
+            }`}
+            sentByTheUser={message.from === userSigned}
+          />
+        );
+      }
+    } else {
+      return oneTimeMediaElement;
     }
   };
 
@@ -142,6 +203,14 @@ const MessageComponent = ({
         <pre>{message.message}</pre>
       )}
       {message.fileType !== "text/plain" && renderMediaElement()}
+      {isOneTimeModalOpen && (
+        <OneTimeFileModal
+          isDarkMode={isDarkMode}
+          isOpen={isOneTimeModalOpen}
+          onRequestClose={() => setOneTimeModalOpen(false)}
+          message={message}
+        />
+      )}
     </div>
   );
 };
