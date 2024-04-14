@@ -17,6 +17,7 @@ const ChatFooter = ({
   clientSocket,
   handleUpdateChatArray,
   handleUpdateInboxUsers,
+  setChatBodyScrollPosition,
 }) => {
   const [message, setMessage] = useState("");
   const [isMediaModalOpen, setMediaModalOpen] = useState(false);
@@ -63,6 +64,13 @@ const ChatFooter = ({
     document.getElementById("send-message-textarea")?.focus();
   };
 
+  const handleScrollChatBodyToEnd = () => {
+    const chatBody = document.querySelector(".chat-body-container");
+    if (chatBody) {
+      setChatBodyScrollPosition(chatBody.scrollHeight);
+    }
+  };
+
   const handleSendMessage = async (file, fileType) => {
     setMessageSending(true);
     const id = await handleSendMessageToDB(file, fileType || "text/plain");
@@ -78,6 +86,7 @@ const ChatFooter = ({
     handleSendMessageToSocket(messageData);
     handleUpdateInboxUsers(messageData);
     handleClearTextArea();
+    handleScrollChatBodyToEnd();
     setMessageSending(false);
   };
 

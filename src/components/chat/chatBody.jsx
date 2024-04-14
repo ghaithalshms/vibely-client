@@ -13,11 +13,11 @@ const ChatBody = ({
   setChatArray,
   handleUpdateInboxUsers,
   handleUpdateChatArray,
+  chatBodyScrollPosition,
+  setChatBodyScrollPosition,
 }) => {
   const [isLoading, setLoading] = useState(false);
   const [oldestMessageGot, setOldestMessageGot] = useState(0);
-
-  const [scrollPosition, setScrollPosition] = useState(0);
 
   const handleResetChat = () => {
     setChatArray([]);
@@ -35,9 +35,9 @@ const ChatBody = ({
   }, [chatUser]);
 
   useEffect(() => {
-    handleScrollChatBodyToEnd();
+    handleUpdateScrollChatBody();
     // eslint-disable-next-line
-  }, [chatArray, scrollPosition]);
+  }, [chatArray, chatBodyScrollPosition]);
 
   useEffect(() => {
     handleReceiveMessageSocket();
@@ -57,8 +57,10 @@ const ChatBody = ({
   let isChatFetching = false;
 
   const handleGetChat = async (_oldestMessageGot) => {
-    const oldestMessageID = _oldestMessageGot || oldestMessageGot;
+    if (isChatFetching) return;
+
     isChatFetching = true;
+    const oldestMessageBeforeUpdate = _oldestMessageGot || oldestMessageGot;
     axios
       .get(getLink.getChat, {
         params: {
@@ -67,13 +69,16 @@ const ChatBody = ({
           oldestMessageGot: _oldestMessageGot || oldestMessageGot,
         },
       })
-      .then((res) => {
-        setChatArray((prevChatArray) => [
-          ...res?.data.chatArray,
-          ...prevChatArray,
-        ]);
 
-        setOldestMessageGot(res?.data.oldestMessageGot);
+      .then((res) => {
+        if (res?.data.oldestMessageGot !== oldestMessageGot) {
+          setChatArray((prevChatArray) => [
+            ...res?.data.chatArray,
+            ...prevChatArray,
+          ]);
+
+          setOldestMessageGot(res?.data.oldestMessageGot);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -81,20 +86,24 @@ const ChatBody = ({
         setLoading(false);
       });
 
-    isChatFetching = false;
-    const chatBody = document.querySelector(".chat-body-container");
-    if (oldestMessageID === 0) {
-      setScrollPosition(chatBody.scrollHeight);
-    } else {
-      // setScrollPosition(chatBody.scrollTop);
+    if (oldestMessageBeforeUpdate === 0) {
+      handleScrollChatBodyToEnd();
     }
+    isChatFetching = false;
   };
 
   const handleScrollChatBodyToEnd = () => {
     const chatBody = document.querySelector(".chat-body-container");
     if (chatBody) {
+      setChatBodyScrollPosition(chatBody.scrollHeight);
+    }
+  };
+
+  const handleUpdateScrollChatBody = () => {
+    const chatBody = document.querySelector(".chat-body-container");
+    if (chatBody) {
       // chatBody.scrollTop = chatBody.scrollHeight;
-      chatBody.scrollTop = scrollPosition;
+      chatBody.scrollTop = chatBodyScrollPosition;
     }
   };
 
@@ -155,10 +164,11 @@ const ChatBody = ({
   const handleChatBodyOnScroll = (e) => {
     if (isChatFetching) return;
 
-    const scrollingPercentage =
-      (e.target.scrollTop / e.target.scrollHeight) * 100;
-    if (scrollingPercentage < 10) {
+    // const scrollingPercentage =
+    //   (e.target.scrollTop / e.target.scrollHeight) * 100;
+    if (e.target.scrollTop === 0) {
       handleGetChat();
+      console.log("running", e.target.scrollTop);
     }
   };
 

@@ -15,6 +15,7 @@ const ChatComponent = ({
   setErrorCode,
 }) => {
   const [chatArray, setChatArray] = useState([]);
+  const [chatBodyScrollPosition, setChatBodyScrollPosition] = useState(0);
 
   const handleUpdateChatArray = (messageData) =>
     setChatArray((prevChatArray) => [...prevChatArray, messageData]);
@@ -59,6 +60,8 @@ const ChatComponent = ({
             setChatArray={setChatArray}
             handleUpdateInboxUsers={handleUpdateInboxUsers}
             handleUpdateChatArray={handleUpdateChatArray}
+            chatBodyScrollPosition={chatBodyScrollPosition}
+            setChatBodyScrollPosition={setChatBodyScrollPosition}
           />
           <ChatFooter
             isDarkMode={isDarkMode}
@@ -69,6 +72,7 @@ const ChatComponent = ({
             setChatArray={setChatArray}
             handleUpdateChatArray={handleUpdateChatArray}
             handleUpdateInboxUsers={handleUpdateInboxUsers}
+            setChatBodyScrollPosition={setChatBodyScrollPosition}
           />
         </>
       );
