@@ -130,6 +130,7 @@ const Profile = ({
             setUserData={setUserData}
             handleCatchAxios={handleCatchAxios}
             setErrorCode={setErrorCode}
+            setUserPostFlowArray={setUserPostFlowArray}
           />
           <UserPostFlow
             isDarkMode={isDarkMode}

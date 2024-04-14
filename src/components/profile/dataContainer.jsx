@@ -25,6 +25,7 @@ const DataContainer = ({
   visitUser,
   handleCatchAxios,
   setErrorCode,
+  setUserPostFlowArray,
 }) => {
   const tokenUsername = Cookies.get("username");
   const token = Cookies.get("token");
@@ -92,6 +93,7 @@ const DataContainer = ({
             isFollowing: false,
             followerCount: userData.followerCount - 1,
           }));
+          setUserPostFlowArray([]);
           break;
         case "Follow request deleted":
           setFollowButtonText("Follow");
