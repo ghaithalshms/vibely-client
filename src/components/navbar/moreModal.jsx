@@ -24,6 +24,7 @@ const MoreModal = ({ isDarkMode, isOpen, onRequestClose, setErrorCode }) => {
       const cookieKey = cookie.split("=")[0].trim();
       Cookies.remove(cookieKey);
     });
+    localStorage.clear();
   };
 
   const handleNavigation = (path) => {
