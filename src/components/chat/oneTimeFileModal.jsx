@@ -53,7 +53,6 @@ const OneTimeFileModal = ({ isDarkMode, isOpen, onRequestClose, message }) => {
     }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
       message.id
     }`;
-    console.log(mediaUrl);
 
     if (message.fileType?.startsWith("image")) {
       return (

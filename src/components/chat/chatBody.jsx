@@ -165,11 +165,8 @@ const ChatBody = ({
   const handleChatBodyOnScroll = (e) => {
     if (isChatFetching) return;
 
-    // const scrollingPercentage =
-    //   (e.target.scrollTop / e.target.scrollHeight) * 100;
     if (e.target.scrollTop === 0) {
       handleGetChat();
-      console.log("running", e.target.scrollTop);
     }
   };
 
