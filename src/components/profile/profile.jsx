@@ -49,28 +49,31 @@ const Profile = ({
   ) => {
     isPostFlowFetching = true;
 
-    try {
-      if (!isOnScrolling) setIsPostFlowLoading(true);
-      const response = await axios.get(getLink.getUserPostFlow, {
+    if (!isOnScrolling) setIsPostFlowLoading(true);
+    await axios
+      .get(getLink.getUserPostFlow, {
         params: {
           username,
           token: Cookies.get("token"),
           lastGotPostID: _lastGotPostID ?? lastGotPostID,
         },
-      });
-
-      if (response?.data !== "private account") {
-        setLastGotPostID(response.data?.lastGotPostID);
-        if (!isOnScrolling) setUserPostFlowArray(response.data?.postFlowArray);
-        else
-          setUserPostFlowArray([
-            ...userPostFlowArray,
-            ...response.data?.postFlowArray,
-          ]);
-      }
-    } catch (error) {
-      handleCatchAxios(error);
-    }
+      })
+      .then((response) => {
+        if (
+          response?.data !== "private account" &&
+          response.data?.lastGotPostID !== lastGotPostID
+        ) {
+          setLastGotPostID(response.data?.lastGotPostID);
+          if (!isOnScrolling)
+            setUserPostFlowArray(response.data?.postFlowArray);
+          else
+            setUserPostFlowArray([
+              ...userPostFlowArray,
+              ...response.data?.postFlowArray,
+            ]);
+        }
+      })
+      .catch((error) => handleCatchAxios(error));
 
     setIsPostFlowLoading(false);
     isPostFlowGot = true;

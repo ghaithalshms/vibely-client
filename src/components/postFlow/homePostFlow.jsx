@@ -23,25 +23,29 @@ const HomePostFlow = ({
     isPostFlowFetching = true;
 
     setIsLoading(true);
-    try {
-      const response = await axios.get(getLink.getHomePostFlow, {
+    await axios
+      .get(getLink.getHomePostFlow, {
         params: {
           token: Cookies.get("token"),
           lastGotPostID,
         },
-      });
-      if (response.data !== "no post flow") {
+      })
+      .then((response) => {
         const { lastGotPostID: newLastGotPostID, postFlowArray } =
           response.data;
-        setLastGotPostID(newLastGotPostID);
-        setHomePostFlowArray((prevPostFlowArray) => [
-          ...prevPostFlowArray,
-          ...postFlowArray,
-        ]);
-      }
-    } catch (error) {
-      handleCatchAxios(error);
-    }
+        if (
+          response.data !== "no post flow" &&
+          newLastGotPostID !== lastGotPostID
+        ) {
+          setLastGotPostID(newLastGotPostID);
+          setHomePostFlowArray((prevPostFlowArray) => [
+            ...prevPostFlowArray,
+            ...postFlowArray,
+          ]);
+        }
+      })
+      .catch((error) => handleCatchAxios(error));
+
     setIsLoading(false);
     isPostFlowGot = true;
     isPostFlowFetching = false;

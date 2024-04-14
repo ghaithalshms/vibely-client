@@ -40,22 +40,24 @@ const ActivitiesPostFlow = ({
     const axiosLink = getAxiosLink();
     if (!axiosLink) return;
     if (!isOnScrolling) setIsLoading(true);
-    try {
-      const response = await axios.get(axiosLink, {
+    await axios
+      .get(axiosLink, {
         params: {
           token: Cookies.get("token"),
           lastGotPostID,
         },
-      });
-      if (response.data !== "no post flow") {
-        setLastGotPostID(response.data?.lastGotPostID);
-        if (!isOnScrolling) setPostFlowArray(response.data?.postFlowArray);
-        else
+      })
+      .then((response) => {
+        if (
+          response.data !== "no post flow" &&
+          response.data?.lastGotPostID !== lastGotPostID
+        ) {
+          setLastGotPostID(response.data?.lastGotPostID);
           setPostFlowArray([...postFlowArray, ...response.data?.postFlowArray]);
-      }
-    } catch (error) {
-      handleCatchAxios(error);
-    }
+        }
+      })
+      .catch((error) => handleCatchAxios(error));
+
     setIsLoading(false);
     isPostFlowGot = true;
     isPostFlowFetching = false;

@@ -18,30 +18,32 @@ const ExplorerPostFlow = ({
   const [explorerPostFlowArray, setExplorerPostFlowArray] = useState([]);
   const [lastGotPostID, setLastGotPostID] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  // const [isPostFlowGot, setIsPostFlowGot] = useState(false);
 
   const handleGetUserPostFlow = async (isOnScrolling) => {
     isPostFlowFetching = true;
 
     setIsLoading(!isOnScrolling);
-    try {
-      const response = await axios.get(getLink.getExplorerPostFlow, {
+    await axios
+      .get(getLink.getExplorerPostFlow, {
         params: {
           token: Cookies.get("token"),
           lastGotPostID,
         },
-      });
-      if (response.data !== "no post flow") {
+      })
+      .then((response) => {
         const { lastGotPostID: newLastGotPostID, postFlowArray } =
           response.data;
-        setLastGotPostID(newLastGotPostID);
-        setExplorerPostFlowArray((prevArray) =>
-          isOnScrolling ? [...prevArray, ...postFlowArray] : postFlowArray
-        );
-      }
-    } catch (error) {
-      handleCatchAxios(error);
-    }
+        if (
+          response.data !== "no post flow" &&
+          newLastGotPostID !== lastGotPostID
+        ) {
+          setLastGotPostID(newLastGotPostID);
+          setExplorerPostFlowArray((prevArray) =>
+            isOnScrolling ? [...prevArray, ...postFlowArray] : postFlowArray
+          );
+        }
+      })
+      .catch((error) => handleCatchAxios(error));
     setIsLoading(false);
     isPostFlowGot = true;
     isPostFlowFetching = false;
