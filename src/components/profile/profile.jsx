@@ -61,6 +61,7 @@ const Profile = ({
         },
       })
       .then((response) => {
+        console.log(response.data);
         if (
           response?.data !== "private account" &&
           response.data?.lastGotPostID !== lastGotPostID
@@ -85,20 +86,23 @@ const Profile = ({
   let isPostFlowGot = false;
 
   const handleVisitUser = async () => {
+    isPostFlowGot = false;
     const username = getUsernameFromUrl();
     handleGetUserData(username).then((userData) => {
+      console.log("userdata got");
       if (
         !isPostFlowGot &&
         (userData.username === Cookies.get("username") ||
           userData.isFollowing ||
           !userData.privacity)
       ) {
-        handleGetUserPostFlow(false, username);
+        handleGetUserPostFlow(false, username, 0);
       } else {
         setIsPostFlowLoading(false);
       }
     });
   };
+
   useEffect(() => {
     handleVisitUser();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
