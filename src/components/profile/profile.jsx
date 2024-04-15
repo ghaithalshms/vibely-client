@@ -25,6 +25,8 @@ const Profile = ({
   };
 
   const handleGetUserData = async (username) => {
+    isPostFlowGot = false;
+    setUserPostFlowArray([]);
     setIsLoading(true);
     try {
       const response = await axios.get(getLink.getUserData, {
@@ -79,8 +81,10 @@ const Profile = ({
     isPostFlowGot = true;
     isPostFlowFetching = false;
   };
+
   let isPostFlowGot = false;
-  useEffect(() => {
+
+  const handleVisitUser = async () => {
     const username = getUsernameFromUrl();
     handleGetUserData(username).then((userData) => {
       if (
@@ -94,6 +98,9 @@ const Profile = ({
         setIsPostFlowLoading(false);
       }
     });
+  };
+  useEffect(() => {
+    handleVisitUser();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let isPostFlowFetching = false;
@@ -112,7 +119,7 @@ const Profile = ({
     <div className="container-y main-container">
       <Navbar
         isDarkMode={isDarkMode}
-        visitUser={handleGetUserData}
+        visitUser={handleVisitUser}
         handleCatchAxios={handleCatchAxios}
         setErrorCode={setErrorCode}
         updateUserPostFlow={() =>
@@ -129,7 +136,7 @@ const Profile = ({
           <DataContainer
             isDarkMode={isDarkMode}
             userData={userData}
-            visitUser={handleGetUserData}
+            visitUser={handleVisitUser}
             setUserData={setUserData}
             handleCatchAxios={handleCatchAxios}
             setErrorCode={setErrorCode}
@@ -138,7 +145,7 @@ const Profile = ({
           <UserPostFlow
             isDarkMode={isDarkMode}
             userData={userData}
-            visitUser={handleGetUserData}
+            visitUser={handleVisitUser}
             handleCatchAxios={handleCatchAxios}
             scrollingPercentage={scrollingPercentage}
             setErrorCode={setErrorCode}
