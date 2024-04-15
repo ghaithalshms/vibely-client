@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -12,6 +12,7 @@ import deleteLight from "../icon/light-mode/post/delete.png";
 import like0Dark from "../icon/dark-mode/post/like 0.png";
 import like1Dark from "../icon/dark-mode/post/like 1.png";
 import deleteDark from "../icon/dark-mode/post/delete.png";
+import handleCache from "../../cache/cacheMedia";
 
 const CommentComponent = ({
   isDarkMode,
@@ -23,22 +24,8 @@ const CommentComponent = ({
 }) => {
   const [isCommentDeleted, setIsCommentDeleted] = useState(false);
   const [pfpLoaded, setPfpLoaded] = useState(false);
+  const [pfp, setPfp] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadProfilePicture = async () => {
-      try {
-        await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}`
-        );
-        setPfpLoaded(true);
-      } catch (error) {
-        setPfpLoaded(false);
-      }
-    };
-
-    loadProfilePicture();
-  }, [comment.username]);
 
   const handleLikeComment = async () => {
     try {
@@ -134,12 +121,16 @@ const CommentComponent = ({
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={
-          pfpLoaded
-            ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}`
-            : defaultPfp
+        src={pfpLoaded ? pfp : defaultPfp}
+        onLoad={() =>
+          handleCache(
+            "pfp",
+            `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}&`,
+            comment.username,
+            setPfp,
+            setPfpLoaded
+          )
         }
-        onLoad={() => setPfpLoaded(true)}
         onError={() => setPfpLoaded(false)}
         alt="Pfp"
         onClick={() => {
