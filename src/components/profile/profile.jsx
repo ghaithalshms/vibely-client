@@ -61,7 +61,6 @@ const Profile = ({
         },
       })
       .then((response) => {
-        console.log(response.data);
         if (
           response?.data !== "private account" &&
           response.data?.lastGotPostID !== lastGotPostID
@@ -89,7 +88,6 @@ const Profile = ({
     isPostFlowGot = false;
     const username = getUsernameFromUrl();
     handleGetUserData(username).then((userData) => {
-      console.log("userdata got");
       if (
         !isPostFlowGot &&
         (userData.username === Cookies.get("username") ||
