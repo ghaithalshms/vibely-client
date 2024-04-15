@@ -187,7 +187,7 @@ const ChatBody = ({
         className="full-width"
         style={{ display: "flex", justifyContent: "flex-end" }}
       >
-        <span>seen</span>
+        <span style={{ marginRight: "10px" }}>seen</span>
       </div>
     );
 
