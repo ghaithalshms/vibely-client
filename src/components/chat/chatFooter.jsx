@@ -48,7 +48,8 @@ const ChatFooter = ({
 
     try {
       const res = await axios.post(postLink.sendMessageToDB, formData);
-      return res?.data?.id;
+      console.log(res.data);
+      return res?.data;
     } catch (err) {
       handleCatchAxios(err);
     }
@@ -74,20 +75,24 @@ const ChatFooter = ({
 
   const handleSendMessage = async (file, fileType, oneTime) => {
     setMessageSending(true);
-    const id = await handleSendMessageToDB(
+    const { id, sentDate } = await handleSendMessageToDB(
       file,
       fileType || "text/plain",
       oneTime
     );
+
     const messageData = {
       id,
       message,
       from: Cookies.get("username"),
       to: chatUser.username,
+      sentDate,
       fileType: fileType || "text/plain",
       seen: false,
       oneTime: oneTime || false,
+      oneTimeOpened: false,
     };
+
     handleUpdateChatArray(messageData);
     handleSendMessageToSocket(messageData);
     handleUpdateInboxUsers(messageData);
