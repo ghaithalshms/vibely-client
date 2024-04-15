@@ -77,7 +77,8 @@ const UserPostFlow = ({
       {!isPostFlowLoading &&
         userPostFlowArray?.length === 0 &&
         (!userData.privacity ||
-          userData.username === Cookies.get("username")) &&
+          userData.username === Cookies.get("username") ||
+          userData.isFollowing) &&
         noAnyPost}
 
       {Array.isArray(userPostFlowArray) &&
