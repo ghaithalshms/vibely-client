@@ -26,7 +26,6 @@ import save1Dark from "../icon/dark-mode/post/save 1.png";
 import commentDark from "../icon/dark-mode/post/comment.png";
 import optionsDark from "../icon/dark-mode/post/options.png";
 import { postLink } from "../../API";
-import handleCache from "../../cache/cacheMedia";
 
 const PostComponent = ({
   isDarkMode,
@@ -39,13 +38,10 @@ const PostComponent = ({
   handleCatchAxios,
   setErrorCode,
 }) => {
-  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+  const [isCommentsModalOpen, setCommentsModalOpen] = useState(false);
   const [isUserListModalOpen, setUserListModalOpen] = useState(false);
 
-  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
-
-  const [file, setFile] = useState(null);
   const [fileLoaded, setFileLoaded] = useState(post.fileType === "text/plain");
 
   const [isPostMoreModalOpen, setPostMoreModalOpen] = useState(false);
@@ -129,17 +125,11 @@ const PostComponent = ({
             marginRight: "0.8rem",
             marginBottom: "0.5rem",
           }}
-          src={pfpLoaded ? pfp : defaultPfp}
-          onLoad={() =>
-            handleCache(
-              "pfp",
-              `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`,
-              user.username,
-              setPfp,
-              setPfpLoaded
-            )
-          }
-          onError={() => setPfpLoaded(false)}
+          src={`${
+            process.env.REACT_APP_API_URL
+          }/api/user/data/picture?username=${post.username || user.username}`}
+          onLoad={() => setFileLoaded(true)}
+          onError={() => setPfpLoaded(true)}
           alt="Pfp"
           onContextMenu={(event) => event.preventDefault()}
         />
@@ -192,7 +182,7 @@ const PostComponent = ({
         />
         <div
           className="container-x pointer"
-          onClick={() => setIsCommentsModalOpen(true)}
+          onClick={() => setCommentsModalOpen(true)}
           style={{ alignItems: "center", justifyContent: "center" }}
         >
           <img
@@ -233,40 +223,30 @@ const PostComponent = ({
     >{`${post.likeCount} like`}</span>
   );
 
-  useEffect(() => {
-    if (!post.fileType.startsWith("text"))
-      handleCache(
-        "post",
-        `${process.env.REACT_APP_API_URL}/api/post/file?token=${Cookies.get(
-          "token"
-        )}&postID=${post.postID}`,
-        post.postID,
-        setFile,
-        setFileLoaded
-      );
-    // eslint-disable-next-line
-  }, []);
-
   const renderPostBody = () => (
     <div className="post-content container-y">
       <pre>{post.description}</pre>
       {!fileLoaded && renderPostFileLoading()}
-      {fileLoaded && post.fileType?.startsWith("image") && (
+      {post.fileType?.startsWith("image") && (
         <img
           className="post-file"
           loading="lazy"
-          src={file}
+          src={`${
+            process.env.REACT_APP_API_URL
+          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
           onError={() => setFileLoaded(false)}
           alt="Post pic"
           onContextMenu={(event) => event.preventDefault()}
         />
       )}
-      {fileLoaded && post.fileType?.startsWith("video") && (
+      {post.fileType?.startsWith("video") && (
         <video
           style={{ display: fileLoaded ? "inline" : "none" }}
           className="post-file"
           loading="lazy"
-          src={file}
+          src={`${
+            process.env.REACT_APP_API_URL
+          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
           onError={() => setFileLoaded(false)}
           type="video/mp4"
           controls
@@ -293,11 +273,11 @@ const PostComponent = ({
         <CommentsModal
           isDarkMode={isDarkMode}
           isOpen={isCommentsModalOpen}
-          onRequestClose={() => setIsCommentsModalOpen(false)}
+          onRequestClose={() => setCommentsModalOpen(false)}
           header={"Comments"}
           postID={post.postID}
           visitUser={(username) => {
-            setIsCommentsModalOpen(false);
+            setCommentsModalOpen(false);
             if (visitUser) visitUser(username);
           }}
           handleCatchAxios={handleCatchAxios}

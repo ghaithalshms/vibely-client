@@ -12,7 +12,6 @@ import deleteLight from "../icon/light-mode/post/delete.png";
 import like0Dark from "../icon/dark-mode/post/like 0.png";
 import like1Dark from "../icon/dark-mode/post/like 1.png";
 import deleteDark from "../icon/dark-mode/post/delete.png";
-import handleCache from "../../cache/cacheMedia";
 
 const CommentComponent = ({
   isDarkMode,
@@ -23,8 +22,8 @@ const CommentComponent = ({
   setErrorCode,
 }) => {
   const [isCommentDeleted, setIsCommentDeleted] = useState(false);
+
   const [pfpLoaded, setPfpLoaded] = useState(false);
-  const [pfp, setPfp] = useState(false);
   const navigate = useNavigate();
 
   const handleLikeComment = async () => {
@@ -121,17 +120,13 @@ const CommentComponent = ({
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={pfpLoaded ? pfp : defaultPfp}
-        onLoad={() =>
-          handleCache(
-            "pfp",
-            `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}&`,
-            comment.username,
-            setPfp,
-            setPfpLoaded
-          )
+        src={
+          pfpLoaded
+            ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${comment.username}&`
+            : defaultPfp
         }
-        onError={() => setPfpLoaded(false)}
+        onLoad={() => setPfpLoaded(true)}
+        onError={() => setPfpLoaded(true)}
         alt="Pfp"
         onClick={() => {
           setErrorCode(0);

@@ -3,10 +3,8 @@ import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import Cookies from "js-cookie";
 import defaultPfp from "../icon/default profile picture.jpg";
-import handleCache from "../../cache/cacheMedia";
 
 const InboxUserComponent = ({ user, message, setChatUser }) => {
-  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const renderVerifiedIcon = (user) => {
@@ -84,17 +82,13 @@ const InboxUserComponent = ({ user, message, setChatUser }) => {
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={pfpLoaded ? pfp : defaultPfp}
-        onLoad={() =>
-          handleCache(
-            "pfp",
-            `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`,
-            user.username,
-            setPfp,
-            setPfpLoaded
-          )
+        src={
+          pfpLoaded
+            ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+            : defaultPfp
         }
-        onError={() => setPfpLoaded(false)}
+        onLoad={() => setPfpLoaded(true)}
+        onError={() => setPfpLoaded(true)}
         alt="Pfp"
       />
       <div>{nameAndIcon}</div>

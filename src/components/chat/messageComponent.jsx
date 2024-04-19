@@ -1,7 +1,6 @@
 import Cookies from "js-cookie";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AudioPlayer from "../audioPlayer/audioPlayer";
-import handleCache from "../../cache/cacheMedia";
 import playIcon from "../icon/light-mode/chat/play.png";
 import OneTimeFileModal from "./oneTimeFileModal";
 
@@ -10,13 +9,17 @@ const MessageComponent = ({
   message,
   handleScrollChatBodyToEnd,
 }) => {
-  const [file, setFile] = useState(null);
   const [fileLoaded, setFileLoaded] = useState(false);
 
   const [isOneTimeModalOpen, setOneTimeModalOpen] = useState(false);
   const [isOneTimeOpened, setOneTimeOpened] = useState(message.oneTimeOpened);
 
   const userSigned = Cookies.get("username");
+  const fileSrc = `${
+    process.env.REACT_APP_API_URL
+  }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
+    message.id
+  }`;
 
   const getMessageStyle = () => {
     const baseStyle = {
@@ -54,27 +57,6 @@ const MessageComponent = ({
       overflowWrap: "break-word",
     };
   };
-
-  useEffect(() => {
-    if (
-      !message.fileType.startsWith("text") &&
-      !message.fileType.startsWith("audio") &&
-      !message.oneTime
-    ) {
-      handleCache(
-        "chat",
-        `${
-          process.env.REACT_APP_API_URL
-        }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-          message.id
-        }`,
-        message.id,
-        setFile,
-        setFileLoaded
-      );
-    }
-    // eslint-disable-next-line
-  }, []);
 
   const oneTimeMediaSpanText = () => {
     if (isOneTimeOpened) {
@@ -131,29 +113,32 @@ const MessageComponent = ({
         return (
           <>
             {!fileLoaded && renderFileLoading()}
-            {fileLoaded && (
+            {
               <img
                 className="message-picture"
                 loading="lazy"
-                src={file}
-                onLoad={handleScrollChatBodyToEnd}
+                src={`${
+                  process.env.REACT_APP_API_URL
+                }/api/chat/message-file?token=${Cookies.get(
+                  "token"
+                )}&messageID=${message.id}`}
+                onLoad={() => setFileLoaded(true)}
                 onError={() => setFileLoaded(false)}
                 alt="Chat pic"
                 onContextMenu={(event) => {
                   event.preventDefault();
                 }}
               />
-            )}
+            }
           </>
         );
       } else if (message.fileType?.startsWith("video")) {
         return (
           <video
-            style={{ display: fileLoaded ? "inline" : "none" }}
             className="message-video"
             loading="lazy"
-            src={file}
-            onLoad={handleScrollChatBodyToEnd}
+            src={fileSrc}
+            onLoad={() => setFileLoaded(true)}
             onError={() => setFileLoaded(false)}
             type="video/mp4"
             controls
@@ -167,11 +152,7 @@ const MessageComponent = ({
         return (
           <AudioPlayer
             isDarkMode={isDarkMode}
-            audioUrl={`${
-              process.env.REACT_APP_API_URL
-            }/api/chat/message-file?token=${Cookies.get("token")}&messageID=${
-              message.id
-            }`}
+            audioUrl={fileSrc}
             sentByTheUser={message.from === userSigned}
           />
         );

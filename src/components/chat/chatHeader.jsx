@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
 import { useNavigate } from "react-router-dom";
@@ -7,12 +7,10 @@ import backDark from "../icon/dark-mode/chat/back.png";
 import { timeDifference } from "../func/timeDifference";
 import spotifyIcon from "../icon/spotify.png";
 import defaultPfp from "../icon/default profile picture.jpg";
-import handleCache from "../../cache/cacheMedia";
 
 const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
   const navigate = useNavigate();
 
-  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const handleBackButtonClick = () => {
@@ -25,18 +23,6 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
     setErrorCode(0);
     navigate(`/${chatUser?.username}`);
   };
-
-  useEffect(() => {
-    setPfp(null);
-    setPfpLoaded(null);
-    handleCache(
-      "pfp",
-      `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`,
-      chatUser.username,
-      setPfp,
-      setPfpLoaded
-    );
-  }, [chatUser]);
 
   const renderBackIcon = () => (
     <img
@@ -114,17 +100,13 @@ const ChatHeader = ({ isDarkMode, chatUser, setChatUser, setErrorCode }) => {
               marginBottom: "0.5rem",
             }}
             onClick={handleProfileClick}
-            src={pfpLoaded ? pfp : defaultPfp}
-            onLoad={() =>
-              handleCache(
-                "pfp",
-                `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`,
-                chatUser.username,
-                setPfp,
-                setPfpLoaded
-              )
+            src={
+              pfpLoaded
+                ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${chatUser.username}`
+                : defaultPfp
             }
-            onError={() => setPfpLoaded(false)}
+            onLoad={() => setPfpLoaded(true)}
+            onError={() => setPfpLoaded(true)}
             alt="Pfp"
           />
           <div className="chat-header-user-container">

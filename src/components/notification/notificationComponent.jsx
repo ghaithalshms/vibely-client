@@ -4,7 +4,6 @@ import { postLink } from "../../API";
 import Cookies from "js-cookie";
 import axios from "axios";
 import defaultPfp from "../icon/default profile picture.jpg";
-import handleCache from "../../cache/cacheMedia";
 
 const NotificationComponent = ({
   user,
@@ -15,7 +14,6 @@ const NotificationComponent = ({
   setLoading,
   setErrorCode,
 }) => {
-  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const navigate = useNavigate();
@@ -66,17 +64,13 @@ const NotificationComponent = ({
           marginRight: "0.8rem",
           marginBottom: "0.5rem",
         }}
-        src={pfpLoaded ? pfp : defaultPfp}
-        onLoad={() =>
-          handleCache(
-            "pfp",
-            `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`,
-            user.username,
-            setPfp,
-            setPfpLoaded
-          )
+        src={
+          pfpLoaded
+            ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+            : defaultPfp
         }
-        onError={() => setPfpLoaded(false)}
+        onLoad={() => setPfpLoaded(true)}
+        onError={() => setPfpLoaded(true)}
         alt="Pfp"
         onClick={handleProfileClick}
       />

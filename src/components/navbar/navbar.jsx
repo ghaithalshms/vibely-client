@@ -41,7 +41,6 @@ import notification1Dark from "../icon/dark-mode/navbar/notifications 1.png";
 import optionsDark from "../icon/dark-mode/navbar/options.png";
 import axios from "axios";
 import { getLink } from "../../API";
-import handleCache from "../../cache/cacheMedia";
 
 const Navbar = ({
   isDarkMode,
@@ -56,7 +55,6 @@ const Navbar = ({
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false);
 
-  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const [notiCount, setNotiCount] = useState(0);
@@ -343,7 +341,9 @@ const Navbar = ({
       }}
       src={
         pfpLoaded
-          ? pfp
+          ? `${
+              process.env.REACT_APP_API_URL
+            }/api/user/data/picture?username=${Cookies.get("username")}`
           : actualPage === "profile"
           ? isDarkMode
             ? profile1Dark
@@ -352,17 +352,8 @@ const Navbar = ({
           ? profile0Dark
           : profile0Light
       }
-      onLoad={() =>
-        handleCache(
-          "pfp",
-          `${
-            process.env.REACT_APP_API_URL
-          }/api/user/data/picture?username=${Cookies.get("username")}`,
-          Cookies.get("username"),
-          setPfp,
-          setPfpLoaded
-        )
-      }
+      onLoad={() => setPfpLoaded(true)}
+      onError={() => setPfpLoaded(true)}
       alt="profile"
       className="pointer"
       onClick={() => {

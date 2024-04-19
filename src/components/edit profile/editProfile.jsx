@@ -5,11 +5,9 @@ import Cookies from "js-cookie";
 import Navbar from "../navbar/navbar";
 import CheckboxStyled from "../navbar/checkboxStyled";
 import defaultPfp from "../icon/default profile picture.jpg";
-import handleCache from "../../cache/cacheMedia";
 
 const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
   const [pfpLoaded, setPfpLoaded] = useState(false);
-  const [pfp, setPfp] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState();
@@ -129,17 +127,13 @@ const EditProfile = ({ isDarkMode, handleCatchAxios, setErrorCode }) => {
             className="edit-profile-picture"
             style={{ borderRadius: "100%", width: "130px", height: "130px" }}
             ref={pictureRef}
-            src={pfpLoaded ? pfp : defaultPfp}
-            onLoad={() =>
-              handleCache(
-                "pfp",
-                `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`,
-                userData.username,
-                setPfp,
-                setPfpLoaded
-              )
+            src={
+              pfpLoaded
+                ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${userData.username}`
+                : defaultPfp
             }
-            onError={() => setPfpLoaded(false)}
+            onLoad={() => setPfpLoaded(true)}
+            onError={() => setPfpLoaded(true)}
             alt="Pfp"
             onClick={handleUploadPictureClick}
           />

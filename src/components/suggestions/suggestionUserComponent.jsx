@@ -6,7 +6,6 @@ import Cookies from "js-cookie";
 import defaultPfp from "../icon/default profile picture.jpg";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
-import handleCache from "../../cache/cacheMedia";
 
 const SuggestionUserComponent = ({
   user,
@@ -16,7 +15,6 @@ const SuggestionUserComponent = ({
 }) => {
   const [followBtnText, setFollowBtnText] = useState("Follow");
 
-  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
 
   const navigate = useNavigate();
@@ -85,16 +83,12 @@ const SuggestionUserComponent = ({
         <img
           className="suggestion-profile-picture pointer"
           onClick={goToUserProfile}
-          src={pfpLoaded ? pfp : defaultPfp}
-          onLoad={() =>
-            handleCache(
-              "pfp",
-              `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`,
-              user.username,
-              setPfp,
-              setPfpLoaded
-            )
+          src={
+            pfpLoaded
+              ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+              : defaultPfp
           }
+          onLoad={() => setPfpLoaded(true)}
           alt="Pfp"
         />
         {renderNameAndIcons()}

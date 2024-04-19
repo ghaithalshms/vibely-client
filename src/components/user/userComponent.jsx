@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { postLink } from "../../API";
-import handleCache from "../../cache/cacheMedia";
 import Cookies from "js-cookie";
 import defaultPfp from "../icon/default profile picture.jpg";
 import adminIcon from "../icon/admin.png";
@@ -16,7 +15,6 @@ const UserComponent = ({
   handleCatchAxios,
   setErrorCode,
 }) => {
-  const [pfp, setPfp] = useState(null);
   const [pfpLoaded, setPfpLoaded] = useState(false);
   const [followBtnText, setFollowBtnText] = useState("Follow");
 
@@ -105,17 +103,13 @@ const UserComponent = ({
             height: "43px",
             marginRight: "0.8rem",
           }}
-          src={pfpLoaded ? pfp : defaultPfp}
-          onLoad={() =>
-            handleCache(
-              "pfp",
-              `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`,
-              user.username,
-              setPfp,
-              setPfpLoaded
-            )
+          src={
+            pfpLoaded
+              ? `${process.env.REACT_APP_API_URL}/api/user/data/picture?username=${user.username}`
+              : defaultPfp
           }
-          onError={() => setPfpLoaded(false)}
+          onLoad={() => setPfpLoaded(true)}
+          onError={() => setPfpLoaded(true)}
           alt="Pfp"
         />
         <div>{renderNameAndIcon()}</div>
