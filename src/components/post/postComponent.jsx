@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import adminIcon from "../icon/admin.png";
 import verifiedIcon from "../icon/verified.png";
@@ -125,10 +125,16 @@ const PostComponent = ({
             marginRight: "0.8rem",
             marginBottom: "0.5rem",
           }}
-          src={`${
-            process.env.REACT_APP_API_URL
-          }/api/user/data/picture?username=${post.username || user.username}`}
-          onLoad={() => setFileLoaded(true)}
+          src={
+            pfpLoaded
+              ? `${
+                  process.env.REACT_APP_API_URL
+                }/api/user/data/picture?username=${
+                  post.username || user.username
+                }`
+              : defaultPfp
+          }
+          onLoad={() => setPfpLoaded(true)}
           onError={() => setPfpLoaded(true)}
           alt="Pfp"
           onContextMenu={(event) => event.preventDefault()}
@@ -234,6 +240,7 @@ const PostComponent = ({
           src={`${
             process.env.REACT_APP_API_URL
           }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
+          onLoad={() => setFileLoaded(true)}
           onError={() => setFileLoaded(false)}
           alt="Post pic"
           onContextMenu={(event) => event.preventDefault()}
@@ -247,6 +254,7 @@ const PostComponent = ({
           src={`${
             process.env.REACT_APP_API_URL
           }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
+          onLoad={() => setFileLoaded(true)}
           onError={() => setFileLoaded(false)}
           type="video/mp4"
           controls
