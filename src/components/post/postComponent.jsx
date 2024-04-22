@@ -239,9 +239,9 @@ const PostComponent = ({
         <img
           className="post-file"
           loading="lazy"
-          src={`${
-            process.env.REACT_APP_API_URL
-          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
+          src={`${process.env.REACT_APP_API_URL}/api/post/file?token=${
+            Cookies.get("token") || ""
+          }&postID=${post.postID}`}
           onLoad={() => setFileLoaded(true)}
           onError={() => setFileLoaded(false)}
           alt="Post pic"
@@ -252,9 +252,9 @@ const PostComponent = ({
         <video
           className="post-file"
           loading="lazy"
-          src={`${
-            process.env.REACT_APP_API_URL
-          }/api/post/file?token=${Cookies.get("token")}&postID=${post.postID}`}
+          src={`${process.env.REACT_APP_API_URL}/api/post/file?token=${
+            Cookies.get("token") || ""
+          }&postID=${post.postID}`}
           onLoad={() => setFileLoaded(true)}
           onError={() => setFileLoaded(false)}
           type="video/mp4"

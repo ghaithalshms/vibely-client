@@ -357,11 +357,13 @@ const Navbar = ({
       alt="profile"
       className="pointer"
       onClick={() => {
-        if (visitUser) visitUser(Cookies.get("username"));
+        if (visitUser) {
+          visitUser(Cookies.get("username"));
+        }
         handleCloseModals();
         setActualPage("profile");
-        setErrorCode(0);
         navigate(`/${Cookies.get("username")}`);
+        setErrorCode(0);
       }}
       // block right click
       onContextMenu={(event) => {

@@ -289,16 +289,12 @@ const App = () => {
         <Route
           path="/*"
           element={
-            token && username ? (
-              <Profile
-                isDarkMode={isDarkMode}
-                scrollingPercentage={scrollingPercentage}
-                handleCatchAxios={handleCatchAxios}
-                setErrorCode={setErrorCode}
-              />
-            ) : (
-              <Navigate to="/login" />
-            )
+            <Profile
+              isDarkMode={isDarkMode}
+              scrollingPercentage={scrollingPercentage}
+              handleCatchAxios={handleCatchAxios}
+              setErrorCode={setErrorCode}
+            />
           }
         />
         {/*  WITHOUT TOKEN */}

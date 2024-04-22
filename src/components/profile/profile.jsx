@@ -6,6 +6,7 @@ import "./profile.css";
 import DataContainer from "./dataContainer";
 import UserPostFlow from "../postFlow/userPostFlow";
 import Navbar from "../navbar/navbar";
+import LoginToSeeFeatures from "./loginToSeeFeatures";
 
 const Profile = ({
   isDarkMode,
@@ -24,7 +25,7 @@ const Profile = ({
     return urlParts[urlParts.length - 1].split("?")[0];
   };
 
-  const handleGetUserData = async (username) => {
+  const handleGetUserData = async (username, token) => {
     isPostFlowGot = false;
     setUserPostFlowArray([]);
     setIsLoading(true);
@@ -32,7 +33,7 @@ const Profile = ({
       const response = await axios.get(getLink.getUserData, {
         params: {
           username,
-          token: Cookies.get("token"),
+          token,
         },
       });
       setUserData(response.data);
@@ -84,13 +85,15 @@ const Profile = ({
 
   let isPostFlowGot = false;
 
-  const handleVisitUser = async () => {
+  const handleVisitUser = async (username) => {
     isPostFlowGot = false;
-    const username = getUsernameFromUrl();
-    handleGetUserData(username).then((userData) => {
+    const token = Cookies.get("token") || "";
+    const signedUsername = Cookies.get("username") || "";
+
+    handleGetUserData(username, token).then((userData) => {
       if (
         !isPostFlowGot &&
-        (userData.username === Cookies.get("username") ||
+        (userData.username === signedUsername ||
           userData.isFollowing ||
           !userData.privacity)
       ) {
@@ -102,7 +105,7 @@ const Profile = ({
   };
 
   useEffect(() => {
-    handleVisitUser();
+    handleVisitUser(getUsernameFromUrl());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let isPostFlowFetching = false;
@@ -119,15 +122,17 @@ const Profile = ({
 
   return (
     <div className="container-y main-container">
-      <Navbar
-        isDarkMode={isDarkMode}
-        visitUser={handleVisitUser}
-        handleCatchAxios={handleCatchAxios}
-        setErrorCode={setErrorCode}
-        updateUserPostFlow={() =>
-          handleGetUserPostFlow(false, userData.username, 0)
-        }
-      />
+      {Cookies.get("token") && (
+        <Navbar
+          isDarkMode={isDarkMode}
+          visitUser={handleVisitUser}
+          handleCatchAxios={handleCatchAxios}
+          setErrorCode={setErrorCode}
+          updateUserPostFlow={() =>
+            handleGetUserPostFlow(false, userData.username, 0)
+          }
+        />
+      )}
       {isLoading && (
         <div className="loader-container">
           <span className="loader" />
@@ -156,6 +161,9 @@ const Profile = ({
             setUserPostFlowArray={setUserPostFlowArray}
           />
         </>
+      )}
+      {!Cookies.get("token") && userData && (
+        <LoginToSeeFeatures isDarkMode={isDarkMode} userData={userData} />
       )}
     </div>
   );
