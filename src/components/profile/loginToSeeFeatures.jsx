@@ -57,6 +57,9 @@ const LoginToSeeFeatures = ({ isDarkMode, userData }) => {
           bottom: "0",
           zIndex: "1",
           padding: "40px 15px 0",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <h3>Login into Vibely!</h3>
